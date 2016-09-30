@@ -38,22 +38,22 @@ layout: default
       </div>
     </div>
 
-     <!-- Categories -->
-      <div class="col-sm-2">
-        <div class="shadow-corner-curl hidden-xs">
-          <div class="categories-list-header">
-            Categories
-          </div>          
-          <a href="javascript:;" class="categories-list-item" cate="All">
-            All<span class="my-badge"> {{site.posts | size}}</span>
+    <!-- Categories -->
+    <div class="col-md-2">
+      <div class="shadow-corner-curl hidden-xs">
+        <div class="categories-list-header">
+          Categories
+        </div>          
+        <a href="javascript:;" class="categories-list-item" cate="All">
+          All<span class="my-badge"> {{site.posts | size}}</span>
+        </a>
+        {% for category in site.categories %}
+          <a href="javascript:;" class="categories-list-item" cate="{{ category | first }}">
+            {{ category | first }} <span class="my-badge">{{ category | last | size }}</span>
           </a>
-          {% for category in site.categories %}
-            <a href="javascript:;" class="categories-list-item" cate="{{ category | first }}">
-              {{ category | first }} <span class="my-badge">{{ category | last | size }}</span>
-            </a>
-          {% endfor %}
-        </div>
+        {% endfor %}
       </div>
+    </div>
 
   </div>
 </div>
