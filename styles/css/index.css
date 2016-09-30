@@ -7117,8 +7117,10 @@ td.visible-print {
   }
 }
 
-.shadow-corner-curl{
-  
+p{
+  text-indent: 2em;
+}
+.shadow-corner-curl{ 
   position: relative;
   background-color:#f8f8fd; 
   -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.4),0 0 20px rgba(0,0,0,0.1) inset;
