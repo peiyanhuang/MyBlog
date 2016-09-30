@@ -3,11 +3,15 @@ layout: default
 ---
 <div class="container docs-container">
   <div class="row">
+    
+    <!-- directories -->
     <div class="col-md-2">
       <div class="sidebar hidden-print" role="complementary">
         {% include lefttree.html %} 
       </div>
     </div>
+    
+    <!-- main -->
     <div class="col-md-8" role="main">
       <div class="panel docs-content">
         <div class="wrapper">
@@ -24,8 +28,17 @@ layout: default
             </article>
         </div>
       </div>
-      
-      <!-- Categories -->
+
+      <div class="panel docs-content">
+        <article class="post-content">
+          <div class="wrapper">
+            {% include LessOrMore/comments %} 
+          </div>
+        </article>
+      </div>
+    </div>
+
+     <!-- Categories -->
       <div class="col-sm-2">
         <div class="shadow-corner-curl hidden-xs">
           <div class="categories-list-header">
@@ -42,13 +55,5 @@ layout: default
         </div>
       </div>
 
-      <div class="panel docs-content">
-        <article class="post-content">
-          <div class="wrapper">
-            {% include LessOrMore/comments %} 
-          </div>
-        </article>
-      </div>
-    </div>
   </div>
 </div>
