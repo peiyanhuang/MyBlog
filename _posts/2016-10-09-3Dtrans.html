@@ -1,0 +1,70 @@
+---
+layout: post
+title:  3D transform
+date:   2016-10-09 19:58:00 +0800
+categories: CSS
+tag: CSS
+---
+
+* content
+{:toc}
+
+<style type="text/css">
+		.warp{
+			display: inline-block;
+			position: relative;
+			cursor: pointer;
+			margin-right: 20px;
+		}
+		.item{
+			width: 200px;
+			height: 120px;
+			transform-style: preserve-3d;
+			transition: transform 0.6s;
+		}
+		.item:hover{
+			transform: translateZ(-60px) rotateX(-95deg);
+		}
+		.item img{
+			width: 200px;
+			height: 120px;
+			position: absolute;
+			top: 0;
+			border-radius: 3px;
+			transform: translateZ(60px);
+		}
+		.item span{
+			background: rgb(136, 131, 131);
+			position: absolute;
+			top: 0;
+			width: 200px;
+			height: 120px;
+			text-align: center;
+			line-height: 120px;
+			border-radius: 15px;
+			transform: rotateX(90deg) translateZ(60px);
+			transition: all 0.6s;
+		}
+		.item:hover img {
+        	border-radius: 15px;
+      	}
+		.item:hover span{
+			border-radius: 3px;
+		}
+	</style>
+
+
+	<div class="warp">
+		<div class="item">
+			<img src="a.jpg">
+			<span class="infor">
+				大家好1
+		</div>
+	</div>
+	<div class="warp">
+		<div class="item">
+			<img src="a.jpg">
+			<span class="infor">
+				大家好2
+		</div>
+	</div>
