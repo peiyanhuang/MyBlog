@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  3D transform
+title:  3D transform and transition
 date:   2016-10-09 20:58:00 +0800
 categories: CSS
 tag: CSS
@@ -78,6 +78,75 @@ tag: CSS
 	</div>
 
 
-<p> transform-style 属性：使被转换的子元素保留其 3D 转换。</p>
+<p> transform-style 属性: 使被转换的子元素保留其 3D 转换。</p>
 <p> perspective 属性:	规定 3D 元素的透视效果。</p>
 <p> transform-origin 属性: 设置旋转元素的基点位置。</p>
+<p> 具体的css属性可以看<a href="http://www.w3school.com.cn/css3/css3_transition.asp">w3school</p>
+<p>下面是代码: </p>
+<code>
+	<style type="text/css">
+	.warp{
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	margin: 40px 20px;
+	}
+	.item{
+		width: 200px;
+		height: 120px;
+		-webkit-transform-style: preserve-3d;
+		        transform-style: preserve-3d;
+		-webkit-transition: -webkit-transform 0.6s;
+		transition: -webkit-transform 0.6s;
+		transition: transform 0.6s;
+		transition: transform 0.6s, -webkit-transform 0.6s;
+	}
+	.item:hover{
+		-webkit-transform: translateZ(-60px) rotateX(-95deg);
+		        transform: translateZ(-60px) rotateX(-95deg);
+	}
+	.item img{
+		width: 200px;
+		height: 120px;
+		position: absolute;
+		top: 0;
+		border-radius: 3px;
+		-webkit-transform: translateZ(60px);
+		        transform: translateZ(60px);
+	}
+	.item span{
+		background: rgb(136, 131, 131);
+		position: absolute;
+		top: 0;
+		width: 200px;
+		height: 120px;
+		text-align: center;
+		line-height: 120px;
+		border-radius: 15px;
+		-webkit-transform: rotateX(90deg) translateZ(60px);
+		        transform: rotateX(90deg) translateZ(60px);
+		-webkit-transition: all 0.6s;
+		transition: all 0.6s;
+	}
+	.item:hover img {
+		border-radius: 15px;
+		}
+	.item:hover span{
+		border-radius: 3px;
+	}
+</style>
+	<div class="warp">
+		<div class="item">
+			<img src="a.jpg">
+			<span class="infor">
+				大家好1
+		</div>
+	</div>
+	<div class="warp">
+		<div class="item">
+			<img src="a.jpg">
+			<span class="infor">
+				大家好2
+		</div>
+	</div>
+</code>
