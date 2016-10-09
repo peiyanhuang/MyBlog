@@ -9,51 +9,58 @@ tag: CSS
 
 
 <style type="text/css">
-		.warp{
-			display: inline-block;
-			position: relative;
-			cursor: pointer;
-			margin-right: 20px;
+	.warp{
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	margin: 40px 20px;
+	}
+	.item{
+		width: 200px;
+		height: 120px;
+		-webkit-transform-style: preserve-3d;
+		        transform-style: preserve-3d;
+		-webkit-transition: -webkit-transform 0.6s;
+		transition: -webkit-transform 0.6s;
+		transition: transform 0.6s;
+		transition: transform 0.6s, -webkit-transform 0.6s;
+	}
+	.item:hover{
+		-webkit-transform: translateZ(-60px) rotateX(-95deg);
+		        transform: translateZ(-60px) rotateX(-95deg);
+	}
+	.item img{
+		width: 200px;
+		height: 120px;
+		position: absolute;
+		top: 0;
+		border-radius: 3px;
+		-webkit-transform: translateZ(60px);
+		        transform: translateZ(60px);
+	}
+	.item span{
+		background: rgb(136, 131, 131);
+		position: absolute;
+		top: 0;
+		width: 200px;
+		height: 120px;
+		text-align: center;
+		line-height: 120px;
+		border-radius: 15px;
+		-webkit-transform: rotateX(90deg) translateZ(60px);
+		        transform: rotateX(90deg) translateZ(60px);
+		-webkit-transition: all 0.6s;
+		transition: all 0.6s;
+	}
+	.item:hover img {
+		border-radius: 15px;
 		}
-		.item{
-			width: 200px;
-			height: 120px;
-			transform-style: preserve-3d;
-			perspective: 4000px;
-			transition: transform 0.6s;
-		}
-		.item:hover{
-			transform: translateZ(-60px) rotateX(-95deg);
-		}
-		.item img{
-			width: 200px;
-			height: 120px;
-			position: absolute;
-			top: 0;
-			border-radius: 3px;
-			transform: translateZ(60px);
-		}
-		.item span{
-			background: rgb(136, 131, 131);
-			position: absolute;
-			top: 0;
-			width: 200px;
-			height: 120px;
-			text-align: center;
-			line-height: 120px;
-			border-radius: 15px;
-			transform: rotateX(90deg) translateZ(60px);
-			transition: all 0.6s;
-		}
-		.item:hover img {
-        	border-radius: 15px;
-      	}
-		.item:hover span{
-			border-radius: 3px;
-		}
-	</style>
+	.item:hover span{
+		border-radius: 3px;
+	}
+</style>
 
-<p>看了下层 CSS3 ，做了个translate的小演示。如下</p>
+<p>看了下层 CSS3 ，做了个translate的简单的演示。如下</p>
 
 	<div class="warp">
 		<div class="item">
@@ -69,3 +76,8 @@ tag: CSS
 				大家好2
 		</div>
 	</div>
+
+
+<p> transform-style 属性：使被转换的子元素保留其 3D 转换。</p>
+<p> perspective 属性:	规定 3D 元素的透视效果。</p>
+<p> transform-origin 属性: 设置旋转元素的基点位置。</p>
