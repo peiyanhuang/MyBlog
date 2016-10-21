@@ -1,0 +1,59 @@
+---
+layout: default
+---
+<div class="container docs-container">
+  <div class="row">
+    
+    <!-- directories -->
+    <div class="col-md-3">
+      <div class="sidebar hidden-print" role="complementary">
+        {% include lefttree.html %} 
+      </div>
+    </div>
+    
+    <!-- main -->
+    <div class="col-md-9" role="main">
+      <div class="panel docs-content">
+        <div class="wrapper">
+            <header class="post-header">
+              <h1 class="post-title">{{ page.title }}</h1>
+              <!--
+                <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
+              -->
+              <div class="meta">Posted on <span class="postdate">{{ page.date | date: "%b %d, %Y" }}</span> By <a target="_blank" href="{{site.url}}">{{ site.author }}</a></div>
+              <br />
+            </header>
+            <article class="post-content">
+              {{ content }}
+            </article>
+        </div>
+      </div>
+
+      <div class="panel docs-content">
+        <article class="post-content">
+          <div class="wrapper">
+            {% include LessOrMore/comments %} 
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- Categories -->
+   <!--  <div class="col-md-2">
+      <div class="shadow-corner-curl hidden-xs">
+        <div class="categories-list-header">
+          Categories
+        </div>          
+        <a href="javascript:;" class="categories-list-item" cate="All">
+          All<span class="my-badge"> {{site.posts | size}}</span>
+        </a>
+        {% for category in site.categories %}
+          <a href="javascript:;" class="categories-list-item" cate="{{ category | first }}">
+            {{ category | first }} <span class="my-badge">{{ category | last | size }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div> -->
+
+  </div>
+</div>
