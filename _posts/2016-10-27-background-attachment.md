@@ -21,7 +21,7 @@ tag: JS
 
 ### 添加事件
 
-我在scroll事件上添加一些动画事件  
+在scroll事件上添加一些动画事件  
 
 	window.addEventListener('scroll',function(e){
         var scrollTop = window.scrollY;
@@ -36,3 +36,6 @@ tag: JS
             content3.classList.add('content-anim');
         }
     })
+
+[原文：视差滚动的爱情故事](http://www.alloyteam.com/2014/01/parallax-scrolling-love-story/)  
+[视差滚动的爱情故事之优化篇](http://www.alloyteam.com/2014/02/optimized-articles-of-parallax-scrolling-love-story/)
