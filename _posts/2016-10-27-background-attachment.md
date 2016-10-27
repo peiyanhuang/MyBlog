@@ -37,5 +37,5 @@ tag: JS
         }
     })
 
-[原文：视差滚动的爱情故事](http://www.alloyteam.com/2014/01/parallax-scrolling-love-story/)  
-[视差滚动的爱情故事之优化篇](http://www.alloyteam.com/2014/02/optimized-articles-of-parallax-scrolling-love-story/)
+原文：[视差滚动的爱情故事](http://www.alloyteam.com/2014/01/parallax-scrolling-love-story/)  
+	[视差滚动的爱情故事之优化篇](http://www.alloyteam.com/2014/02/optimized-articles-of-parallax-scrolling-love-story/)
