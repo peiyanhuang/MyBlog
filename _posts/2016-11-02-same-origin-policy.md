@@ -1,15 +1,15 @@
 ---
 layout: post
-title:  同源策略及跨域访问
-date:   2016-10-23 19:58:00 +0800
-categories: HTML5
-tag: HTML5
+title:  同源策略
+date:   2016-11-02 19:58:00 +0800
+categories: JS
+tag: JS
 ---
 
 * content
 {:toc}
 
-转自[浏览器同源政策及其规避方法](http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html)作者： 阮一峰
+转自 [浏览器同源政策及其规避方法](http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html) 作者： 阮一峰
 
 ### 一、同源政策
 
