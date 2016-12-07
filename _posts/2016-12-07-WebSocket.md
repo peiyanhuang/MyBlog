@@ -9,19 +9,17 @@ tag: HTML5
 * content
 {:toc}
 
-### 1. WebSocket
+### 1. WebSocket及轮询
 
-先说说轮询。
-
-#### ajax轮询
+#### **ajax轮询**
 
 ajax轮询的原理非常简单，客户端定时向服务器发送Ajax请求，服务器接到请求后马上返回响应信息并关闭连接。
 
-#### long poll(长轮询)
+#### **long poll (长轮询)**
 
 long poll 其实原理跟 ajax轮询差不多，都是采用轮询的方式，不过采取的是阻塞模型（一直打电话，没收到就不挂电话），也就是说，客户端发起连接后，如果没消息，就一直不返回Response给客户端。直到有新消息才返回响应信息才关闭连接。客户端处理完响应信息后再向服务器发送新的请求，周而复始。
 
-#### WebSocket 机制
+#### **WebSocket 机制**
 
 WebSocket 是 HTML5一种新的协议。它实现了浏览器与服务器全双工通信，能更好的节省服务器资源和带宽并达到实时通讯，它建立在 TCP 之上，同 HTTP 一样通过 TCP 来传输数据，但是它和 HTTP 最大不同是：
 
@@ -84,11 +82,11 @@ WebSocket 是 HTML5一种新的协议。它实现了浏览器与服务器全双�
 	  console.log(“WebSocketError!”);
 	};
 
-1. `var ws = new WebSocket(“ws://localhost:8080”)`
+`var ws = new WebSocket(“ws://localhost:8080”)`
 
 申请一个WebSocket对象，参数是需要连接的服务器端的地址，同http协议使用http://开头一样，WebSocket协议的URL使用ws://开头，另外安全的WebSocket协议使用wss://开头。
 
-2. `ws.onopen = function() { console.log(“open”)}`
+`ws.onopen = function() { console.log(“open”)}`
 
 当websocket创建成功时，即会触发onopen事件
 
@@ -96,14 +94,14 @@ WebSocket 是 HTML5一种新的协议。它实现了浏览器与服务器全双�
 
 用于叫消息发送到服务端 
 
-3. `ws.onmessage = function(evt) { console.log(evt.data) }`
+`ws.onmessage = function(evt) { console.log(evt.data) }`
 
 当客户端收到服务端发来的消息时，会触发onmessage事件，参数evt.data中包含server传输过来的数据
 
-4. `ws.onclose = function(evt) { console.log(“WebSocketClosed!”); }`
+`ws.onclose = function(evt) { console.log(“WebSocketClosed!”); }`
 
 当客户端收到服务端发送的关闭连接的请求时，触发onclose事件
 
-5. `ws.onerror = function(evt) { console.log(“WebSocketError!”); }`
+`ws.onerror = function(evt) { console.log(“WebSocketError!”); }`
 
 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
