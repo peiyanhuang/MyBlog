@@ -63,6 +63,8 @@ WebSocket 是 HTML5一种新的协议。它实现了浏览器与服务器全双�
 
 ### 2. WebSocket 客户端实现
 
+IE 10+ 支持。
+
 	var ws = new WebSocket(“ws://localhost:8080”);
 	ws.onopen = function()
 	{
