@@ -74,21 +74,14 @@ var hasDontEnumQuirk = function(){
 
 在每一次HTTP请求过程中，用户代理字符串是作为响应首部发送的，而该字符串可以通过 JavaScript 的 navigator.userAgent 属性访问。
 
+[用户代理检测](https://github.com/peiyanhuang/learn/blob/master/js/clientDetection/browser.js)
 
+IE 浏览器的 Ua 有点乱，具有如下特征：
 
+- IE6-10 通过“ MSIE ”字段正确地标识自身版本信息；
+- IE11 通过“ rv ”字段标识自身版本信息；
 
-
-
-
-
-
-
-
-
-
-
-
-判断游览器类型是否是IE
+简单的只要判断游览器类型是否是IE，可以用IE特有的ActiveXObject()对象(Edge不支持)：
 	
 ```	
 	function isIE(){
