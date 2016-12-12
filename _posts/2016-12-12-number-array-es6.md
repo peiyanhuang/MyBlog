@@ -1,0 +1,163 @@
+---
+layout: post
+title:  ES6数值和数组
+date:   2016-12-11 15:58:00 +0800
+categories: HTML
+tag: HTML
+---
+
+* content
+{:toc}
+
+### 数值
+
+#### 1. 二进制和八进制表示法
+
+ES6提供了二进制和八进制数值的新的写法，分别用前缀`0b`（或`0B`）和`0o`（或`0O`）表示。
+
+如果要将`0b`和`0o`前缀的字符串数值转为十进制，要使用`Number()`方法。
+
+#### 2. Number.isFinite(), Number.isNaN()
+
+ES6在Number对象上，新提供了`Number.isFinite()`和`Number.isNaN()`两个方法。
+
+`Number.isFinite()`用来检查一个数值是否为有限的（finite）。
+
+```javascript
+Number.isFinite(15.2); // true
+Number.isFinite(NaN); // false
+Number.isFinite(Infinity); // false
+Number.isFinite('15'); // false
+Number.isFinite(true); // false
+```
+
+`Number.isNaN()`用来检查一个值是否为`NaN`。
+
+```javascript
+Number.isNaN(NaN) // true
+Number.isNaN(15) // false
+Number.isNaN('15') // false
+Number.isNaN(true) // false
+```
+
+它们与传统的全局方法`isFinite()`和`isNaN()`的区别在于，传统方法会先调用`Number()`将非数值的值转为数值，再进行判断，而这两个新方法只对数值有效，非数值一律返回`false`。
+
+#### 3. Number.parseInt(), Number.parseFloat()
+
+ES6将全局方法`parseInt()`和`parseFloat()`，移植到Number对象上面，行为完全保持不变。
+
+这样做的目的，是逐步减少全局性方法，使得语言逐步模块化。
+
+#### 4. Number.isInteger()
+
+`Number.isInteger()`用来判断一个值是否为整数。需要注意的是，在JavaScript内部，整数和浮点数是同样的储存方法，所以3和3.0被视为同一个值。
+
+#### 4. Number.EPSILON
+
+ES6在Number对象上面，新增一个极小的常量`Number.EPSILON`。
+```
+Number.EPSILON
+// 2.220446049250313e-16
+Number.EPSILON.toFixed(20)
+// '0.00000000000000022204'
+```
+引入一个这么小的量的目的，在于为浮点数计算，设置一个误差范围。我们知道浮点数计算是不精确的。
+
+#### 5. 安全整数和Number.isSafeInteger()
+
+JavaScript能够准确表示的整数范围在`-2^53`到`2^53`之间（不含两个端点），超过这个范围，无法精确表示这个值。
+
+ES6引入了`Number.MAX_SAFE_INTEGER`和`Number.MIN_SAFE_INTEGER`这两个常量，用来表示这个范围的上下限。
+
+`Number.isSafeInteger()`则是用来判断一个整数是否落在这个范围之内。
+
+实际使用这个函数时，需要注意。验证运算结果是否落在安全整数的范围内，不要只验证运算结果，而要同时验证参与运算的每个值。
+
+#### 6. Math对象的扩展
+
+ES6在Math对象上新增了17个与数学相关的方法。所有这些方法都是静态方法，只能在Math对象上调用。
+
+**Math.trunc()**
+
+`Math.trunc`方法用于去除一个数的小数部分，返回整数部分。
+```
+Math.trunc(4.9) // 4
+Math.trunc(-4.1) // -4
+```
+**Math.sign()**
+
+`Math.sign`方法用来判断一个数到底是正数、负数、还是零。
+
+它会返回五种值。
+
+- 参数为正数，返回+1；
+- 参数为负数，返回-1；
+- 参数为0，返回0；
+- 参数为-0，返回-0;
+- 其他值，返回NaN。
+
+**Math.cbrt()**
+
+`Math.cbrt`方法用于计算一个数的立方根。
+
+**Math.clz32()**
+
+JavaScript的整数使用32位二进制形式表示，`Math.clz32`方法返回一个数的32位无符号整数形式有多少个前导0。
+
+对于小数，`Math.clz32`方法只考虑整数部分。
+
+**Math.imul()**
+
+`Math.imul`方法返回两个数以32位带符号整数形式相乘的结果，返回的也是一个32位的带符号整数。
+```
+Math.imul(2, 4)   // 8
+```
+
+**Math.fround()**
+
+Math.fround方法返回一个数的单精度浮点数形式。
+
+**Math.hypot()**
+
+`Math.hypot`方法返回所有参数的平方和的平方根。
+
+##### 对数方法
+
+**（1） Math.expm1()**
+
+`Math.expm1(x)`返回e<sup>x</sup> - 1，即`Math.exp(x) - 1`。
+
+**（2）Math.log1p()**
+
+`Math.log1p(x)`方法返回`1 + x`的自然对数，即`Math.log(1 + x)`。如果`x`小于-1，返回`NaN`。
+
+**（3）Math.log10()**
+
+`Math.log10(x)`返回以10为底的`x`的对数。如果`x`小于0，则返回NaN。
+
+**（4）Math.log2()**
+
+`Math.log2(x)`返回以2为底的`x`的对数。如果`x`小于0，则返回NaN。
+
+##### 三角函数方法
+
+ES6新增了6个三角函数方法。
+
+- `Math.sinh(x)` 返回`x`的双曲正弦（hyperbolic sine）
+- `Math.cosh(x)` 返回`x`的双曲余弦（hyperbolic cosine）
+- `Math.tanh(x)` 返回`x`的双曲正切（hyperbolic tangent）
+- `Math.asinh(x)` 返回`x`的反双曲正弦（inverse hyperbolic sine）
+- `Math.acosh(x)` 返回`x`的反双曲余弦（inverse hyperbolic cosine）
+- `Math.atanh(x)` 返回`x`的反双曲正切（inverse hyperbolic tangent）
+
+##### 指数运算符
+
+ES7新增了一个指数运算符（`**`），目前Babel转码器已经支持。
+
+指数运算符可以与等号结合，形成一个新的赋值运算符（`**=`）。
+
+```javascript
+let a = 2;
+a **= 2;
+// 等同于 a = a * a;
+```
