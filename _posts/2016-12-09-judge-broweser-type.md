@@ -81,7 +81,7 @@ IE 浏览器的 Ua 有点乱，具有如下特征：
 - IE6-10 通过“ MSIE ”字段正确地标识自身版本信息；
 - IE11 通过“ rv ”字段标识自身版本信息；
 
-简单的只要判断游览器类型是否是IE，可以用IE特有的ActiveXObject()对象(Edge不支持)：
+简单的只要判断游览器类型是否是IE，可以用IE特有的ActiveXObject()对象(Edge不支持，Edge 浏览器的 JS 引擎 Chakra)：
 	
 ```	
 	function isIE(){
