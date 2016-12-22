@@ -109,7 +109,7 @@ IE 10+ 支持。
 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
 
 
-### 3. websocket在Edge 报 `script 12029无法连接服务`的error
+### 3. websocket在Edge 报 'script 12029'无法连接服务的error
 
 解决方法：cmd管理员运行，输入下面语句
 
