@@ -339,7 +339,7 @@ for (let n of numbers()) {
 // 2
 ```
 
-## Generator.prototype.throw()
+### Generator.prototype.throw()
 
 Generator函数返回的遍历器对象，都有一个`throw`方法，可以在函数体外抛出错误，然后在Generator函数体内捕获。
 
@@ -1095,7 +1095,7 @@ Generator函数是ECMAScript 6对协程的实现，但属于不完全实现。Ge
 
 如果将Generator函数当作协程，完全可以将多个需要互相协作的任务写成Generator函数，它们之间使用yield语句交换控制权。
 
-### 应用
+## 应用
 
 Generator可以暂停函数执行，返回任意表达式的值。这种特点使得Generator有多种应用场景。
 
