@@ -9,6 +9,8 @@ tag: ES6
 * content
 {:toc}
 
+[ECMAScript 6 入门 Generator函数](http://es6.ruanyifeng.com/#docs/generator)
+
 ### Generator函数
 
 Generator函数有多种理解角度。从语法上，首先可以把它理解成，Generator函数是一个状态机，封装了多个内部状态。
