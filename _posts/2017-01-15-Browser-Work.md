@@ -320,7 +320,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
 
 现在我们回到“标记打开状态”。接收下一个输入字符/时，会创建`end tag token`并改为“标记名称状态”。我们会再次保持这个状态，直到接收>。然后将发送新的标记，并回到“数据状态”。`</html>`输入也会进行同样的处理。
 
-![image](../images/browser/image019.png)
+![image]({{'/images/browser/image019.png' | prepend: site.baseurl}})
 
 图10：对示例输入进行标记化
 
@@ -329,6 +329,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
 在创建解析器的同时，也会创建 Document 对象。在树构建阶段，以 Document 为根节点的 DOM 树也会不断进行修改，向其中添加各种元素。标记生成器发送的每个节点都会由树构建器进行处理。规范中定义了每个标记所对应的 DOM 元素，这些元素会在接收到相应的标记时创建。这些元素不仅会添加到 DOM 树中，还会添加到开放元素的堆栈中。此堆栈用于纠正嵌套错误和处理未关闭的标记。其算法也可以用状态机来描述。这些状态称为“插入模式”。
 
 让我们来看看示例输入的树构建过程：
+
 ```
 <html>
   <body>
@@ -347,7 +348,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
 
 接收 body 结束标记会触发“after body”模式。现在我们将接收 HTML 结束标记，然后进入“after after body”模式。接收到文件结束标记后，解析过程就此结束。
 
-![image](../images/browser/image022.gif)
+![image]({{'/images/browser/image022.gif' | prepend: site.baseurl}})
 
 图11：示例 HTML 的树构建
 
@@ -362,6 +363,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
 您在浏览 HTML 网页时从来不会看到“语法无效”的错误。这是因为浏览器会纠正任何无效内容，然后继续工作。
 
 以下面的 HTML 代码为例：
+
 ```
 <html>
   <mytag>
@@ -373,6 +375,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
   </p>
 </html>
 ```
+
 在这里，我已经违反了很多语法规则（“mytag”不是标准的标记，“p”和“div”元素之间的嵌套有误等等），但是浏览器仍然会正确地显示这些内容，并且毫无怨言。因为有大量的解析器代码会纠正 HTML 网页作者的错误。
 
 不同浏览器的错误处理机制相当一致，但令人称奇的是，这种机制并不是 HTML 当前规范的一部分。和书签管理以及前进/后退按钮一样，它也是浏览器在多年发展中的产物。很多网站都普遍存在着一些已知的无效 HTML 结构，每一种浏览器都会尝试通过和其他浏览器一样的方式来修复这些无效结构。
@@ -386,27 +389,33 @@ HTML5 规范定义了一部分这样的要求。Webkit 在 HTML 解析器类的�
 我们至少要能够处理以下错误情况：
 
 明显不能在某些外部标记中添加的元素。在此情况下，我们应该关闭所有标记，直到出现禁止添加的元素，然后再加入该元素。
+
 我们不能直接添加的元素。这很可能是网页作者忘记添加了其中的一些标记（或者其中的标记是可选的）。这些标签可能包括：HTML HEAD BODY TBODY TR TD LI（还有遗漏的吗？）。
+
 向 inline 元素内添加 block 元素。关闭所有 inline 元素，直到出现下一个较高级的 block 元素。
 如果这样仍然无效，可关闭所有元素，直到可以添加元素为止，或者忽略该标记。
+
 让我们看一些 Webkit 容错的示例：
 
 使用了 `</br>` 而不是 `<br>`
 
 有些网站使用了 `</br>` 而不是 `<br>`。为了与 IE 和 Firefox 兼容，Webkit 将其与 `<br>` 做同样的处理。
 代码如下：
+
 ```
 if (t->isCloseTag(brTag) && m_document->inCompatMode()) {
      reportError(MalformedBRError);
      t->beginTag = true;
 }
 ```
+
 请注意，错误处理是在内部进行的，用户并不会看到这个过程。
 
 #### 离散表格
 
 离散表格是指位于其他表格内容中，但又不在任何一个单元格内的表格。
 比如以下的示例：
+
 ```
 <table>
     <table>
@@ -417,6 +426,7 @@ if (t->isCloseTag(brTag) && m_document->inCompatMode()) {
 ```
 
 Webkit 会将其层次结构更改为两个同级表格：
+
 ```
 <table>
     <tr><td>outer table</td></tr>
@@ -439,6 +449,7 @@ Webkit 使用一个堆栈来保存当前的元素内容，它会从外部表格�
 
 如果用户在一个表单元素中又放入了另一个表单，那么第二个表单将被忽略。
 代码如下：
+
 ```
 if (!m_currentFormElement) {
         m_currentFormElement = new HTMLFormElement(formTag,    m_document);
@@ -545,7 +556,7 @@ ruleset
 
 Webkit 使用Flex 和 Bison解析器生成器，通过 CSS 语法文件自动创建解析器。正如我们之前在解析器简介中所说，Bison 会创建自下而上的移位归约解析器。Firefox 使用的是人工编写的自上而下的解析器。这两种解析器都会将 CSS 文件解析成 StyleSheet 对象，且每个对象都包含 CSS 规则。CSS 规则对象则包含选择器和声明对象，以及其他与 CSS 语法对应的对象。
 
-![image](../images/browser/image023.png)
+![image]({{'/images/browser/image023.png' | prepend: site.baseurl}})
 
 图12：解析 CSS
 
@@ -627,7 +638,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 
 有一些呈现对象对应于 DOM 节点，但在树中所在的位置与 DOM 节点不同。浮动定位和绝对定位的元素就是这样，它们处于正常的流程之外，放置在树中的其他地方，并映射到真正的框架，而放在原位的是占位框架。
 
-![image](../images/browser/image025.png)
+![image]({{'/images/browser/image025.png' | prepend: site.baseurl}})
 
 图13：呈现树及其对应的 DOM 树 (3.1)。初始容器 block 为“viewport”，而在 Webkit 中则为“RenderView”对象。
 
@@ -655,6 +666,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
 如果不进行优化，为每一个元素查找匹配的规则会造成性能问题。要为每一个元素遍历整个规则列表来寻找匹配规则，这是一项浩大的工程。选择器会具有很复杂的结构，这就会导致某个匹配过程一开始看起来很可能是正确的，但最终发现其实是徒劳的，必须尝试其他匹配路径。
 
 例如下面这个组合选择器：
+
 ```
 div div div div{
   ...
@@ -685,7 +697,7 @@ Webkit 节点会引用样式对象 (RenderStyle)。这些对象在某些情况�
 
 为了简化样式计算，Firefox 还采用了另外两种树：规则树和样式上下文树。Webkit 也有样式对象，但它们不是保存在类似样式上下文树这样的树结构中，只是由 DOM 节点指向此类对象的相关样式。
 
-![image](../images/browser/image035.png)
+![image]({{'/images/browser/image035.png' | prepend: site.baseurl}})
 
 图14：Firefox 样式上下文树 (2.2)
 
@@ -695,7 +707,7 @@ Webkit 节点会引用样式对象 (RenderStyle)。这些对象在某些情况�
 
 这个想法相当于将规则树路径视为词典中的单词。如果我们已经计算出如下的规则树：
 
-![image](../images/browser/tree.png)
+![image]({{'/images/browser/tree.png' | prepend: site.baseurl}})
 
 假设我们需要为内容树中的另一个元素匹配规则，并且找到匹配路径是 B - E - I（按照此顺序）。由于我们在树中已经计算出了路径 A - B - E - I - L，因此就已经有了此路径，这就减少了现在所需的工作量。
 
@@ -719,6 +731,7 @@ Webkit 节点会引用样式对象 (RenderStyle)。这些对象在某些情况�
 如果某个元素与其同级元素都指向同一个树节点，那么它们就可以共享整个样式上下文。
 
 让我们来看一个例子，假设我们有如下 HTML 代码：
+
 ```
 <html>
   <body>
@@ -744,17 +757,18 @@ div span {margin-bottom:4px}
 #div1 {color:blue}
 #div2 {color:green}
 ```
+
 为了简便起见，我们只需要填充两个结构：color 结构和 margin 结构。color 结构只包含一个成员（即“color”），而 margin 结构包含四条边。
 
 形成的规则树如下图所示（节点的标记方式为“节点名 : 指向的规则序号”）：
 
-![image](../images/browser/image027.png)
+![image]({{'/images/browser/image027.png' | prepend: site.baseurl}})
 
 图15：规则树
 
 上下文树如下图所示（节点名 : 指向的规则节点）：
 
-![image](../images/browser/image029.png)
+![image]({{'/images/browser/image029.png' | prepend: site.baseurl}})
 
 图16：上下文树
 
@@ -769,10 +783,13 @@ div span {margin-bottom:4px}
 第二个 `<span>` 元素处理起来更加简单。我们将匹配规则，最终发现它和之前的 span 一样指向规则 G。由于我们找到了指向同一节点的同级，就可以共享整个样式上下文了，只需指向之前 span 的上下文即可。
 
 对于包含了继承自父代的规则的结构，缓存是在上下文树中进行的（事实上 color 属性是继承的，但是 Firefox 将其视为 reset 属性，并缓存到规则树上）。
+
 例如，如果我们在某个段落中添加 font 规则：
+
 ```
 p {font-family:Verdana;font size:10px;font-weight:bold}
 ```
+
 那么，该段落元素作为上下文树中的 div 的子代，就会共享与其父代相同的 font 结构（前提是该段落没有指定 font 规则）。
 
 在 Webkit 中没有规则树，因此会对匹配的声明遍历 4 次。首先应用非重要高优先级的属性（由于作为其他属性的依据而应首先应用的属性，例如 display），接着是高优先级重要规则，然后是普通优先级非重要规则，最后是普通优先级重要规则。这意味着多次出现的属性会根据正确的层叠顺序进行解析。最后出现的最终生效。
@@ -784,11 +801,17 @@ p {font-family:Verdana;font size:10px;font-weight:bold}
 样式规则有一些来源：
 
 外部样式表或样式元素中的 CSS 规则
+
 ```p {color:blue}```
+
 inline 样式属性及类似内容
+
 ```<p style="color:blue" />```
+
 HTML 可视化属性（映射到相关的样式规则）
+
 ```<p bgcolor="blue" />```
+
 后两种很容易和元素进行匹配，因为元素拥有样式属性，而且 HTML 属性可以使用元素作为键值进行映射。
 
 我们之前在第 2 个问题中提到过，CSS 规则匹配可能比较棘手。为了解决这一难题，可以对 CSS 规则进行一些处理，以便访问。
@@ -798,6 +821,7 @@ HTML 可视化属性（映射到相关的样式规则）
 这种处理可以大大简化规则匹配。我们无需查看每一条声明，只要从哈希表中提取元素的相关规则即可。这种优化方法可排除掉 95% 以上规则，因此在匹配过程中根本就不用考虑这些规则了 (4.1)。
 
 我们以如下的样式规则为例：
+
 ```
 p.error {color:red}
 #messageDiv {height:50px}
@@ -815,7 +839,10 @@ div {margin:5px}
 我们首先会为 p 元素寻找匹配的规则。类表中有一个“error”键，在下面可以找到“p.error”的规则。div 元素在 ID 表（键为 ID）和标记表中有相关的规则。剩下的工作就是找出哪些根据键提取的规则是真正匹配的了。
 例如，如果 div 的对应规则如下：
 
+```
 table div {margin:5px}
+```
+
 这条规则仍然会从标记表中提取出来，因为键是最右边的选择器，但这条规则并不匹配我们的 div 元素，因为 div 没有 table 祖先。
 
 Webkit 和 Firefox 都进行了这一处理。
@@ -915,7 +942,7 @@ HTML 采用基于流的布局模型，这意味着大多数情况下只要一次
 布局可以采用增量方式，也就是只对 dirty 呈现器进行布局（这样可能存在需要进行额外布局的弊端）。
 当呈现器为 dirty 时，会异步触发增量布局。例如，当来自网络的额外内容添加到 DOM 树之后，新的呈现器附加到了呈现树中。
 
-![image](../images/browser/reflow.png)
+![image]({{'/images/browser/reflow.png' | prepend: site.baseurl}})
 
 图17：增量布局 - 只有 dirty 呈现器及其子代进行布局 (3.6)。
 
@@ -929,6 +956,7 @@ HTML 采用基于流的布局模型，这意味着大多数情况下只要一次
 ### 5.4优化
 
 如果布局是由“大小调整”或呈现器的位置（而非大小）改变而触发的，那么可以从缓存中获取呈现器的大小，而无需重新计算。
+
 在某些情况下，只有一个子树进行了修改，因此无需从根节点开始布局。这适用于在本地进行更改而不影响周围元素的情况，例如在文本字段中插入文本（否则每次键盘输入都将触发从根节点开始的布局）。
 
 ### 5.5布局处理
@@ -952,9 +980,11 @@ Firefox 布局的输出为“metrics”对象 (nsHTMLReflowMetrics)，其包含�
 
 呈现器宽度是根据容器块的宽度、呈现器样式中的“width”属性以及边距和边框计算得出的。
 例如以下 div 的宽度：
+
 ```
 <div style="width:30%"/>
 ```
+
 将由 Webkit 计算如下（BenderBox 类，calcWidth 方法）：
 
 容器的宽度取容器的 availableWidth 和 0 中的较大值。availableWidth 在本例中相当于 contentWidth，计算公式如下：
@@ -1039,12 +1069,13 @@ Chapter 9
 CSS 框模型描述的是针对文档树中的元素而生成，并根据可视化格式模型进行布局的矩形框。
 每个框都有一个内容区域（例如文本、图片等），还有可选的周围补白、边框和边距区域。
 
-![image](../images/browser/image046.jpg)
+![image]({{'/images/browser/image046.jpg' | prepend: site.baseurl}})
 
 图：CSS2 框模型
 
 每一个节点都会生成 0..n 个这样的框。
 所有元素都有一个“display”属性，决定了它们所对应生成的框类型。示例：
+
 ```
 block  - generates a block box.
 inline - generates one or more inline boxes.
@@ -1079,25 +1110,25 @@ static 定位无需定义位置，而是使用默认定位。对于其他方案�
 
 block 框：形成一个 block，在浏览器窗口中拥有其自己的矩形区域。
 
-![image](../images/browser/image057.png)
+![image]({{'/images/browser/image057.png' | prepend: site.baseurl}})
 
 图：block 框
 
 inline 框：没有自己的 block，但是位于容器 block 内。
 
-![image](../images/browser/image059.png)
+![image]({{'/images/browser/image059.png' | prepend: site.baseurl}})
 
 图：inline 框
 
 block 采用的是一个接一个的垂直格式，而 inline 采用的是水平格式。
 
-![image](../images/browser/image061.png)
+![image]({{'/images/browser/image061.png' | prepend: site.baseurl}})
 
 图：block 和 inline 格式
 
 inline 框放置在行中或“行框”中。这些行至少和最高的框一样高，还可以更高，当框根据“底线”对齐时，这意味着元素的底部需要根据其他框中非底部的位置对齐。如果容器的宽度不够，inline 元素就会分为多行放置。在段落中经常发生这种情况。
 
-![image](../images/browser/image063.png)
+![image]({{'/images/browser/image063.png' | prepend: site.baseurl}})
 
 图：行
 
@@ -1107,22 +1138,24 @@ inline 框放置在行中或“行框”中。这些行至少和最高的框一�
 
 相对定位：先按照普通方式定位，然后根据所需偏移量进行移动。
 
-![image](../images/browser/image065.png)
+![image]({{'/images/browser/image065.png' | prepend: site.baseurl}})
 
 图：相对定位
 
 #### 9.5.2浮动
 
 浮动框会移动到行的左边或右边。有趣的特征在于，其他框会浮动在它的周围。下面这段 HTML 代码：
+
 ```
 <p>
   <img style="float:right" src="images/image.gif" width="100" height="100">
   Lorem ipsum dolor sit amet, consectetuer...
 </p>
 ```
+
 显示效果如下：
 
-![image](../images/browser/image067.png)
+![image]({{'/images/browser/image067.png' | prepend: site.baseurl}})
 
 图：浮动
 
@@ -1130,7 +1163,7 @@ inline 框放置在行中或“行框”中。这些行至少和最高的框一�
 
 这种布局是准确定义的，与普通流无关。元素不参与普通流。尺寸是相对于容器而言的。在固定定位中，容器就是可视区域。
 
-![image](../images/browser/image069.png)
+![image]({{'/images/browser/image069.png' | prepend: site.baseurl}})
 
 图：固定定位
 
@@ -1166,7 +1199,7 @@ inline 框放置在行中或“行框”中。这些行至少和最高的框一�
 
 结果如下：
 
-![image](../images/browser/image071.png)
+![image]({{'/images/browser/image071.png' | prepend: site.baseurl}})
 
 图：固定定位
 
