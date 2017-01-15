@@ -85,7 +85,7 @@ Webkit 是一种开放源代码呈现引擎，起初用于 Linux 平台，随后
 
 然后进行如下所示的基本流程：
 
-![image](../images/browser/flow.png)
+![image]({{'/images/browser/flow.png' | prepend: site.baseurl}})
 
 图2：呈现引擎的基本流程。
 
@@ -99,11 +99,11 @@ Webkit 是一种开放源代码呈现引擎，起初用于 Linux 平台，随后
 
 ### 2.3主流程示例
 
-![image](../images/browser/webkitflow.png)
+![image]({{'/images/browser/webkitflow.png' | prepend: site.baseurl}})
 
 图3：Webkit 主流程
 
-![image](../images/browser/image008.jpg)
+![image]({{'/images/browser/image008.jpg' | prepend: site.baseurl}})
  
 图4：Mozilla 的 Gecko 呈现引擎主流程 (3.6)
 
@@ -121,7 +121,7 @@ Gecko 将视觉格式化元素组成的树称为“框架树”。每个元素�
 
 示例 - 解析2 + 3 - 1这个表达式，会返回下面的树：
 
-![image](../images/browser/image009.png)
+![image]({{'/images/browser/image009.png' | prepend: site.baseurl}})
 
 图5：数学表达式树节点
 
@@ -139,7 +139,7 @@ Gecko 将视觉格式化元素组成的树称为“框架树”。每个元素�
 
 解析器通常将解析工作分给以下两个组件来处理：词法分析器（有时也称为标记生成器），负责将输入内容分解成一个个有效标记；而解析器负责根据语言的语法规则分析文档的结构，从而构建解析树。词法分析器知道如何将无关的字符（比如空格和换行符）分离出来。
 
-![image](../images/browser/image011.png)
+![image]({{'/images/browser/image011.png' | prepend: site.baseurl}})
 
 图6：从源文档到解析树
 
@@ -151,7 +151,7 @@ Gecko 将视觉格式化元素组成的树称为“框架树”。每个元素�
 
 很多时候，解析树还不是最终产品。解析通常是在翻译过程中使用的，而翻译是指将输入文档转换成另一种格式。编译就是这样一个例子。编译器可将源代码编译成机器代码，具体过程是首先将源代码解析成解析树，然后将解析树翻译成机器代码文档。
 
-![image](../images/browser/image013.png)
+![image]({{'/images/browser/image013.png' | prepend: site.baseurl}})
 
 图7：编译流程
 
@@ -176,19 +176,23 @@ Gecko 将视觉格式化元素组成的树称为“框架树”。每个元素�
 词汇通常用正则表达式表示。
 
 例如，我们的示例语言可以定义如下：
+
 ```
 INTEGER :0|[1-9][0-9]*
 PLUS : +
 MINUS: -
 ```
+
 正如您所看到的，这里用正则表达式给出了整数的定义。
 
 语法通常使用一种称为BNF的格式来定义。我们的示例语言可以定义如下：
+
 ```
 expression :=  term  operation  term
 operation :=  PLUS | MINUS
 term := INTEGER | expression
 ```
+
 之前我们说过，如果语言的语法是与上下文无关的语法，就可以由常规解析器进行解析。与上下文无关的语法的直观定义就是可以完全用 BNF 格式表达的语法。有关正式定义，请参阅关于与上下文无关的语法的维基百科文章。
 
 #### 3.1.6解析器类型
@@ -203,11 +207,11 @@ term := INTEGER | expression
 
 ```
 堆栈	         输入
- 	            2 + 3 - 1
+ 	          2 + 3 - 1
 项	          + 3 - 1
-项运算	      3 - 1
-表达式	      - 1
-表达式运算符	1
+项运算	        3 - 1
+表达式	        - 1
+表达式运算符	 1
 表达式	 
 ```
 
@@ -253,6 +257,7 @@ DTD 存在一些变体。严格模式完全遵守 HTML 规范，而其他模式�
 解析树的根节点是“Document”对象。
 
 DOM 与标记之间几乎是一一对应的关系。比如下面这段标记：
+
 ```
 <html>
   <body>
@@ -266,7 +271,7 @@ DOM 与标记之间几乎是一一对应的关系。比如下面这段标记：
 
 可翻译成如下的 DOM 树：
 
-![image](../images/browser/image015.png)
+![image]({{'/images/browser/image015.png' | prepend: site.baseurl}})
 
 图8：示例标记的 DOM 树
 
@@ -291,7 +296,7 @@ HTML5 规范详细地描述了解析算法。此算法由两个阶段组成：�
 
 标记生成器识别标记，传递给树构造器，然后接受下一个字符以识别下一个标记；如此反复直到输入的结束。
 
-![image](../images/browser/image017.png)
+![image]({{'/images/browser/image017.png' | prepend: site.baseurl}})
 
 图9：HTML 解析流程（摘自 HTML5 规范）
 
