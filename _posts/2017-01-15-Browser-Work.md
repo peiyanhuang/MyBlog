@@ -8,6 +8,7 @@ tag: Others
 
 * content
 {:toc}
+
 ## 序言
 
 这是一篇全面介绍 Webkit 和 Gecko 内部操作的入门文章，是以色列开发人员塔利·加希尔大量研究的成果。在过去的几年中，她查阅了所有公开发布的关于浏览器内部机制的数据（请参见资源），并花了很多时间来研读网络浏览器的源代码。她写道：
@@ -60,7 +61,7 @@ tag: Others
 
 - 数据存储。这是持久层。浏览器需要在硬盘上保存各种数据，例如 Cookie。新的 HTML 规范 (HTML5) 定义了“网络数据库”，这是一个完整（但是轻便）的浏览器内数据库。
 
-![image](../images/browser/layers.png)
+![image]({{ '/images/browser/layers.png' | prepend: site.baseurl }})
 
 图1：浏览器的主要组件。
 
