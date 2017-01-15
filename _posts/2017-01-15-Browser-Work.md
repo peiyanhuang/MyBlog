@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  浏览器工作原理(转)
-date:   2016-10-05 15:58:00 +0800
-categories: 前端工具
-tag: 前端工具
+date:   2017-01-15 17:02:00 +0800
+categories: Others
+tag: Others
 ---
 
 * content
