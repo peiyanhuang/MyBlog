@@ -398,3 +398,14 @@ history属性，一共可以设置三种值。
 	/messages/:id的onLeave
 	/inbox的onLeave
 	/about的onEnter
+
+下面是一个例子，使用onEnter钩子替代<Redirect>组件。
+
+	<Route path="inbox" component={Inbox}>
+	  <Route
+	    path="messages/:id"
+	    onEnter={
+	      ({params}, replace) => replace(`/messages/${params.id}`)
+	    } 
+	  />
+	</Route>
