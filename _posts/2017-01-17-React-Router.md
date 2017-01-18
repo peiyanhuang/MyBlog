@@ -309,9 +309,10 @@ history属性，一共可以设置三种值。
 
 	const history = createMemoryHistory(location)
 
+
 ### Redirect 组件
 
-<Redirect>组件用于路由的跳转，即用户访问一个路由，会自动跳转到另一个路由。
+`<Redirect>`组件用于路由的跳转，即用户访问一个路由，会自动跳转到另一个路由。
 
 ```
 <Route path="inbox" component={Inbox}>
@@ -320,11 +321,11 @@ history属性，一共可以设置三种值。
 </Route>
 ```
 
-现在访问/inbox/messages/5，会自动跳转到/messages/5。
+现在访问`/inbox/messages/5`，会自动跳转到`/messages/5`。
 
 ### IndexRedirect 组件
 
-IndexRedirect组件用于访问根路由的时候，将用户重定向到某个子组件。
+`IndexRedirect`组件用于访问根路由的时候，将用户重定向到某个子组件。
 
 ```
 <Route path="/" component={App}>
@@ -338,7 +339,7 @@ IndexRedirect组件用于访问根路由的时候，将用户重定向到某个�
 
 ### 表单处理
 
-Link组件用于正常的用户点击跳转，但是有时还需要表单跳转、点击按钮跳转等操作。这些情况怎么跟React Router对接呢？
+`Link`组件用于正常的用户点击跳转，但是有时还需要表单跳转、点击按钮跳转等操作。这些情况怎么跟React Router对接呢？
 下面是一个表单。
 
 ```
