@@ -313,10 +313,12 @@ history属性，一共可以设置三种值。
 
 <Redirect>组件用于路由的跳转，即用户访问一个路由，会自动跳转到另一个路由。
 
-	<Route path="inbox" component={Inbox}>
-	  {/* 从 /inbox/messages/:id 跳转到 /messages/:id */}
-	  ＜Redirect from="messages/:id" to="/messages/:id" />
-	</Route>
+```
+<Route path="inbox" component={Inbox}>
+  {/* 从 /inbox/messages/:id 跳转到 /messages/:id */}
+  ＜Redirect from="messages/:id" to="/messages/:id" />
+</Route>
+```
 
 现在访问/inbox/messages/5，会自动跳转到/messages/5。
 
@@ -324,11 +326,13 @@ history属性，一共可以设置三种值。
 
 IndexRedirect组件用于访问根路由的时候，将用户重定向到某个子组件。
 
-	<Route path="/" component={App}>
-	  ＜IndexRedirect to="/welcome" />
-	  <Route path="welcome" component={Welcome} />
-	  <Route path="about" component={About} />
-	</Route>
+```
+<Route path="/" component={App}>
+  	<IndexRedirect to="/welcome" />
+  	<Route path="welcome" component={Welcome} />
+  	<Route path="about" component={About} />
+</Route>
+```
 
 上面代码中，用户访问根路径时，将自动重定向到子组件welcome。
 
@@ -337,14 +341,17 @@ IndexRedirect组件用于访问根路由的时候，将用户重定向到某个�
 Link组件用于正常的用户点击跳转，但是有时还需要表单跳转、点击按钮跳转等操作。这些情况怎么跟React Router对接呢？
 下面是一个表单。
 
-	<form onSubmit={this.handleSubmit}>
-	  <input type="text" placeholder="userName"/>
-	  <input type="text" placeholder="repo"/>
-	  <button type="submit">Go</button>
-	</form>
+```
+<form onSubmit={this.handleSubmit}>
+  	<input type="text" placeholder="userName"/>
+  	<input type="text" placeholder="repo"/>
+  	<button type="submit">Go</button>
+</form>
+```
 
 第一种方法是使用browserHistory.push
 
+```
 	import { browserHistory } from 'react-router'
 
 	// ...
@@ -355,9 +362,11 @@ Link组件用于正常的用户点击跳转，但是有时还需要表单跳转�
 	    const path = `/repos/${userName}/${repo}`
 	    browserHistory.push(path)
 	  },
+```
 
 第二种方法是使用context对象。
 
+```
 	export default React.createClass({
 
 	  // ask for `router` from context
@@ -370,15 +379,18 @@ Link组件用于正常的用户点击跳转，但是有时还需要表单跳转�
 	    this.context.router.push(path)
 	  },
 	})
+```
 
 ### 路由的钩子
 
 每个路由都有Enter和Leave钩子，用户进入或离开该路由时触发。
 
+```
 	<Route path="about" component={About} />
-	＜Route path="inbox" component={Inbox}>
-	  ＜Redirect from="messages/:id" to="/messages/:id" />
+		<Route path="inbox" component={Inbox}>
+	  	<Redirect from="messages/:id" to="/messages/:id" />
 	</Route>
+```
 
 上面的代码中，如果用户离开/messages/:id，进入/about时，会依次触发以下的钩子。
 
