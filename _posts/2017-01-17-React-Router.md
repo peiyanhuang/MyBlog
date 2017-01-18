@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  学习React router
-date:   2016-10-10 19:29:00 +0800
+date:   2017-01-17 19:29:00 +0800
 categories: JS
 tag: React
 ---
