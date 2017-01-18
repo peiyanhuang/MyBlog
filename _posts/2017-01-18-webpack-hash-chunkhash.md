@@ -19,11 +19,11 @@ hash代表的是`compilation`的hash值。
 
     [chunkhash] is replaced by the hash of the chunk.
 
-chunkhash代表的是chunk的hash值。
+`chunkhash`代表的是chunk的hash值。
 
-chunkhash很好理解，chunk在Webpack中的含义我们都清楚，简单讲，chunk就是模块。chunkhash也就是根据模块内容计算出的hash值。
+`chunkhash`很好理解，chunk在Webpack中的含义我们都清楚，简单讲，chunk就是模块。chunkhash也就是根据模块内容计算出的hash值。
 
-`compilation`对象代表某个版本的资源对应的编译进程。当使用Webpack的development中间件时，每次检测到项目文件有改动就会创建一个compilation，进而能够针对改动生产全新的编译文件。compilation对象包含当前模块资源、待编译文件、有改动的文件和监听依赖的所有信息。
+`compilation`对象代表某个版本的资源对应的编译进程。当使用Webpack的development中间件时，每次检测到项目文件有改动就会创建一个`compilation`，进而能够针对改动生产全新的编译文件。`compilation`对象包含当前模块资源、待编译文件、有改动的文件和监听依赖的所有信息。
 
 与`compilation`对应的有个`compiler`对象，通过对比，可以帮助大家对`compilation`有更深入的理解。`compiler`对象代表的是配置完备的Webpack环境。 `compiler`对象只在Webpack启动时构建一次，由Webpack组合所有的配置项构建生成。
 
