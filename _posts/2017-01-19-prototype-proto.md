@@ -52,7 +52,7 @@ console.log(Object.prototype.__proto__) //null
 
 总结：
 
-1.实例对象的`__proto__`属性,指向该对象的构造函数的`原型对象(prototype)`。
+1.`实例对象的__proto__`属性,指向该对象的构造函数的`原型对象(prototype)`。
 
 2.`原型对象(prototype)`的`__proto__`属性，指向`Object.prototype`
 
@@ -95,20 +95,4 @@ dog.price
 
 dog.prototype.price
 //2000
-```
-
-在ES6中的`extends`继承
-
-```
-class A { 
-}
-
-class B extends A  {
-}
-
-console.log(B.__proto__ === A); // true  
-console.log(B.prototype.__proto__ === A.prototype); // true 
-
-console.log(A.__proto__ === Function.prototype); // true 
-console.log(A.prototype.__proto__ === Object.prototype); // true 
 ```
