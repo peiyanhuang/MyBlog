@@ -71,7 +71,7 @@ tag: JS
 
 	importScripts('serviceworker-cache-polyfill.js');
 
-#### Service Worker的安装步骤
+#### 5.1 Service Worker的安装步骤
 
 来个简单缓存文件的例子。首先在页面注册一个service worker，这个步骤告诉浏览器你的service worker脚本在哪里。
 
@@ -122,7 +122,7 @@ self.addEventListener('install', function(event) {
 
 如果所有的文件都被缓存成功了，那么service worker就安装成功了。如果任何一个文件下载失败，那么安装步骤就会失败。这个方式允许你依赖于你自己指定的所有资源，但是这意味着你需要非常谨慎地决定哪些文件需要在安装步骤中被缓存。指定了太多的文件的话，就会增加安装失败率。
 
-#### 怎样缓存和返回Request
+#### 5.2 怎样缓存和返回Request
 
 你已经安装了service worker，你现在可以返回你缓存的请求了。
 
@@ -206,7 +206,7 @@ self.addEventListener('fetch', function(event) {
 3.如果我们通过了检查，clone这个请求。这么做的原因是如果response是一个Stream，那么它的body只能被读取一次，所以我们得将它克隆出来，一份发给浏览器，一份发给缓存。
 ```
 
-#### 如何更新一个Service Worker
+#### 5.3 如何更新一个Service Worker
 
 你的service worker总有需要更新的那一天。当那一天到来的时候，你需要按照如下步骤来更新：
 
@@ -247,6 +247,52 @@ self.addEventListener('activate', function(event) {
 });
 ```
 
+### 6 Cache API
+
+`Cache API`就是对`http`的`request/response`进行缓存管理，是在`service worker`的规范中定义的，往往跟`service worker`一起操作使用，是实现web app离线应用的关键一环。但是`Cache API`又不依赖于`service worker`，可以单独在window下使用，。
+
+在`window`对象下，`cache api`的操作封装在`caches`对象下面，里面的操作分为两类: 对`cache`的操作、对`cache`里面`http`的操作。下面简单说明下cache storage的相关操作
+
+```
+// open: 创建或打开一个cache
+caches.open('test').then(cache => {
+  return cache.add('/base.css')
+}).then((val) => {
+  console.log('create a cache and add "base.css" to it');
+});
+// 在cache storage查找缓存的资源
+caches.match('/base.css').then(res => {
+  if (!res) return 'can not find this http in caches storage';
+  return res.text()
+}).then((result) => {
+  console.log(result)
+});
+// 得到所有的cache
+caches.keys().then(name => {
+  console.log('names: ', name)
+});
+// 得到某个cache
+caches.delete('test').then(val => {
+  console.log('delete success?: ', val)
+});
+
+// 对cache里面http进行操作
+caches.open('test').then(cache => {
+  // 添加缓存资源
+  return cache.add('/base.css')
+}).then((val) => {
+  console.log('create a cache and add "base.css" to it');
+});
+
+caches.open('test').then(cache => {
+  // 资源匹配
+  return cache.match('/base.css')
+}).then(res => {
+  return res.text()
+}).then(str => {
+  console.log(str)
+});
+```
 
 相关：
 
