@@ -13,7 +13,7 @@
 	<link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="{{ '/feed.xml' | prepend: site.baseurl }}">
 	
 	<meta name="description" content="{{site.meta_description}}">
-
+	
 	<script src="{{ '/styles/js/jquery.min.js' | prepend: site.baseurl }}"></script>
 	<!--[if lt IE 9]>
     	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -27,6 +27,15 @@
 		  s.parentNode.insertBefore(hm, s);
 		})();
 	</script> -->
+	<script type="text/javascript">
+		if ('serviceWorker' in navigator) {
+		  	navigator.serviceWorker.register('/sw.js').then(function(registration) {
+		    	console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+			}).catch(function(err) {
+		    	console.log('ServiceWorker registration failed: ', err);
+		  	});
+		}
+	</script>
   	<style type="text/css">
 	  	.docs-content{
 	  		margin-bottom: 10px;

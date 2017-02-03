@@ -299,7 +299,7 @@ caches.open('test').then(cache => {
 
 相关：
 
-[使用 Service worker 实现加速/离线访问静态 blog 网站](http://www.liuhaihua.cn/archives/469454.html)  
+[使用 Service worker 实现加速/离线访问静态 blog 网站](http://www.ctolib.com/topics-108365.html)  
 [service worker：让 Web 应用变得逆天的起来](https://toutiao.io/posts/kuvl2w/preview)  
 [【翻译】Service Worker 入门](https://www.w3ctech.com/topic/866)  
 [Service Worker初体验](http://web.jobbole.com/84792/)  
