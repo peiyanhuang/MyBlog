@@ -5,16 +5,12 @@ const __DEVELOPMENT__ = false;
 const __DEBUG__ = false;
 const offlineResources = [
   '/',
-  '/offline.html',
-  '/offline.svg'
+  '/index.html',
+  '/MyBlog/styles/images/logo.jpg'
 ];
 
 const ignoreFetch = [
-  /https?:\/\/cdn.bootcss.com\//,
-  /https?:\/\/static.duoshuo.com\//,
-  /https?:\/\/www.google-analytics.com\//,
-  /https?:\/\/dn-lbstatics.qbox.me\//,
-  /https?:\/\/ajax.cloudflare.com\//,
+  /https?:\/\/cdn.bootcss.com\//
 ];
 
 
