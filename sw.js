@@ -23,7 +23,7 @@ function onInstall(event) {
 
 function updateStaticCache() {
   return caches
-    .open(cacheKey('offline'))
+    .open(cacheKey('index'))
     .then((cache) => {
       return cache.addAll(offlineResources);
     })
@@ -105,11 +105,11 @@ function cachedOrOffline(request) {
 }
 
 function offlineResponse(request) {
-  log('(offline)', request.method, request.url);
+  log('(index)', request.method, request.url);
   if (request.url.match(/\.(jpg|png|gif|svg|jpeg)(\?.*)?$/)) {
-    return caches.match('/offline.svg');
+    return caches.match('/index.svg');
   } else {
-    return caches.match('/offline.html');
+    return caches.match('/index.html');
   }
 }
 
