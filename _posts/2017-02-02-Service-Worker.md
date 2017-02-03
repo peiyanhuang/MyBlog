@@ -260,6 +260,7 @@ caches.open('test').then(cache => {
 }).then((val) => {
   console.log('create a cache and add "base.css" to it');
 });
+
 // 在cache storage查找缓存的资源
 caches.match('/base.css').then(res => {
   if (!res) return 'can not find this http in caches storage';
@@ -267,10 +268,12 @@ caches.match('/base.css').then(res => {
 }).then((result) => {
   console.log(result)
 });
+
 // 得到所有的cache
 caches.keys().then(name => {
   console.log('names: ', name)
 });
+
 // 得到某个cache
 caches.delete('test').then(val => {
   console.log('delete success?: ', val)
