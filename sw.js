@@ -1,14 +1,16 @@
+'use strict';
+
 const version = 'v20160440';
 const __DEVELOPMENT__ = false;
 const __DEBUG__ = false;
 const offlineResources = [
   '/',
-  '/index.html',
-  '/MyBlog/styles/images/logo.jpg'
+  '/offline.html',
+  '/offline.svg'
 ];
 
 const ignoreFetch = [
-  /https?:\/\/cdn.bootcss.com\//
+  /https?:\/\/cdn.bootcss.com\//,
 ];
 
 
@@ -23,7 +25,7 @@ function onInstall(event) {
 
 function updateStaticCache() {
   return caches
-    .open(cacheKey('index'))
+    .open(cacheKey('offline'))
     .then((cache) => {
       return cache.addAll(offlineResources);
     })
@@ -53,9 +55,7 @@ function onFetch(event) {
 
 function networkedOrCached(request) {
   return networkedAndCache(request)
-    .catch(() => {
-      return cachedOrOffline(request)
-    });
+    .catch(() => { return cachedOrOffline(request) });
 }
 
 // Stash response in cache as side-effect of network request
@@ -79,9 +79,7 @@ function cachedOrNetworked(request) {
       log(response ? '(cached)' : '(network: cache miss)', request.method, request.url);
       return response ||
         networkedAndCache(request)
-        .catch(() => {
-          return offlineResponse(request)
-        });
+          .catch(() => { return offlineResponse(request) });
     });
 }
 
@@ -105,11 +103,11 @@ function cachedOrOffline(request) {
 }
 
 function offlineResponse(request) {
-  log('(index)', request.method, request.url);
+  log('(offline)', request.method, request.url);
   if (request.url.match(/\.(jpg|png|gif|svg|jpeg)(\?.*)?$/)) {
-    return caches.match('/index.svg');
+    return caches.match('/offline.svg');
   } else {
-    return caches.match('/index.html');
+    return caches.match('/offline.html');
   }
 }
 
@@ -127,12 +125,12 @@ function removeOldCache() {
     .then((keys) => {
       return Promise.all( // We return a promise that settles when all outdated caches are deleted.
         keys
-        .filter((key) => {
-          return !key.startsWith(version); // Filter by keys that don't start with the latest version prefix.
-        })
-        .map((key) => {
-          return caches.delete(key); // Return a promise that's fulfilled when each outdated cache is deleted.
-        })
+         .filter((key) => {
+           return !key.startsWith(version); // Filter by keys that don't start with the latest version prefix.
+         })
+         .map((key) => {
+           return caches.delete(key); // Return a promise that's fulfilled when each outdated cache is deleted.
+         })
       );
     })
     .then(() => {
@@ -153,7 +151,7 @@ function log() {
 function shouldAlwaysFetch(request) {
   return __DEVELOPMENT__ ||
     request.method !== 'GET' ||
-    ignoreFetch.some(regex => request.url.match(regex));
+      ignoreFetch.some(regex => request.url.match(regex));
 }
 
 function shouldFetchAndCache(request) {
