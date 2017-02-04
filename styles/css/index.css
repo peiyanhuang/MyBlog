@@ -7215,3 +7215,9 @@ p{
   -ms-transform:rotate(360deg) scale(1.2);
   transform:rotate(360deg) scale(1.2);
 }
+.offline{
+  margin-top: 50px;
+  font-family: "KaiTi","SimSun","Microsoft YaHei","黑体",sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+}

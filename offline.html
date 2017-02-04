@@ -1,106 +1,138 @@
----
-layout: default
----
+<html><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
 
- <div class="container docs-container">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="sidebar hidden-print" role="complementary">
-            <div id="navigation">
-              <h1>目录</h1>
-              <ul class="nav sidenav">
+  <link rel="shortcut icon" href="/MyBlog/styles/images/favicon.jpg">
+  <link rel="icon" href="/MyBlog/styles/images/favicon.jpg">
 
-                {% for post in site.posts  %}
-                  {% capture this_year %}{{ post.date | date: "%Y" }}{% endcapture %}
-                  {% capture this_month %}{{ post.date | date: "%B" }}{% endcapture %}
-                  {% capture next_year %}{{ post.previous.date | date: "%Y" }}{% endcapture %}
-                  {% capture next_month %}{{ post.previous.date | date: "%B" }}{% endcapture %}
+  <link rel="stylesheet" href="/MyBlog/styles/css/index.css">
+  <link rel="stylesheet" href="/MyBlog/styles/css/fontawesome/css/font-awesome.min.css">
+  <link rel="canonical" href="/MyBlog/">
+  <link rel="alternate" type="application/rss+xml" title="Less Or More" href="/MyBlog/feed.xml">
+  
+  <meta name="description" content="个人博客;学而不思则罔;思而不学则殆;生命不止;折腾不休">
+  <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?94be4b0f9fc5d94cc0d0415ea6761ae9";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script> -->
+  <script type="text/javascript">
+    var src = "/MyBlog/sw.js";
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(src).then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ',    registration.scope);
+      }).catch(function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    }
+  </script><style type="text/css">
+:root #content > #center > .dose > .dosesingle,
+:root #content > #right > .dose > .dosesingle
+{ display: none !important; }</style>
+    <style type="text/css">
+      .docs-content{
+        margin-bottom: 10px;
+      }
+    </style>
+</head>
 
-                  {% if forloop.first %}
-                    <li><a href="#year_{{this_year}}">{{this_year}}</a>
-                      <ul class="nav">
-                        <li><a href="#month_{{this_year}}_{{this_month}}">{{this_month}}</a></li>
-                  {% endif %}
+  <body class="index">
 
-                  {% if forloop.last %}
-                        </ul>
-                      </li>
-                  {% else %}
-                    {% if this_year != next_year %}
-                        </ul>
-                      </li>
-                      <li><a href="#year_{{next_year}}">{{next_year}}</a>
-                        <ul class="nav">
-                          <li><a href="#month_{{next_year}}_{{next_month}}">{{next_month}}</a></li>
-                    {% else %}    
-                      {% if this_month != next_month %}
-                          <li><a href="#month_{{next_year}}_{{next_month}}">{{next_month}}</a></li>
-                      {% endif %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-9" role="main">
-          <div class="panel docs-content">
-            <div class="wrapper">
-              <div class="home">
-                {% for post in site.posts  %}
-                  {% capture this_year %}{{ post.date | date: "%Y" }}{% endcapture %}
-                  {% capture this_month %}{{ post.date | date: "%B" }}{% endcapture %}
-                  {% capture next_year %}{{ post.previous.date | date: "%Y" }}{% endcapture %}
-                  {% capture next_month %}{{ post.previous.date | date: "%B" }}{% endcapture %}
-
-                  {% if forloop.first %}
-                    <h2 id="year_{{this_year}}">{{this_year}}</h2>
-                    <h3 id="month_{{this_year}}_{{this_month}}">{{this_month}}</h3>
-                    <ul>
-                  {% endif %}
-
-                  <ol class="breadcrumb">
-                   <li><span>{{ post.date | date: "%B %e, %Y" }}</span> &raquo; <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></li>
-                  </ol>
-                  {% if forloop.last %}
-                    </ul>
-                  {% else %}
-                    {% if this_year != next_year %}
-                      </ul>
-                      <h2 id="year_{{next_year}}">{{next_year}}</h2>
-                      <h3 id="month_{{next_year}}_{{next_month}}">{{next_month}}</h3>
-                      <ul>
-                    {% else %}    
-                      {% if this_month != next_month %}
-                        </ul>
-                        <h3 id="month_{{next_year}}_{{next_month}}">{{next_month}}</h3>
-                        <ul>
-                      {% endif %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Categories -->
-        <!-- <div class="col-md-2">
-          <div class="shadow-corner-curl hidden-xs">
-            <div class="categories-list-header">
-              Categories
-            </div>          
-            <a href="javascript:;" class="categories-list-item" cate="All">
-              All<span class="my-badge"> {{site.posts | size}}</span>
-            </a>
-            {% for category in site.categories %}
-              <a href="javascript:;" class="categories-list-item" cate="{{ category | first }}">
-                {{ category | first }} <span class="my-badge">{{ category | last | size }}</span>
-              </a>
-            {% endfor %}
-          </div>
-        </div> -->
-        
+    <header class="navbar navbar-inverse navbar-fixed-top docs-nav" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="#" class="navbar-brand">
+        <img src="/MyBlog/styles/images/logo.jpg">
+      </a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">    
+        <li>
+          <a href="/MyBlog/">Home</a>
+        </li>
+        <li>
+          <a href="/MyBlog/categories/">Categories</a>
+        </li>
+        <li>
+          <a href="/MyBlog/tag/">Tag</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <!-- <li>
+          <a href="/MyBlog/donate/"><strong>打赏</strong></a>
+        </li> -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">关于<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a rel="nofollow" target="_blank" href="https://github.com/peiyanhuang/">Github</a></li>
+            <!-- <li><a rel="nofollow" target="_blank" href="">关于作者</a></li> -->
+            <!-- <li><a rel="nofollow" href="/MyBlog/books">我的书单</a></li> -->
+            <li class="divider"></li>
+            <li><a rel="nofollow" target="_blank" href="https://github.com/peiyanhuang/MyBlog/tree/gh-pages">本项目</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+    <div class="docs-header" id="content">
+      <div class="container">
+    
+        <h1>Less Or More</h1>
+        <p>Actually, less is more!</p>
+    
       </div>
     </div>
+    
+
+     <div class="container docs-container">
+      <div class="row">
+        <div class="col-md-12" role="main">
+          <div class="panel docs-content" style="text-align: center;">
+            
+              <p class="offline">虽然你现在没有网络可以用，但是我的部分页面由于使用了离线访问技术，你还是可以访问的！</p>
+              
+              <svg t="1486179275310" class="icon" style="width: 100px;height:100px;margin:100px 0;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4204" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48">
+                <defs>
+                  <style type="text/css"></style>
+                </defs>
+                <path d="M1024 402.285714c0 10.361905-7.92381 18.285714-18.285714 18.285715-5.485714 0-10.971429-2.438095-14.019048-6.704762l-3.047619-1.828572C877.714286 273.67619 708.87619 188.952381 518.095238 188.952381 325.485714 188.952381 154.209524 279.161905 43.885714 419.352381h-0.609524c-3.657143 4.266667-9.142857 7.314286-15.847619 7.314286C15.847619 426.666667 6.095238 416.914286 6.095238 405.333333c0-6.095238 2.438095-11.580952 6.704762-15.238095 118.247619-146.895238 299.885714-240.761905 503.466667-240.761905 203.580952 0 385.219048 94.47619 504.07619 241.371429 1.828571 3.047619 3.657143 7.314286 3.657143 11.580952M152.380952 501.638095c84.72381-103.009524 212.114286-168.838095 355.961905-168.838095 148.114286 0 279.161905 69.485714 363.885714 177.980952v1.828572c0.609524 1.828571-0.609524 6.095238-0.609523 7.923809 0 10.361905-4.87619 15.238095-15.238096 15.238096-3.047619 0-10.361905 1.219048-12.8 0l-3.657142 1.219047C763.12381 437.028571 642.438095 371.809524 505.904762 371.809524c-129.828571 0-246.247619 59.12381-323.047619 151.771428-1.219048 10.361905-10.361905 18.895238-21.333333 18.895238-11.580952 0-21.333333-9.752381-21.333334-21.333333 0-8.533333 4.87619-15.847619 12.190476-19.504762m148.114286 121.295238C349.866667 562.590476 424.838095 524.190476 508.342857 524.190476c70.704762 0 135.314286 27.428571 183.466667 72.533334-12.8 8.533333-23.771429 18.285714-34.133334 29.257142-40.228571-36.571429-93.257143-59.12381-151.771428-59.123809-73.752381 0-139.580952 35.961905-181.028572 90.819047l-1.219047-0.609523c-3.657143 4.87619-9.752381 7.314286-16.457143 7.314285-11.580952 0-21.333333-9.752381-21.333333-21.333333 0.609524-9.142857 6.704762-17.066667 14.628571-20.114286m207.847619 80.457143c49.980952 0 90.209524 40.228571 90.209524 90.209524 0 49.980952-40.228571 90.209524-90.209524 90.209524s-90.209524-40.228571-90.209524-90.209524c0-49.980952 40.228571-90.209524 90.209524-90.209524m284.647619-101.180952c81.066667 0 146.895238 65.828571 146.895238 146.895238S874.057143 896 792.990476 896 646.095238 830.171429 646.095238 749.104762s65.219048-146.895238 146.895238-146.895238m-62.171428 188.952381c-6.095238 6.095238-6.095238 15.847619 0 21.333333 6.095238 6.095238 15.847619 6.095238 21.333333 0l43.27619-43.885714 43.276191 43.27619c6.095238 6.095238 15.847619 6.095238 21.942857 0s6.095238-15.847619 0-21.942857l-43.27619-43.27619 42.666666-43.276191c6.095238-6.095238 6.704762-15.847619 0.609524-21.333333-6.095238-6.095238-16.457143-6.704762-22.552381-0.609524l-42.666667 43.885714-43.885714-43.885714c-6.095238-6.095238-15.847619-6.095238-21.942857 0s-6.095238 15.847619 0 21.942857l43.885714 43.885714-42.666666 43.885715" fill="#8a8a8a" p-id="4205">
+                </path>
+              </svg>
+          </div>  
+        </div>
+      </div>
+    </div>
+
+    
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <p class="copyright">Copyright © 2014-2017 peiyanHuang.</p>
+        <p>Powered by <a href="http://jekyllrb.com">Jekyll</a></p>
+      </div>
+    </footer>
+
+<script src="//cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/holder/2.9.4/holder.min.js"></script>
+
+<script src="/MyBlog/styles/js/application.js"></script>
+<script src="/MyBlog/styles/js/lessismore.js"></script>
+
+  
+
+</body></html>
