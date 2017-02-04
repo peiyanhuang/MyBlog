@@ -105,9 +105,9 @@ function cachedOrOffline(request) {
 function offlineResponse(request) {
   log('(offline)', request.method, request.url);
   if (request.url.match(/\.(jpg|png|gif|svg|jpeg)(\?.*)?$/)) {
-    return caches.match('/offline.svg');
+    return caches.match('/MyBlog/offline.svg');
   } else {
-    return caches.match('/offline.html');
+    return caches.match('/MyBlog/offline.html');
   }
 }
 
