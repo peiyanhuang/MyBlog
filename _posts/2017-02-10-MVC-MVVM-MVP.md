@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  MVC、MVP和MVVM
-date:   2017-02-14 18:58:00 +0800
+date:   2017-02-10 18:58:00 +0800
 categories: Others
 tag: Others
 ---
@@ -15,7 +15,7 @@ tag: Others
 
 MVC模式的意思是软件可以分成三个部分。
 
-![image](http://image.beekka.com/blog/2015/bg2015020105.png)
+<!-- ![image](http://image.beekka.com/blog/2015/bg2015020105.png) -->
 
 	视图（View）：用户界面。
 	控制器（Controller）：业务逻辑
@@ -33,7 +33,7 @@ MVC模式的意思是软件可以分成三个部分。
 
 MVP 模式将 Controller 改名为 Presenter，同时改变了通信方向。
 
-![image](http://image.beekka.com/blog/2015/bg2015020109.png)
+<!-- ![image](http://image.beekka.com/blog/2015/bg2015020109.png) -->
 
 1. 各部分之间的通信，都是双向的。
 
@@ -45,6 +45,6 @@ MVP 模式将 Controller 改名为 Presenter，同时改变了通信方向。
 
 MVVM 模式将 Presenter 改名为 ViewModel，基本上与 MVP 模式完全一致。
 
-![image](http://image.beekka.com/blog/2015/bg2015020110.png)
+<!-- ![image](http://image.beekka.com/blog/2015/bg2015020110.png) -->
 
 唯一的区别是，它采用双向绑定（data-binding）：View的变动，自动反映在 ViewModel，反之亦然。
