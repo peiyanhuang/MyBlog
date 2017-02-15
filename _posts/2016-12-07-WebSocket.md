@@ -108,6 +108,17 @@ IE 10+ 支持。
 
 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
 
+`ws.readyState`: WebSocket对象通过只读属性`readyState`来传达连接状态，它会更加连接状态自动改变。下表展示了`readyState`属性的四个不同的值。
+
+```
+属性 					值		状态
+WebSocket.CONNECTING 	0		连接正在进行，但还没有建立
+WebSocket.OPEN 			1		连接已经建立，可以发送消息。
+WebSocket.CLOSING 		2		连接正在进行关闭握手
+WebSocket.CLOSED 		3		连接已经关闭或不能打开
+```
+
+`ws.bufferedAmount`属性可以检查已经进入队列但还未被传输的数据大小
 
 ### 3. websocket在Edge 报 'script 12029'无法连接服务的error
 
