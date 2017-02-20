@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Vue 的原理思想
+title:  Vue 的响应式原理
 date:   2017-02-19 20:58:00 +0800
 categories: JS
 tag: Vue
