@@ -49,3 +49,11 @@ plugins: [
     ], path.resolve(__dirname,"src"))
   ]
 ```
+
+### html-webpack-plugin
+
+这个插件用来简化创建服务于 webpack bundle 的 HTML 文件，尤其是对于在文件名中包含了 hash 值，而这个值在每次编译的时候都发生变化的情况。你既可以让这个插件来帮助你自动生成 HTML 文件，也可以使用 lodash 模板加载生成的 bundles，或者自己加载这些 bundles。
+
+[利用webpack生成HTML普通网页&页面模板](https://segmentfault.com/a/1190000007126268#articleHeader1)
+
+[html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
