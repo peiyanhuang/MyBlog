@@ -9,7 +9,7 @@ tag: 前端工具
 * content
 {:toc}
 
-###　NoErrorsPlugin
+### NoErrorsPlugin
 
 该插件可以当遇到错误时跳过，不终止webpack进程。
 
@@ -57,3 +57,25 @@ plugins: [
 [利用webpack生成HTML普通网页&页面模板](https://segmentfault.com/a/1190000007126268#articleHeader1)
 
 [html-webpack-plugin](https://www.npmjs.com/package/html-webpack-plugin)
+
+### extract-text-webpack-plugin
+
+打包成独立文件
+
+```
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var extractCSS = new ExtractTextPlugin('style/[name].css');
+
+var cssLoader = extractCSS.extract(['css']);
+
+modules: {
+	loaders: [
+		{test: /\.css$/, loader: cssLoader}
+	]
+},
+plugins:[
+	extractCSS,
+]
+```
+
+[extract-text-webpack-plugin](https://www.npmjs.com/package/extract-text-webpack-plugin)
