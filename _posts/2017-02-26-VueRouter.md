@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  Vue Router学习（一）
-date:   2017-03-1 20:58:00 +0800
+title:  Vue Router学习
+date:   2017-03-01 20:58:00 +0800
 categories: JS
 tag: Vue
 ---
