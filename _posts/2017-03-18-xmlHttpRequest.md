@@ -67,7 +67,7 @@ function sendAjax() {
 }
 ```
 
-#### XMLHttpRequest对象的主要属性
+#### 1.1 XMLHttpRequest对象的主要属性
 
 - `xhr.readyState`：XMLHttpRequest对象的状态，等于4表示数据已经接收完毕。
 
@@ -100,7 +100,7 @@ function sendAjax() {
 
 - `xhr.withCredentials`: 表明在进行跨站(cross-site)的访问控制(Access-Control)请求时，是否使用认证信息(例如cookie或授权的header)。 默认为 false。
 
-#### 设置request header
+#### 1.2 设置request header
 
 ```
 var xhr = new XMLHttpRequest();
@@ -123,7 +123,7 @@ xhr.send();
 
 4.`setRequestHeader`可以调用多次，最终的值不会采用覆盖override的方式，而是采用追加append的方式。
 
-#### 获取response header
+#### 1.3 获取response header
 
 `xhr`提供了2个用来获取响应头部的方法：`getAllResponseHeaders` 和 `getResponseHeader` 。前者是获取 `response` 中的所有 `header` 字段，后者只是获取某个指定 `header` 字段的值。另外，`getResponseHeader(header)`的 `header` 参数不区分大小写。
 
@@ -137,7 +137,7 @@ xhr.send();
 
 `Access-Control-Expose-Headers`:首先得注意是`Access-Control-Expose-Headers`进行跨域请求时响应头部中的一个字段，对于同域请求，响应头部是没有这个字段的。这个字段中列举的 header 字段就是服务器允许暴露给客户端访问的字段。
 
-#### 指定xhr.response的数据类型
+#### 1.4 指定xhr.response的数据类型
 
 有2种方法可以实现，一个是`level 1`就提供的 `overrideMimeType()` 方法，另一个是`level 2`才提供的 `xhr.responseType` 属性。
 
@@ -170,7 +170,7 @@ xhr.send();
 	xhr.responseType = 'blob';
 ```
 
-### 设置请求的超时时间
+#### 1.5 设置请求的超时时间
 
 ```
 xhr.timeout = 3000;
@@ -186,7 +186,7 @@ xhr.timeout = 3000;
 - `xhr.withCredentials` 必须为 false;
 - `xhr.responseType` 必须为"",（注意置为"text"也不允许）
 
-#### FormData对象
+#### 1.6 FormData对象
 
 `ajax`操作往往用来传递表单数据。为了方便表单处理，HTML 5新增了一个`FormData`对象，可以模拟表单。
 
@@ -220,7 +220,7 @@ formData.append('secret', '123456'); // 可以继续添加一个表单项
 
 还可以用`FormData` [上传文件](https://peiyanhuang.github.io/MyBlog/2017/03/20/H5-file/#文件上传)
 
-#### 进度信息
+#### 1.7 进度信息
 
 可以通过 `onprogress` 事件来实时显示进度，默认情况下这个事件每 `50ms` 触发一次。需要注意的是，上传过程和下载过程触发的是不同对象的 `onprogress` 事件：
 
@@ -241,7 +241,7 @@ function updateProgress(event) {
 
 与`progress`事件相关的，还有其他五个事件，可以分别指定回调函数：
 
-### Events
+### 2. Events
 
 |  事件  			|	触发条件  |
 | :----  			| :----      |
