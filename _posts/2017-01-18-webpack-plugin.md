@@ -17,6 +17,8 @@ tag: 前端工具
 		new webpack.NoErrorsPlugin()
 	]
 
+webpack2.x 要替换为 new webpack.NoEmitOnErrorsPlugin()
+
 ### CommonsChunkPlugin
 
 提取公共脚本

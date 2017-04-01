@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  构造vue2.0 + webpack2环境
-date:   2017-03-31 20:38:00 +0800
+date:   2017-03-31 21:38:00 +0800
 categories: 前端工具
 tag: 前端工具
 ---
@@ -239,7 +239,6 @@ hotClient.subscribe(function (event) {
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin('[name]-css.css');
-const extractLESS = new ExtractTextPlugin('[name]-less.css');
 
 //打包css、 less文件
 module: {
@@ -251,17 +250,67 @@ module: {
       			fallback: 'style-loader',
       			use: ['css-loader'],
       		})
-      	},
-      	{
-			test: /\.less$/i,
-			use: extractLESS.extract({
+      	}
+    ]
+}
+
+//plugins 中加上
+extractCSS,
+```
+
+再把 autoprefixer 也装上吧，修改下
+
+```
+module: {
+	rules: [
+		{
+			test: /\.css$/, 
+			exclude: /node_modules/,
+			// use: ["style-loader", "css-loader"],
+			use: extractCSS.extract({
 				fallback: 'style-loader',
-				use: ['css-loader', 'less-loader']
+				use: [
+					{
+						loader: 'css-loader', 
+						options: {
+							sourceMap: true,
+							importLoaders: 1
+						}
+					},
+					{
+						loader: 'postcss-loader',
+						options: {
+							sourceMap: 'inline'
+						}
+					}
+				],
 			})
 		}
+	]
+}
+```
+
+然后创建 postcss.config.js:
+
+```
+module.exports = {
+    plugins: [
+        require('autoprefixer')
     ]
 }
 ```
+
+在 package.json 中添加：
+
+```
+"browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+```
+
+可以随你设置。
 
 现在OK！
 
@@ -280,13 +329,13 @@ modules: [
 	{
 		test: /\.js$/,
 		exclude: /node_modules/,
-    	use: [{
-    		loader: 'babel-loader',
-    		options: {
-      			presets: ['es2015']
-    		}
-    	}]
-    }
+		use: [{
+			loader: 'babel-loader',
+			options: {
+				presets: ['es2015']
+			}
+		}]
+	}
 ]
 ```
 
@@ -297,8 +346,10 @@ modules: [
 
 安装着个版本的 webpack ："webpack": "^2.1.0-beta.22"，支持 1 的写法。
 
+-  热重载所需的 new webpack.optimize.OccurenceOrderPlugin() 插件默认已经有了，可以不用引入了；new webpack.NoErrorsPlugin() 需替换为 new webpack.NoEmitOnErrorsPlugin()。
+
 - using 'Vue.use(vuex)' befor 'new Vuex.Store({ })'
 
 把 store.js 的内容写在入口文件 index.js 中会报上面的错误（不是具体的错误，只是大概意思）。注册了`Vue.use(Vuex)`也回报。分开写就不报错了，什么原因也找不到。
 
-先写到这吧！
+- 引入文件时 require() 和 module.exports 配对使用， import x from './tag' 和 export default 配对使用，不能混合。
