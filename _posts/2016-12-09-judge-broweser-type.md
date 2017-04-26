@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  客户端检测
-date:   2016-12-08 20:58:00 +0800
+date:   2016-12-09 20:58:00 +0800
 categories: JS
-tag: ES6
+tag: JS
 ---
 
 * content
@@ -93,3 +93,5 @@ IE 浏览器的 Ua 有点乱，具有如下特征：
 	    }
 	}
 ```
+
+[通过JS语句判断WEB网站的访问端是电脑还是手机](https://segmentfault.com/a/1190000009153213?utm_source=weekly&utm_medium=email&utm_campaign=email_weekly)
