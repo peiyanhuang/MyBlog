@@ -348,8 +348,4 @@ modules: [
 
 -  热重载所需的 new webpack.optimize.OccurenceOrderPlugin() 插件默认已经有了，可以不用引入了；new webpack.NoErrorsPlugin() 需替换为 new webpack.NoEmitOnErrorsPlugin()。
 
-- using 'Vue.use(vuex)' befor 'new Vuex.Store({ })'
-
-把 store.js 的内容写在入口文件 index.js 中会报上面的错误（不是具体的错误，只是大概意思）。注册了`Vue.use(Vuex)`也回报。分开写就不报错了，什么原因也找不到。
-
 - 引入文件时 require() 和 module.exports 配对使用， import x from './tag' 和 export default 配对使用，不能混合。
