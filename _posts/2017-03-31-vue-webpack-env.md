@@ -245,7 +245,6 @@ module: {
     rules: [
       	{
       		test: /\.css$/, 
-      		// use: ["style-loader", "css-loader"],
       		use: extractCSS.extract({
       			fallback: 'style-loader',
       			use: ['css-loader'],
@@ -258,7 +257,7 @@ module: {
 extractCSS,
 ```
 
-再把 autoprefixer 也装上吧，修改下
+再把 autoprefixer 也装上吧，开启 sourceMap，修改下
 
 ```
 module: {
@@ -266,7 +265,6 @@ module: {
 		{
 			test: /\.css$/, 
 			exclude: /node_modules/,
-			// use: ["style-loader", "css-loader"],
 			use: extractCSS.extract({
 				fallback: 'style-loader',
 				use: [
@@ -341,6 +339,8 @@ modules: [
 
 具体 1.x 和 2.x  的区别看这
 [Migrating from v1 to v2](https://webpack.js.org/guides/migrating/)
+
+[webpack2.2的中文文档看这](http://www.css88.com/doc/webpack2/)
 
 解决方法 2 ：
 
