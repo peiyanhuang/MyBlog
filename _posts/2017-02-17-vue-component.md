@@ -29,7 +29,7 @@ tag: Vue
 
 使用来自以下来源之一的字符串模板，这些限制将不适用:
 
-- <script type="text/x-template">
+- `<script type="text/x-template">`
 - JavaScript内联模版字符串
 - .vue 组件
 
