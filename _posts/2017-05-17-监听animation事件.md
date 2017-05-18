@@ -247,7 +247,7 @@ navigator.sayswho= (function(){
 ### 检查css属性支持
 
 ```
-var support_css3 = (() => {
+var isSupportCss = (() => {
    	var div = document.createElement('div'),
       	vendors = 'Ms O Moz Webkit'.split(' '),
       	len = vendors.length;
