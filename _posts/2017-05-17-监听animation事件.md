@@ -243,3 +243,30 @@ navigator.sayswho= (function(){
 	if(M == "MSIE") { browserPrefix = "ms"; }
 })();
 ```
+
+### 检查css属性支持
+
+```
+var support_css3 = (() => {
+   	var div = document.createElement('div'),
+      	vendors = 'Ms O Moz Webkit'.split(' '),
+      	len = vendors.length;
+ 
+   	return (prop) => {
+      	if ( prop in div.style ) return true;
+ 
+      	prop = prop.replace(/^[a-z]/, (val) => {
+         	return val.toUpperCase();
+      	});
+ 
+      	while(len--) {
+      		if (len < 0) {
+      			return false;
+      		}else if ( vendors[len] + prop in div.style ) {
+            	return true;
+         	} 
+      	}
+      	return false;
+   	};
+})();
+```
