@@ -69,7 +69,7 @@ anim.addEventListener("animationend", AnimationListener, false);
 
 动画结束的时候触发animationend事件。
 
-###　浏览器的支持情况
+### 浏览器的支持情况
 
 ```
 W3c标准：animationstart、 animationiteration、 animationend
