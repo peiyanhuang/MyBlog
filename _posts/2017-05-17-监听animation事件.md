@@ -6,6 +6,9 @@ categories: CSS
 tag: JS
 ---
 
+* content
+{:toc}
+
 转自：[如何使用js捕获css3动画](https://www.w3cboy.com/post/2014/03/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8js%E6%8D%95%E8%8E%B7css3%E5%8A%A8%E7%94%BB/)
 
 ### animation的3种事件
