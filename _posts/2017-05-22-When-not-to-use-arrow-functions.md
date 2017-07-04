@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  [转载]什么时候你不能使用箭头函数
+title:  什么时候你不能使用箭头函数[转载]
 date:   2017-05-22 20:58:00 +0800
 categories: JS
 tag: ES6
