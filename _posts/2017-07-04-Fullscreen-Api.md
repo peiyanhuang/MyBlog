@@ -1,9 +1,9 @@
 --
 layout: post
 title:  全屏显示(Fullscreen API)
-date:   2017-07-04 19:58:00 +0800 
+date:   2017-07-04 19:58:00 +0800
 categories: HTML5
-tag: Js 
+tag: JS
 ---
 
 * content
