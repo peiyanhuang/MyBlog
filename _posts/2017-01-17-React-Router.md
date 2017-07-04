@@ -2,7 +2,7 @@
 layout: post
 title:  学习React Router
 date:   2017-01-17 19:29:00 +0800
-categories: JS
+categories: 2017
 tag: React
 ---
 

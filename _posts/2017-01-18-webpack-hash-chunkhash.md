@@ -2,7 +2,7 @@
 layout: post
 title:  Webpack--hash 和 chunkhash 的区别
 date:   2017-01-18 18:38:00 +0800
-categories: 前端工具
+categories: 2017
 tag: 前端工具
 ---
 
