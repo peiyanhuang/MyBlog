@@ -43,6 +43,16 @@ Firefox和Chrome在行为上略有不同。Firefox自动为该节点增加一条
 }
 ```
 
+IE11 以下可使用 `ActiveXObject()`
+
+```
+....
+else if(!!window.ActiveXObject || 'ActiveXObject' in window){
+  var wscript = new ActiveXObject("Wscript.shell");
+  wscript.SendKeys("{F11}");
+}
+```
+
 #### 1-2. exitFullscreen()
 
 document对象的 `exitFullscreen` 方法用于取消全屏。该方法也带有浏览器前缀。
