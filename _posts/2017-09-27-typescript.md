@@ -130,6 +130,135 @@ var user = { firstName: "Jane", lastName: "User" };
 document.body.innerHTML = greeter(user);
 ```
 
+#### 3.1 可选属性
+
+接口里的属性不一定全都是必需的。 有些是只在某些条件下存在，或者根本不存在。即给函数传入的参数对象中只有部分属性赋值了。
+
+```
+interface SquareConfig {
+    color?: string;
+    width?: number;
+}
+```
+
+带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个`?`符号。
+
+注意：如下会在TypeScript中报错。
+
+```
+function createSquare(config: SquareConfig): { color: string; area: number } {
+    // ...
+}
+
+let mySquare = createSquare({ colour: "red", width: 100 });
+```
+
+注意传入createSquare的参数拼写为`colour`而不是`color`。 TypeScript会认为这段代码可能存在bug。`对象字面量`会被特殊对待而且会经过`额外属性检查`，当将它们赋值给变量或作为参数传递的时候。 如果一个对象字面量存在任何“目标类型”不包含的属性时，你会得到一个错误。
+
+```
+// error: 'colour' not expected in type 'SquareConfig'
+let mySquare = createSquare({ colour: "red", width: 100 });
+```
+
+绕开这些检查非常简单。 最简便的方法是使用类型断言：
+
+```
+let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
+```
+
+然而，最佳的方式是能够添加一个字符串索引签名：
+
+```
+interface SquareConfig {
+    color?: string;
+    width?: number;
+    [propName: string]: any;
+}
+```
+
+还有最后一种跳过这些检查的方式它就是将这个对象赋值给一个另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
+
+```
+let squareOptions = { colour: "red", width: 100 };
+let mySquare = createSquare(squareOptions);
+```
+
+#### 3.2 只读属性
+
+一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用`readonly`来指定只读属性:
+
+```
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+```
+
+可以通过赋值一个对象字面量来构造一个Point。 赋值后， x和y再也不能被改变了。
+
+```
+let p1: Point = { x: 10, y: 20 };
+p1.x = 5; // error!
+```
+
+TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
+
+```
+let a: number[] = [1, 2, 3, 4];
+let ro: ReadonlyArray<number> = a;
+ro.length = 100; // error!
+a = ro; // error!
+```
+
+上面代码的最后一行，可以看到就算把整个ReadonlyArray赋值到一个普通数组也是不可以的。 但是你可以用类型断言重写：
+
+```
+a = ro as number[];
+```
+
+#### 3.3 函数类型
+
+为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+
+```
+interface SearchFunc {
+	(source: string, subString: string): boolean;
+}
+
+let mySearch: SearchFunc;
+mySearch = function(src: string, sub: string): boolean {
+  let result = src.search(sub);
+  return result > -1;
+}
+```
+
+函数的参数名不需要与接口里定义的名字相匹配。函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。
+
+也可以这样调用：
+
+```
+let mySearch: SearchFunc;
+mySearch = function(src, sub) {
+    let result = src.search(sub);
+    return result > -1;
+}
+```
+
+#### 3.4 可索引的类型
+
+与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。 
+
+```
+interface StringArray {
+  [index: number]: string;
+}
+
+let myArray: StringArray;
+myArray = ["Bob", "Fred"];
+
+let myStr: string = myArray[0];
+```
+
 ### 4. 类
 
 在构造函数的参数上使用public等同于创建了同名的成员变量.
