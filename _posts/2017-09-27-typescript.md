@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  typeScript 
+title:  typeScript 基础类型和接口
 date:   2017-10-23 19:58:00 +0800
 categories: JS
 tag: TypeScript
@@ -259,28 +259,89 @@ myArray = ["Bob", "Fred"];
 let myStr: string = myArray[0];
 ```
 
-### 4. 类
+#### 3.5 类类型
 
-在构造函数的参数上使用public等同于创建了同名的成员变量.
+可以在接口中描述一个方法，在类里实现它:
 
 ```
-class Student {
-    fullName: string;
-    constructor(public firstName, public middleInitial, public lastName) {
-        this.fullName = firstName + " " + middleInitial + " " + lastName;
+interface ClockInterface {
+    currentTime: Date;
+    setTime(d: Date);
+}
+
+class Clock implements ClockInterface {
+    currentTime: Date;
+    setTime(d: Date) {
+        this.currentTime = d;
     }
+    constructor(h: number, m: number) { }
 }
-
-interface Person {
-    firstName: string;
-    lastName: string;
-}
-
-function greeter(person : Person) {
-    return "Hello, " + person.firstName + " " + person.lastName;
-}
-
-var user = new Student("Jane", "M.", "User");
-
-document.body.innerHTML = greeter(user);
 ```
+
+#### 3.6 混合类型
+
+```
+interface Counter {
+    (start: number): string;
+    interval: number;
+    reset(): void;
+}
+
+function getCounter(): Counter {
+    let counter = <Counter>function (start: number) { };
+    counter.interval = 123;
+    counter.reset = function () { };
+    return counter;
+}
+
+let c = getCounter();
+c(10);
+c.reset();
+c.interval = 5.0;
+```
+
+#### 3.7 继承接口
+
+和类一样，接口也可以相互继承。
+
+```
+interface Shape {
+    color: string;
+}
+
+interface PenStroke {
+    penWidth: number;
+}
+
+interface Square extends Shape, PenStroke {
+    sideLength: number;
+}
+
+let square = <Square>{};
+square.color = "blue";
+square.sideLength = 10;
+square.penWidth = 5.0;
+```
+
+当接口继承了一个类类型时，它会继承类的成员但不包括其实现:
+
+```
+class Control {
+    private state: any;
+}
+
+interface SelectableControl extends Control {
+    select(): void;
+}
+
+class Button extends Control implements SelectableControl {
+    select() { }
+}
+
+// 错误：“Image”类型缺少“state”属性。
+class Image implements SelectableControl {
+    select() { }
+}
+```
+
+在Control类内部，是允许通过SelectableControl的实例来访问私有成员state的。 实际上， SelectableControl就像Control一样，并拥有一个select方法。 Button和TextBox类是SelectableControl的子类（因为它们都继承自Control并有select方法），但Image和Location类并不是这样的。
