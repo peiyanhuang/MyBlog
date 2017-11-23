@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  javascript中的深拷贝和浅拷贝
-date:   2017-08-01 19:08:00 +0800
+date:   2017-11-23 13:08:00 +0800
 categories: JS
 tag: JS
 ---
@@ -9,7 +9,7 @@ tag: JS
 * content
 {:toc}
 
-### 浅拷贝与深拷贝的区别
+### 1.浅拷贝与深拷贝的区别
 
 JS 中的浅拷贝与深拷贝，只是针对复杂数据类型（Object，Array）的复制问题。浅拷贝与深拷贝都可以实现在已有对象上再生出一份的作用。但是对象的实例是存储在堆内存中然后通过一个引用值去操作对象，由此拷贝的时候就存在两种情况了：--拷贝引用和拷贝实例，这也是浅拷贝和深拷贝的区别。
 
@@ -17,7 +17,7 @@ JS 中的浅拷贝与深拷贝，只是针对复杂数据类型（Object，Array
 
 - 深拷贝：重新分配内存，并且把源对象所有属性都进行新建拷贝，以保证深拷贝的对象的引用图不包含任何原有对象或对象图上的任何对象，拷贝后的对象与原来的对象是完全隔离，互不影响
 
-### 浅拷贝
+### 2.浅拷贝
 
 这是最简单的浅拷贝，直接引用，例:
 
@@ -64,18 +64,45 @@ console.log(b[0].c); // 输出 3，说明其元素拷贝的是引用
 外层源对象是拷贝实例，如果其属性元素为复杂数据类型时，内层元素拷贝引用。
 对源对象直接操作，不影响另外一个对象，但是对其属性操作时候，会改变另外一个对象的属性的值。
 
-### 深拷贝
+### 3.深拷贝
 
 深拷贝后，两个对象，包括其内部的元素互不干扰。常见方法有 `JSON.parse()`, `JSON.stringify()`, jQury 的 `$.extend(true,{},obj)`, lodash的 `_.cloneDeep` 和 `_.clone(value, true)`。
 
 [jQury 的 $.extend(true,{},obj) 方法](https://github.com/jquery/jquery/blob/1472290917f17af05e98007136096784f9051fab/src/core.js#L121)
 
-一个简单的方法是使用 `JSON.parse()、JSON.stringify()`:
+```
+function deepCopy(value, targets) {
+    let target = targets || {};
+    if (typeof value !== "object" && !(value instanceof Function)) {
+        target = {};
+    }
+    if (value !== null) {
+        for (var i in value) {
+            if (value[i] === target[i]) {
+                continue;
+            }
+            if (typeof value[i] === 'object') {
+                if (value[i] instanceof Array) {    //is array
+                    target[i] = [];
+                } else {    // is object
+                    target[i] = {};
+                }
+                target[i] = deepCopy(value[i], target[i]);
+            } else {
+                target[i] = value[i]
+            }
+        }
+    }
+    return target;
+}
+```
+
+另一个简单的方法是使用 `JSON.parse()、JSON.stringify()`:
 
 ```
 let _clone = function(obj){
     let str, 
-    	newobj = obj.constructor === Array ? [] : {};
+    	  newobj = obj.constructor === Array ? [] : {};
     if(typeof obj !== 'object'){
         return;
     } else if(window.JSON){
@@ -90,4 +117,5 @@ let _clone = function(obj){
 };
 ```
 
-或者简单的 `JSON.parse(JSON.stringify(obj))`, 但只能支持JSON格式的。
+简单的 `JSON.parse(JSON.stringify(obj))`, 但只能支持JSON格式的。
+
