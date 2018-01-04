@@ -253,8 +253,7 @@ module: {
     ]
 }
 
-//plugins 中加上
-extractCSS,
+//plugins 中加上 extractCSS,
 ```
 
 再把 autoprefixer 也装上吧，开启 sourceMap，修改下
