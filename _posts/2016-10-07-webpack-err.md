@@ -2,7 +2,7 @@
 layout: post
 title:  Webpack 遇到的error
 date:   2016-10-07 13:58:00 +0800
-categories: 2016
+categories: 前端工具
 tag: 前端工具
 ---
 

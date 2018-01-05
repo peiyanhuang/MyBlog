@@ -2,7 +2,7 @@
 layout: post
 title:  MVC、MVP和MVVM
 date:   2017-02-10 18:58:00 +0800
-categories: 2017
+categories: Others
 tag: Others
 ---
 

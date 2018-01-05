@@ -2,7 +2,7 @@
 layout: post
 title:  typeScript 基础类型和接口
 date:   2017-10-23 19:58:00 +0800
-categories: JS
+categories: TypeScript
 tag: TypeScript
 ---
 

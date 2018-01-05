@@ -2,7 +2,7 @@
 layout: post
 title:  Generator函数
 date:   2016-12-29 19:58:00 +0800
-categories: 2016
+categories: ES6
 tag: ES6
 ---
 

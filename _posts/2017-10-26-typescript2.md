@@ -2,7 +2,7 @@
 layout: post
 title:  typeScript 类
 date:   2017-10-26 19:58:00 +0800
-categories: JS
+categories: TypeScript
 tag: TypeScript
 ---
 

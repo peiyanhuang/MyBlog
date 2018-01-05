@@ -2,8 +2,8 @@
 layout: post
 title:  Html5 新增标签及属性
 date:   2017-02-23 15:58:00 +0800
-categories: 2017
-tag: HTML5
+categories: HTML
+tag: HTML
 ---
 
 * content

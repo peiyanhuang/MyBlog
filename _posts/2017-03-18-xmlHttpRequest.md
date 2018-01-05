@@ -2,7 +2,7 @@
 layout: post
 title:  XMLHttpRequest 详解
 date:   2017-03-18 20:38:00 +0800
-categories: 2017
+categories: JS
 tag: JS
 ---
 
@@ -15,7 +15,7 @@ tag: JS
 
 两者的关系可以理解为我们使用 `XMLHttpRequest` 对象来发送一个 `Ajax` 请求。
 
-`XMLHttpRequest` 一开始只是微软浏览器提供的一个接口，后来各大浏览器纷纷效仿也提供了这个接口，再后来W3C对它进行了标准化，提出了 `XMLHttpRequest` 标准。` XMLHttpRequest `标准又分为`Level 1`和`Level 2`。
+`XMLHttpRequest` 一开始只是微软浏览器提供的一个接口，后来各大浏览器纷纷效仿也提供了这个接口，再后来W3C对它进行了标准化，提出了 `XMLHttpRequest` 标准。`XMLHttpRequest` 标准又分为 `Level 1` 和 `Level 2`。
 
 老版本的XMLHttpRequest对象有以下几个缺点：
 

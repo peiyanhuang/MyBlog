@@ -2,7 +2,7 @@
 layout: post
 title:  Vue Router学习
 date:   2017-03-01 20:58:00 +0800
-categories: 2017
+categories: Vue
 tag: Vue
 ---
 

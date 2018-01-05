@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  __proto__和prototype的区别和关系
+title:  '__proto__'和'prototype'的区别和关系
 date:   2017-01-19 20:38:00 +0800
-categories: 2017
+categories: JS
 tag: JS
 ---
 

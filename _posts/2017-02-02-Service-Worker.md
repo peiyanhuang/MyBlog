@@ -2,7 +2,7 @@
 layout: post
 title:  Service Worker
 date:   2017-02-02 15:58:00 +0800
-categories: 2017
+categories: JS
 tag: JS
 ---
 
