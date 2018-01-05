@@ -2,7 +2,7 @@
 layout: post
 title:  Vue 的响应式原理
 date:   2017-02-19 20:58:00 +0800
-categories: JS
+categories: 2017
 tag: Vue
 ---
 

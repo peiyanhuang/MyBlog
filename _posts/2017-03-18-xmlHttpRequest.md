@@ -2,7 +2,7 @@
 layout: post
 title:  XMLHttpRequest 详解
 date:   2017-03-18 20:38:00 +0800
-categories: JS
+categories: 2017
 tag: JS
 ---
 

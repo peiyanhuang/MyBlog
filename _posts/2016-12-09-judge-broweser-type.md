@@ -2,7 +2,7 @@
 layout: post
 title:  客户端检测
 date:   2016-12-09 20:58:00 +0800
-categories: JS
+categories: 2016
 tag: JS
 ---
 

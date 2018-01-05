@@ -2,7 +2,7 @@
 layout: post
 title:  构造vue2.0 + webpack2环境
 date:   2017-03-31 21:38:00 +0800
-categories: 前端工具
+categories: 2017
 tag: 前端工具
 ---
 
@@ -253,8 +253,7 @@ module: {
     ]
 }
 
-//plugins 中加上
-extractCSS,
+//plugins 中加上 extractCSS,
 ```
 
 再把 autoprefixer 也装上吧，开启 sourceMap，修改下

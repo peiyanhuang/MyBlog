@@ -2,7 +2,7 @@
 layout: post
 title:  Array.prototype.slice.call(arguments)
 date:   2016-12-22 20:58:00 +0800
-categories: JS
+categories: 2016
 tag: JS
 ---
 
