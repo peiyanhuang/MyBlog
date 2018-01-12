@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  Service Worker
-date:   2017-02-02 15:58:00 +0800
+date:   2018-01-11 15:58:00 +0800
 categories: JS
 tag: JS
 ---
@@ -15,7 +15,7 @@ tag: JS
 
 ### 2. 实现的功能
 
-目前sw还是一个草案，各个浏览器支持程度还不是很高，除了chrome 40、firefox以外，其他浏览器均不支持该功能，但是sw提供的逆天功能还是非常值得期待:
+目前`sw`还是一个草案，各个浏览器支持程度还不是很高，除了chrome 40、firefox以外，其他浏览器均不支持该功能，但是sw提供的逆天功能还是非常值得期待:
 
 - 后台数据的同步
 - 从其他域获取资源请求
@@ -64,14 +64,14 @@ tag: JS
 
 ### 5. 简单使用
 
-从这个[项目地址](https://github.com/dominiccooney/cache-polyfill)拿到`chaches polyfill`。
+从这个[项目地址](https://github.com/dominiccooney/cache-polyfill)拿到`cache polyfill`。
 
-这个`polyfill`支持`CacheStorate.match，Cache.add和Cache.addAll`，而现在`Chrome 49`以下实现的Cache API还没有支持这些方法。
-在service worker中通过importScripts加载进来。被service worker加载的脚本文件会被自动缓存。
+这个`polyfill`支持`CacheStorate.match，Cache.add和Cache.addAll`，而现在`Chrome 49`以下实现的`Cache API`还没有支持这些方法。
+在`service worker`中通过`importScripts`加载进来。被`service worker`加载的脚本文件会被自动缓存。
 
 	importScripts('serviceworker-cache-polyfill.js');
 
-#### 5.1 Service Worker的安装步骤
+#### 5.1 Service Worker的安装
 
 来个简单缓存文件的例子。首先在页面注册一个service worker，这个步骤告诉浏览器你的service worker脚本在哪里。
 
@@ -87,15 +87,19 @@ if ('serviceWorker' in navigator) {
 }
 ```
 
-上面的代码检查service worker API是否可用，如果可用，service worker /sw.js 被注册。
+上面的代码检查`service worker API`是否可用，如果可用，`service worker /sw.js` 被注册。
 
-如果这个service worker已经被注册过，浏览器会自动忽略上面的代码。
+如果这个`service worker`已经被注册过，浏览器会自动忽略上面的代码。
 
-现在你可以到 `chrome://inspect/#service-workers` 检查service worker是否对你的网站启用了。
+现在你可以到 `chrome://inspect/#service-workers` 检查`service worker`是否对你的网站启用了。
 
-在页面上完成注册步骤之后，让我们把注意力转到service worker的脚本里来，在这里面，我们要完成它的安装步骤。
+在页面上完成注册步骤之后，让我们把注意力转到`service worker`的脚本里来，在这里面，我们要完成它的安装步骤。
 
-在最基本的例子中，你需要为install事件定义一个callback，并决定哪些文件你想要缓存。
+`service worker` 主要有三个事件: `install`，`activate` 和 `fetch`。
+
+#### 5.2 Install 事件
+
+在最基本的例子中，你需要为`install`事件定义一个`callback`，并决定哪些文件你想要缓存。
 
 ```
 var CACHE_NAME = 'my-site-cache-v1';
@@ -109,24 +113,34 @@ var urlsToCache = [
 // Set the callback for the install step
 self.addEventListener('install', function(event) {
     event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      caches.open(CACHE_NAME)
+        .then(function(cache) {
+          console.log('Opened cache');
+          return cache.addAll(urlsToCache);
+        })
   	);
 });
 ```
 
-上面的代码中，我们通过caches.open打开我们指定的cache文件名，然后我们调用cache.addAll并传入我们的文件数组。这是通过一连串promise（caches.open 和 cache.addAll）完成的。event.waitUntil拿到一个promise并使用它来获得安装耗费的时间以及是否安装成功。
+上面的代码中，我们通过`caches.open`打开我们指定的`cache`文件名，然后我们调用`cache.addAll`并传入我们的文件数组。这是通过一连串`promise`（caches.open 和 cache.addAll）完成的。
 
-如果所有的文件都被缓存成功了，那么service worker就安装成功了。如果任何一个文件下载失败，那么安装步骤就会失败。这个方式允许你依赖于你自己指定的所有资源，但是这意味着你需要非常谨慎地决定哪些文件需要在安装步骤中被缓存。指定了太多的文件的话，就会增加安装失败率。
+[`event.waitUntil`](https://developer.mozilla.org/zh-CN/docs/Web/API/ExtendableEvent/waitUntil)拿到一个`promise`并使用它来获得安装耗费的时间以及是否安装成功。
 
-#### 5.2 怎样缓存和返回Request
+如果所有的文件都被缓存成功了，那么`service worker`就安装成功了。如果任何一个文件下载失败，那么安装步骤就会失败。这个方式允许你依赖于你自己指定的所有资源，但是这意味着你需要非常谨慎地决定哪些文件需要在安装步骤中被缓存。指定了太多的文件的话，就会增加安装失败率。
+
+`self.skipWaiting()`方法使`service worker`进入`active`状态。例如：
+
+```
+self.addEventListener('install', function(event) {
+  self.skipWaiting();
+});
+```
+
+#### 5.3 Fetch 事件(怎样缓存和返回Request)
 
 你已经安装了service worker，你现在可以返回你缓存的请求了。
 
-当service worker被安装成功并且用户浏览了另一个页面或者刷新了当前的页面，service worker将开始接收到fetch事件。下面是一个例子：
+当`service worker`被安装成功并且用户浏览了另一个页面或者刷新了当前的页面，`service worker`将开始接收到`fetch`事件。下面是一个例子：
 
 ```
 self.addEventListener('fetch', function(event) {
@@ -156,28 +170,18 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        // Cache hit - return response
         if (response) {
           return response;
         }
 
-        // IMPORTANT: Clone the request. A request is a stream and
-        // can only be consumed once. Since we are consuming this
-        // once by cache and once by the browser for fetch, we need
-        // to clone the response
         var fetchRequest = event.request.clone();
 
         return fetch(fetchRequest).then(
           function(response) {
-            // Check if we received a valid response
             if(!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
-            // IMPORTANT: Clone the response. A response is a stream
-            // and because we want the browser to consume the response
-            // as well as the cache consuming the response, we need
-            // to clone it so we have 2 stream.
             var responseToCache = response.clone();
 
             caches.open(CACHE_NAME)
@@ -206,23 +210,25 @@ self.addEventListener('fetch', function(event) {
 3.如果我们通过了检查，clone这个请求。这么做的原因是如果response是一个Stream，那么它的body只能被读取一次，所以我们得将它克隆出来，一份发给浏览器，一份发给缓存。
 ```
 
-#### 5.3 如何更新一个Service Worker
+#### 5.4 Activate 事件(如何更新一个Service Worker)
 
-你的service worker总有需要更新的那一天。当那一天到来的时候，你需要按照如下步骤来更新：
+你的`service worker`总有需要更新的那一天。当那一天到来的时候，你需要按照如下步骤来更新：
 
 ```
 1. 更新你的service worker的JavaScript文件
 
-	1.1 当用户浏览你的网站，浏览器尝试在后台下载service worker的脚本文件。只要服务器上的文件和本地文件有一个字节不同，它们就被判定为需要更新。
+  1.1 当用户浏览你的网站，浏览器尝试在后台下载service worker的脚本文件。只要服务器上的文件和本地文件有一个字节不同，它们就被判定为需要更新。
 
 2. 更新后的service worker将开始运作，install event被重新触发。
 
 3. 在这个时间节点上，当前页面生效的依然是老版本的service worker，新的servicer worker将进入"waiting"状态。
+
 4. 当前页面被关闭之后，老的service worker进程被杀死，新的servicer worker正式生效。
+
 5. 一旦新的service worker生效，它的activate事件被触发。
 ```
 
-代码更新后，通常需要在activate的callback中执行一个管理cache的操作。因为你会需要清除掉之前旧的数据。我们在activate而不是install的时候执行这个操作是因为如果我们在install的时候立马执行它，那么依然在运行的旧版本的数据就坏了。
+代码更新后，通常需要在`activate`的`callback`中执行一个管理`cache`的操作。因为你会需要清除掉之前旧的数据。我们在`activate`而不是`install`的时候执行这个操作是因为如果我们在`install`的时候立马执行它，那么依然在运行的旧版本的数据就坏了。
 
 之前我们只使用了一个缓存，叫做`my-site-cache-v1`，其实我们也可以使用多个缓存的，例如一个给页面使用，一个给blog的内容提交使用。这意味着，在`install`步骤里，我们可以创建两个缓存，`pages-cache-v1`和`blog-posts-cache-v1`，在`activite`步骤里，我们可以删除旧的`my-site-cache-v1`。
 
@@ -247,11 +253,13 @@ self.addEventListener('activate', function(event) {
 });
 ```
 
-### 6 Cache API
+### 6. Cache API
 
 `Cache API`就是对`http`的`request/response`进行缓存管理，是在`service worker`的规范中定义的，往往跟`service worker`一起操作使用，是实现web app离线应用的关键一环。但是`Cache API`又不依赖于`service worker`，可以单独在window下使用，。
 
-在`window`对象下，`cache api`的操作封装在`caches`对象下面，里面的操作分为两类: 对`cache`的操作、对`cache`里面`http`的操作。下面简单说明下cache storage的相关操作
+在`window`对象下，`cache api`的操作封装在`caches`对象下面，里面的操作分为两类: 对`cache`的操作、对`cache`里面`http`的操作。下面简单说明下`cache storage`的相关操作:
+
+[Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)
 
 ```
 // open: 创建或打开一个cache
@@ -297,9 +305,65 @@ caches.open('test').then(cache => {
 });
 ```
 
-相关：
+### 7. Service Worker 与页面通信
 
-[使用 Service worker 实现加速/离线访问静态 blog 网站](http://www.ctolib.com/topics-108365.html)  
-[service worker：让 Web 应用变得逆天的起来](https://toutiao.io/posts/kuvl2w/preview)  
-[【翻译】Service Worker 入门](https://www.w3ctech.com/topic/866)  
+Service Worker 没有直接操作页面 DOM 的权限，但是可以通过 postMessage 方法和 Web 页面进行通信。
+
+#### 7.1 使用 postMessage 方法发送信息
+
+1、在 `sw.js` 中向接管页面发信息，可以采用 `client.postMessage()` 方法，示例代码如下：
+
+```
+self.clients.matchAll()
+    .then(function (clients) {
+        if (clients && clients.length) {
+            clients.forEach(function (client) {
+                // 发送字符串'sw.update'
+                client.postMessage('sw.update');
+            })
+        }
+    })
+```
+
+2、在主页面给 `Service Worker` 发消息，可以采用 `navigator.serviceWorker.controller.postMessage()` 方法，示例代码如下：
+
+```
+// 点击指定 DOM 时就给Service Worker 发送消息
+document.getElementById('app-refresh').addEventListener('click', function () {
+    navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage('sw.updatedone');
+});
+```
+
+#### 7.2 接收 postMessage 发送的信息
+
+若要接收消息，当然我们需要绑定 `message` 的监听事件
+
+1、在 `sw.js` 中接收主页面发来的信息，示例代码如下，通过 `event.data` 来读取数据：
+
+```
+self.addEventListener('message', function (event) {
+    console.log(event.data); // 输出：'sw.updatedone'
+});
+```
+
+2、在页面中接收 `sw.js` 发来的信息，示例代码如下，通过 `event.data` 来读取数据：
+
+```
+navigator.serviceWorker.addEventListener('message', function (event) {
+    if (e.data === 'sw.update') {
+        // 此处可以操作页面的 DOM 元素啦
+    }
+});
+```
+
+### 相关
+
+[Service Worker API MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API)
+
+[使用 Service worker 实现加速/离线访问静态 blog 网站](http://www.ctolib.com/topics-108365.html)
+
+[service worker：让 Web 应用变得逆天的起来](https://toutiao.io/posts/kuvl2w/preview)
+
+[【翻译】Service Worker 入门](https://www.w3ctech.com/topic/866) 
+
 [Service Worker初体验](http://web.jobbole.com/84792/)  
