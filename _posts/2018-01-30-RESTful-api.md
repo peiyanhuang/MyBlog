@@ -82,3 +82,56 @@ v{n} n代表版本号,分为整形和浮点型
 4.API 路径规则
 
 在RESTful架构中，每个网址代表一种资源（resource），所以网址中不能有动词，只能有名词，而且所用的名词往往与数据库的表格名对应。
+
+### 3.axios封装RESTful标准接口
+
+如下一个用户管理模块：
+
+```javascript
+import axios from 'axios'
+import qs from 'query-string'
+
+class UserManager {
+  constructor() {
+    this.$ajax = axios.create({
+      baseUrl: 'https://api.example.com'
+    });
+
+    // 修改POST和PUT请求默认的Content-Type，根据需要而定
+    this.dataMethodDefaults = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      transformRequest: [function (data) {
+        return qs.stringify(data)
+      }]
+    }
+  }
+  
+  getUsersPageableList (page = 0, size = 20) {
+    return this.$ajax.get(`/users?page=${page}&size=${size}`);
+  }
+  
+  getUsersFullList () {
+    return this.$ajax.get('/users/all');
+  }
+  
+  getUser (id) {
+    if (!id) {
+      return Promise.reject(new Error(`getUser：id(${id})无效`));
+    }
+    return this.$ajax.get(`/users/${id}`);
+  }
+  
+  createUser (data = {}) {
+    if (!data || !Object.keys(data).length) {
+      return Promise.reject(new Error('createUser：提交的数据无效'));
+    }
+    return this.$ajax.post('/users', data, { ...this.dataMethodDefaults });
+  }
+}
+
+export default new UserManager()
+```
+
+`Content-Type` Axios默认是 `application/json`，我根据后端接口的定义，将其调整成了表单类型 `application/x-www-form-urlencoded`。
