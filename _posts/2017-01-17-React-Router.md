@@ -2,8 +2,8 @@
 layout: post
 title:  学习React Router
 date:   2017-01-17 19:29:00 +0800
-categories: React
-tag: React
+categories: 开发者
+tag: 开发者
 ---
 
 * content

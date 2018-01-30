@@ -2,8 +2,8 @@
 layout: post
 title:  浏览器工作原理(转)
 date:   2017-01-15 18:02:00 +0800
-categories: Others
-tag: Others
+categories: 开发者
+tag: 开发者
 ---
 
 * content
