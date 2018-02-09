@@ -25,11 +25,11 @@ tsc ***.ts
 
 输出结果为一个`***.js`文件，它包含了和输入文件中相同的JavsScript代码。
 
-### 2. 类型注解
+### 2. 基础类型
 
-类型注解是一种为 函数 或 变量 添加约束的方式。
+类型注解是一种为 `函数` 或 `变量` 添加约束的方式，即规定变量的类型。
 
-```
+```typescript
 function greeter(person: string) {
     return "Hello, " + person;
 }
@@ -134,7 +134,7 @@ document.body.innerHTML = greeter(user);
 
 接口里的属性不一定全都是必需的。 有些是只在某些条件下存在，或者根本不存在。即给函数传入的参数对象中只有部分属性赋值了。
 
-```
+```typescript
 interface SquareConfig {
     color?: string;
     width?: number;
@@ -143,32 +143,71 @@ interface SquareConfig {
 
 带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个`?`符号。
 
-注意：如下会在TypeScript中报错。
-
-```
+```typescript
 function createSquare(config: SquareConfig): { color: string; area: number } {
     // ...
 }
 
-let mySquare = createSquare({ colour: "red", width: 100 });
+let mySquare = createSquare({ color: "red", width: 100 });
 ```
 
-注意传入createSquare的参数拼写为`colour`而不是`color`。 TypeScript会认为这段代码可能存在bug。`对象字面量`会被特殊对待而且会经过`额外属性检查`，当将它们赋值给变量或作为参数传递的时候。 如果一个对象字面量存在任何“目标类型”不包含的属性时，你会得到一个错误。
+#### 3.2 只读属性
 
+一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用`readonly`来指定只读属性:
+
+```typescript
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+
+let p1: Point = { x: 10, y: 20 };
+p1.x = 5; // error!
 ```
-// error: 'colour' not expected in type 'SquareConfig'
-let mySquare = createSquare({ colour: "red", width: 100 });
+
+TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
+
+```typescript
+let a: number[] = [1, 2, 3, 4];
+let ro: ReadonlyArray<number> = a;
+ro.length = 100; // error!
+a = ro; // error!
 ```
+
+上面代码的最后一行，可以看到就算把整个 `ReadonlyArray` 赋值到一个普通数组也是不可以的。 但是你可以用类型断言重写：
+
+```typescript
+a = ro as number[];
+```
+
+#### 3.3额外的属性检查
+
+```typescript
+interface SquareConfig {
+    color?: string;
+    width?: number;
+}
+
+function createSquare(config: SquareConfig): { color: string; area: number } {
+    // ...
+}
+
+let mySquare = createSquare({ rgb: "red", width: 100 });
+```
+
+如上，我们可能会认为其是正确的：因为 width 属性是兼容的，不存在 color 属性，而且额外的 rgb 属性是无意义的。
+
+然而，TypeScript会认为这段代码可能存在bug -- 对象字面量会被特殊对待而且会经过 *额外属性检查*，当将它们赋值给变量或作为参数传递的时候。 如果一个对象字面量存在任何“目标类型”不包含的属性时，你会得到一个错误。
 
 绕开这些检查非常简单。 最简便的方法是使用类型断言：
 
-```
+```typescript
 let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
 ```
 
 然而，最佳的方式是能够添加一个字符串索引签名：
 
-```
+```typescript
 interface SquareConfig {
     color?: string;
     width?: number;
@@ -176,47 +215,14 @@ interface SquareConfig {
 }
 ```
 
-还有最后一种跳过这些检查的方式它就是将这个对象赋值给一个另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
+还有最后一种跳过这些检查的方式它就是将这个对象赋值给另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
 
-```
+```typescript
 let squareOptions = { colour: "red", width: 100 };
 let mySquare = createSquare(squareOptions);
 ```
 
-#### 3.2 只读属性
-
-一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用`readonly`来指定只读属性:
-
-```
-interface Point {
-    readonly x: number;
-    readonly y: number;
-}
-```
-
-可以通过赋值一个对象字面量来构造一个Point。 赋值后， x和y再也不能被改变了。
-
-```
-let p1: Point = { x: 10, y: 20 };
-p1.x = 5; // error!
-```
-
-TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
-
-```
-let a: number[] = [1, 2, 3, 4];
-let ro: ReadonlyArray<number> = a;
-ro.length = 100; // error!
-a = ro; // error!
-```
-
-上面代码的最后一行，可以看到就算把整个ReadonlyArray赋值到一个普通数组也是不可以的。 但是你可以用类型断言重写：
-
-```
-a = ro as number[];
-```
-
-#### 3.3 函数类型
+#### 3.4 函数类型
 
 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
 
@@ -244,7 +250,7 @@ mySearch = function(src, sub) {
 }
 ```
 
-#### 3.4 可索引的类型
+#### 3.5 可索引的类型
 
 与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。 
 
@@ -259,7 +265,7 @@ myArray = ["Bob", "Fred"];
 let myStr: string = myArray[0];
 ```
 
-#### 3.5 类类型
+#### 3.6 类类型
 
 可以在接口中描述一个方法，在类里实现它:
 
@@ -278,7 +284,7 @@ class Clock implements ClockInterface {
 }
 ```
 
-#### 3.6 混合类型
+#### 3.7 混合类型
 
 ```
 interface Counter {
@@ -300,7 +306,7 @@ c.reset();
 c.interval = 5.0;
 ```
 
-#### 3.7 继承接口
+#### 3.8 继承接口
 
 和类一样，接口也可以相互继承。
 
