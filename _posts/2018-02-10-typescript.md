@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  typeScript 基础类型和接口
-date:   2017-10-23 19:58:00 +0800
+date:   2018-02-10 19:58:00 +0800
 categories: TypeScript
 tag: TypeScript
 ---
@@ -13,13 +13,13 @@ tag: TypeScript
 
 npm 安装:
 
-```
+```bash
 > npm install -g typescript
 ```
 
 编译方式:
 
-```
+```bash
 tsc ***.ts
 ```
 
@@ -226,23 +226,21 @@ let mySquare = createSquare(squareOptions);
 
 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
 
-```
+```typescript
 interface SearchFunc {
-	(source: string, subString: string): boolean;
+    (source: string, subString: string): boolean;
 }
 
 let mySearch: SearchFunc;
 mySearch = function(src: string, sub: string): boolean {
-  let result = src.search(sub);
-  return result > -1;
+    let result = src.search(sub);
+    return result > -1;
 }
 ```
 
-函数的参数名不需要与接口里定义的名字相匹配。函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。
+函数的参数名不需要与接口里定义的名字相匹配。函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。也可以这样调用：
 
-也可以这样调用：
-
-```
+```typescript
 let mySearch: SearchFunc;
 mySearch = function(src, sub) {
     let result = src.search(sub);
@@ -254,7 +252,7 @@ mySearch = function(src, sub) {
 
 与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。 
 
-```
+```typescript
 interface StringArray {
   [index: number]: string;
 }
@@ -267,9 +265,9 @@ let myStr: string = myArray[0];
 
 #### 3.6 类类型
 
-可以在接口中描述一个方法，在类里实现它:
+使用 `implements` 关键字，可以在接口中描述一个方法，在类里实现它:
 
-```
+```typescript
 interface ClockInterface {
     currentTime: Date;
     setTime(d: Date);
@@ -286,7 +284,7 @@ class Clock implements ClockInterface {
 
 #### 3.7 混合类型
 
-```
+```typescript
 interface Counter {
     (start: number): string;
     interval: number;
@@ -310,7 +308,7 @@ c.interval = 5.0;
 
 和类一样，接口也可以相互继承。
 
-```
+```typescript
 interface Shape {
     color: string;
 }
@@ -331,7 +329,7 @@ square.penWidth = 5.0;
 
 当接口继承了一个类类型时，它会继承类的成员但不包括其实现:
 
-```
+```typescript
 class Control {
     private state: any;
 }
