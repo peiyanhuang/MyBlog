@@ -9,23 +9,7 @@ tag: TypeScript
 * content
 {:toc}
 
-### 1. 安装使用
-
-npm 安装:
-
-```bash
-> npm install -g typescript
-```
-
-编译方式:
-
-```bash
-tsc ***.ts
-```
-
-输出结果为一个`***.js`文件，它包含了和输入文件中相同的JavsScript代码。
-
-### 2. 基础类型
+### 1. 基础类型
 
 类型注解是一种为 `函数` 或 `变量` 添加约束的方式，即规定变量的类型。
 
@@ -39,7 +23,7 @@ var user = [0, 1, 2];
 document.body.innerHTML = greeter(user);
 ```
 
-#### 2.1 基础类型
+#### 1.1 基础类型
 
 ```
 1.布尔值: 最基本的数据类型就是简单的true/false值。
@@ -89,7 +73,7 @@ never类型表示的是那些永不存在的值的类型。 例如， never类�
 never类型是任何类型的子类型，也可以赋值给任何类型；然而，没有类型是never的子类型或可以赋值给never类型（除了never本身之外）。 即使 any也不可以赋值给never。
 ```
 
-#### 2.2 类型断言
+#### 1.2 类型断言
 
 通过类型断言这种方式可以告诉编译器，“相信我，我知道自己在干什么”。 类型断言好比其它语言里的类型转换，但是不进行特殊的数据检查和解构。 它没有运行时的影响，只是在编译阶段起作用。 TypeScript会假设你，程序员，已经进行了必须的检查。
 
@@ -111,7 +95,7 @@ let strLength: number = (someValue as string).length;
 
 两种形式是等价的。 至于使用哪个大多数情况下是凭个人喜好；然而，当你在TypeScript里使用`JSX`时，只有 `as`语法断言是被允许的。
 
-### 3. 接口
+### 2. 接口
 
 使用接口来描述一个拥有`firstName`和`lastName`字段的对象。 在TypeScript中，只要两个类型内部的结构兼容那么那么可以认为他们是兼容的。 这就允许我们在实现接口时候只要保证包含了接口要求的结构就可以，而不必明确地使用 implements语句。
 
@@ -130,7 +114,7 @@ var user = { firstName: "Jane", lastName: "User" };
 document.body.innerHTML = greeter(user);
 ```
 
-#### 3.1 可选属性
+#### 2.1 可选属性
 
 接口里的属性不一定全都是必需的。 有些是只在某些条件下存在，或者根本不存在。即给函数传入的参数对象中只有部分属性赋值了。
 
@@ -151,7 +135,7 @@ function createSquare(config: SquareConfig): { color: string; area: number } {
 let mySquare = createSquare({ color: "red", width: 100 });
 ```
 
-#### 3.2 只读属性
+#### 2.2 只读属性
 
 一些对象属性只能在对象刚刚创建的时候修改其值。 你可以在属性名前用`readonly`来指定只读属性:
 
@@ -180,7 +164,7 @@ a = ro; // error!
 a = ro as number[];
 ```
 
-#### 3.3额外的属性检查
+#### 2.3 额外的属性检查
 
 ```typescript
 interface SquareConfig {
@@ -222,7 +206,7 @@ let squareOptions = { colour: "red", width: 100 };
 let mySquare = createSquare(squareOptions);
 ```
 
-#### 3.4 函数类型
+#### 2.4 函数类型
 
 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
 
@@ -248,7 +232,7 @@ mySearch = function(src, sub) {
 }
 ```
 
-#### 3.5 可索引的类型
+#### 2.5 可索引的类型
 
 与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。 
 
@@ -263,7 +247,7 @@ myArray = ["Bob", "Fred"];
 let myStr: string = myArray[0];
 ```
 
-#### 3.6 类类型
+#### 2.6 类类型
 
 使用 `implements` 关键字，可以在接口中描述一个方法，在类里实现它:
 
@@ -282,7 +266,7 @@ class Clock implements ClockInterface {
 }
 ```
 
-#### 3.7 混合类型
+#### 2.7 混合类型
 
 ```typescript
 interface Counter {
@@ -304,7 +288,7 @@ c.reset();
 c.interval = 5.0;
 ```
 
-#### 3.8 继承接口
+#### 2.8 继承接口
 
 和类一样，接口也可以相互继承。
 
