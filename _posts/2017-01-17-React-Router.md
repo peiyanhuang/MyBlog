@@ -30,27 +30,27 @@ import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const BasicExample = () => (
-	<Router>
-		<div>
-			<ul>
-				<li>
-					<Link to="/">Home</Link>
-				</li>
-				<li>
-					<Link to="/about">About</Link>
-				</li>
-				<li>
-					<Link to="/topics">Topics</Link>
-				</li>
-			</ul>
+  <Router>
+    <div>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+        <li>
+          <Link to="/topics">Topics</Link>
+        </li>
+      </ul>
 
-			<hr />
+      <hr />
 
-			<Route exact path="/" component={Home} />
-			<Route path="/about" component={About} />
-			<Route path="/topics" component={Topics} />
-		</div>
-	</Router>
+      <Route exact path="/" component={Home} />
+      <Route path="/about" component={About} />
+      <Route path="/topics" component={Topics} />
+    </div>
+  </Router>
 );
 ```
 
@@ -74,20 +74,20 @@ const BasicExample = () => (
 
 ```jsx
 <Router>
-	<div>
-		<Route exact path="/" component={Home}/>
-		<Route path="/news" component={NewsFeed}/>
-	</div>
+  <div>
+    <Route exact path="/" component={Home}/>
+    <Route path="/news" component={NewsFeed}/>
+  </div>
 </Router>
 
 // 如果应用的地址是/,那么相应的UI会类似这个样子：
 <div>
-	<Home/>
+  <Home/>
 </div>
 
 // 如果应用的地址是/news,那么相应的UI就会成为这个样子：
 <div>
-	<NewsFeed/>
+  <NewsFeed/>
 </div>
 ```
 
@@ -111,11 +111,11 @@ const BasicExample = () => (
 
 // 包装/合成
 const FadingRoute = ({ component: Component, ...rest }) => (
-	<Route {...rest} render={props => (
-		<FadeIn>
-			<Component {...props}/>
-		</FadeIn>
-	)}/>
+  <Route {...rest} render={props => (
+    <FadeIn>
+      <Component {...props}/>
+    </FadeIn>
+  )}/>
 )
 
 <FadingRoute path="/cool" component={Something}/>
@@ -162,10 +162,10 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 import { Switch, Route } from 'react-router'
 
 <Switch>
-	<Route exact path="/" component={Home}/>
-	<Route path="/about" component={About}/>
-	<Route path="/:user" component={User}/>
-	<Route component={NoMatch}/>
+  <Route exact path="/" component={Home}/>
+  <Route path="/about" component={About}/>
+  <Route path="/:user" component={User}/>
+  <Route component={NoMatch}/>
 </Switch>
 ```
 
@@ -175,7 +175,7 @@ import { Switch, Route } from 'react-router'
 
 React Router 安装命令如下。
 
-	$ npm install --save react-router
+  $ npm install --save react-router
 
 使用时，路由器 Router 就是 React 的一个组件。
 
@@ -185,9 +185,9 @@ Router组件本身只是一个容器，真正的路由要通过Route组件定义
 import { Router, Route, hashHistory } from 'react-router';
 
 render((
-	<Router history={hashHistory}>
-		<Route path="/" component={App}/>
-	</Router>
+  <Router history={hashHistory}>
+    <Route path="/" component={App}/>
+  </Router>
 ), document.getElementById('app'));
 ```
 
@@ -198,9 +198,9 @@ Route组件定义了URL路径与组件的对应关系。你可以同时使用多
 
 ```jsx
 <Router history={hashHistory}>
-	<Route path="/" component={App}/>
-	<Route path="/repos" component={Repos}/>
-	<Route path="/about" component={About}/>
+  <Route path="/" component={App}/>
+  <Route path="/repos" component={Repos}/>
+  <Route path="/about" component={About}/>
 </Router>
 ```
 
@@ -214,27 +214,35 @@ Route 组件的 `path` 属性指定路由的匹配规则。这个属性是可以
 
 请看下面的例子。
 
-	<Route path="inbox" component={Inbox}>
-		 <Route path="messages/:id" component={Message} />
-	</Route>
+```jsx
+<Route path="inbox" component={Inbox}>
+    <Route path="messages/:id" component={Message} />
+</Route>
+```
 
 上面代码中，当用户访问/inbox/messages/:id时，会加载下面的组件。
 
-	<Inbox>
-		<Message/>
-	</Inbox>
+```jsx
+<Inbox>
+  <Message/>
+</Inbox>
+```
 
 如果省略外层Route的path参数，写成下面的样子。
 
-	<Route component={Inbox}>
-		<Route path="inbox/messages/:id" component={Message} />
-	</Route>
+```jsx
+<Route component={Inbox}>
+  <Route path="inbox/messages/:id" component={Message} />
+</Route>
+```
 
 现在用户访问/inbox/messages/:id时，组件加载还是原来的样子。
 
-	<Inbox>
-		<Message/>
-	</Inbox>
+```
+<Inbox>
+  <Message/>
+</Inbox>
+```
 
 #### path 的通配符
 
@@ -268,17 +276,17 @@ import React from 'react'
 import { Link } from 'react-router'
 
 export default React.createClass({
-	render() {
-	return (
-		<div>
-		<h1>React Router Tutorial</h1>
-		<ul role="nav">
-			<li><Link to="/about">About</Link></li>
-			<li><Link to="/repos">Repos</Link></li>
-		</ul>
-		</div>
-	)
-	}
+  render() {
+  return (
+    <div>
+    <h1>React Router Tutorial</h1>
+    <ul role="nav">
+      <li><Link to="/about">About</Link></li>
+      <li><Link to="/repos">Repos</Link></li>
+    </ul>
+    </div>
+  )
+  }
 })
 ```
 
@@ -286,21 +294,27 @@ export default React.createClass({
 
 如果希望当前的路由与其他路由有不同样式，这时可以使用Link组件的`activeStyle`属性。
 
-	<Link to="/about" activeStyle={{color: 'red'}}>About</Link>
-	<Link to="/repos" activeStyle={{color: 'red'}}>Repos</Link>
+```jsx
+<Link to="/about" activeStyle={{color: 'red'}}>About</Link>
+<Link to="/repos" activeStyle={{color: 'red'}}>Repos</Link>
+```
 
 上面代码中，当前页面的链接会红色显示。
 另一种做法是，使用`activeClassName`指定当前路由的`Class`。
 
-	<Link to="/about" activeClassName="active">About</Link>
-	<Link to="/repos" activeClassName="active">Repos</Link>
+```jsx
+<Link to="/about" activeClassName="active">About</Link>
+<Link to="/repos" activeClassName="active">Repos</Link>
+```
 
 上面代码中，当前页面的链接的class会包含active类。
 
 在Router组件之外，导航到路由页面，可以使用浏览器的`History API`，像下面这样写。
 
-	import { browserHistory } from 'react-router';
-	browserHistory.push('/some/path');
+```jsx
+import { browserHistory } from 'react-router';
+browserHistory.push('/some/path');
+```
 
 如果你不希望在每一处的`Link`都写下`activeClassName`和`activeStyle`，就可以像下面这样，
 
@@ -310,9 +324,9 @@ import React from 'react'
 import { Link } from 'react-router'
 
 export default React.createClass({
-	render() {
-		return <Link {...this.props} activeClassName="active"/>
-	}
+  render() {
+    return <Link {...this.props} activeClassName="active"/>
+  }
 })
 
 // modules/App.js
@@ -330,29 +344,31 @@ Route 组件还可以嵌套。
 
 ```jsx
 <Router history={hashHistory}>
-	<Route path="/" component={App}/>
-	<Route path="/repos" component={Repos}/>
-	<Route path="/about" component={About}/>
+  <Route path="/" component={App}/>
+  <Route path="/repos" component={Repos}/>
+  <Route path="/about" component={About}/>
 </Router>
 ```
 
 上面代码中，用户访问`/repos`时，会先加载 App 组件，然后在它的内部再加载 Repos 组件。
 
-	<App>
-		<Repos/>
-	</App>
+```
+<App>
+  <Repos/>
+</App>
+```
 
-App组件要写成下面的样子。
+App 组件要写成下面的样子。
 
 ```jsx
 export default React.createClass({
-	render() {
-		return (
-			<div>
-				{this.props.children}
-			</div>
-		)
-	}
+  render() {
+    return (
+      <div>
+        {this.props.children}
+      </div>
+    )
+  }
 })
 ```
 
@@ -360,33 +376,39 @@ export default React.createClass({
 
 子路由也可以不写在 Router 组件里面，单独传入`Router`组件的`routes`属性。
 
-	var routes = <Route path="/" component={App}>
-		<Route path="/repos" component={Repos}/>
-		<Route path="/about" component={About}/>
-	</Route>;
+```jsx
+var routes = <Route path="/" component={App}>
+  <Route path="/repos" component={Repos}/>
+  <Route path="/about" component={About}/>
+</Route>;
 
-	<Router routes={routes} history={browserHistory}/>
+<Router routes={routes} history={browserHistory}/>
+```
 
 ### IndexRoute 
 
-	<Router>
-		<Route path="/" component={App}>
-			<Route path="accounts" component={Accounts}/>
-			<Route path="statements" component={Statements}/>
-		</Route>
-	</Router>
+```
+<Router>
+  <Route path="/" component={App}>
+    <Route path="accounts" component={Accounts}/>
+    <Route path="statements" component={Statements}/>
+  </Route>
+</Router>
+```
 
 上面代码中，访问根路径/，不会加载任何子组件。也就是说，App组件的`this.props.children`，这时是 `undefined`。
 
-	// modules/App.js
-	import Home from './Home'
+```jsx
+// modules/App.js
+import Home from './Home'
 
-	// ...
-	<div>
-		{/* ... */}
-		{this.props.children || <Home/>}
-	</div>
-	//...
+// ...
+<div>
+  {/* ... */}
+  {this.props.children || <Home/>}
+</div>
+//...
+```
 
 因此，通常会采用`{this.props.children || <Home/>}`这样的写法。这时，Home 明明是 Accounts 和 Statements 的同级组件，却没有写在 Route 中。
 
@@ -401,26 +423,28 @@ import Home from './modules/Home'
 // ...
 
 render((
-	<Router history={hashHistory}>
-		<Route path="/" component={App}>
+  <Router history={hashHistory}>
+    <Route path="/" component={App}>
 
-			{/* add it here, as a child of `/` */}
-			<IndexRoute component={Home}/>
+      {/* add it here, as a child of `/` */}
+      <IndexRoute component={Home}/>
 
-			<Route path="/repos" component={Repos}>
-				<Route path="/repos/:userName/:repoName" component={Repo}/>
-			</Route>
-			<Route path="/about" component={About}/>
-		</Route>
-	</Router>
+      <Route path="/repos" component={Repos}>
+        <Route path="/repos/:userName/:repoName" component={Repo}/>
+      </Route>
+      <Route path="/about" component={About}/>
+    </Route>
+  </Router>
 ), document.getElementById('app'))
 ```
 
 现在，用户访问/的时候，加载的组件结构如下。
 
-	<App>
-		<Home/>
-	</App>
+```
+<App>
+  <Home/>
+</App>
+```
 
 这种组件结构就很清晰了：App 只包含下级组件的共有元素，本身的展示内容则由 Home 组件定义。这样有利于代码分离，也有利于使用 React Router 提供的各种 API。
 
@@ -431,15 +455,19 @@ render((
 如果链接到根路由 `/`，不要使用 Link 组件，而要使用 IndexLink 组件。
 这是因为对于根路由来说，`activeStyle` 和 `activeClassName` 会失效，或者说总是生效，因为 `/` 会匹配任何子路由。而 IndexLink 组件会使用路径的精确匹配。
 
-	<IndexLink to="/" activeClassName="active">
-		Home
-	</IndexLink>
+```jsx
+<IndexLink to="/" activeClassName="active">
+  Home
+</IndexLink>
+```
 
 上面代码中，根路由只会在精确匹配时，才具有 `activeClassName`。另一种方法是使用 Link 组件的`onlyActiveOnIndex` 属性，也能达到同样效果。
 
-	<Link to="/" activeClassName="active" onlyActiveOnIndex={true}>
-		Home
-	</Link>
+```jsx
+<Link to="/" activeClassName="active" onlyActiveOnIndex={true}>
+  Home
+</Link>
+```
 
 实际上，IndexLink 就是对 Link 组件的 `onlyActiveOnIndex` 属性的包装。
 
@@ -447,36 +475,40 @@ render((
 
 Router 组件的 `history` 属性，用来监听浏览器地址栏的变化，并将 URL 解析成一个地址对象，供 React Router 匹配。`history` 属性，一共可以设置三种值。
 
-	browserHistory
-	hashHistory
-	createMemoryHistory
+  browserHistory
+  hashHistory
+  createMemoryHistory
 
 如果设为`hashHistory`，路由将通过 URL 的 `hash` 部分（#）切换，URL 的形式类似 example.com/#/some/path。
 
-	import { hashHistory } from 'react-router'
+```jsx
+import { hashHistory } from 'react-router'
 
-	render(
-		<Router history={hashHistory} routes={routes} />,
-		document.getElementById('app')
-	)
+render(
+  <Router history={hashHistory} routes={routes} />,
+  document.getElementById('app')
+)
+```
 
 如果设为`browserHistory`，浏览器的路由就不再通过 `Hash` 完成了，而显示正常的路径 example.com/some/path，背后调用的是浏览器的 History API。
 
-	import { browserHistory } from 'react-router'
+```jsx
+import { browserHistory } from 'react-router'
 
-	render(
-		<Router history={browserHistory} routes={routes} />,
-		document.getElementById('app')
-	)
+render(
+  <Router history={browserHistory} routes={routes} />,
+  document.getElementById('app')
+)
+```
 
 但是，这种情况需要对服务器改造。否则用户直接向服务器请求某个子路由，会显示网页找不到的404错误。
 如果开发服务器使用的是 webpack-dev-server，加上`--history-api-fallback`参数就可以了。
 
-	"start": "webpack-dev-server --inline --content-base . --history-api-fallback"
+  "start": "webpack-dev-server --inline --content-base . --history-api-fallback"
 
 `createMemoryHistory`主要用于服务器渲染。它创建一个内存中的 `history` 对象，不与浏览器 URL 互动。
 
-	const history = createMemoryHistory(location)
+  const history = createMemoryHistory(location)
 
 ### Redirect 组件
 
@@ -484,8 +516,8 @@ Router 组件的 `history` 属性，用来监听浏览器地址栏的变化，�
 
 ```jsx
 <Route path="inbox" component={Inbox}>
-	{/* 从 /inbox/messages/:id 跳转到 /messages/:id */}
-	＜Redirect from="messages/:id" to="/messages/:id" />
+  {/* 从 /inbox/messages/:id 跳转到 /messages/:id */}
+  ＜Redirect from="messages/:id" to="/messages/:id" />
 </Route>
 ```
 
@@ -497,9 +529,9 @@ Router 组件的 `history` 属性，用来监听浏览器地址栏的变化，�
 
 ```jsx
 <Route path="/" component={App}>
-		<IndexRedirect to="/welcome" />
-		<Route path="welcome" component={Welcome} />
-		<Route path="about" component={About} />
+    <IndexRedirect to="/welcome" />
+    <Route path="welcome" component={Welcome} />
+    <Route path="about" component={About} />
 </Route>
 ```
 
@@ -512,9 +544,9 @@ Router 组件的 `history` 属性，用来监听浏览器地址栏的变化，�
 
 ```jsx
 <form onSubmit={this.handleSubmit}>
-		<input type="text" placeholder="userName"/>
-		<input type="text" placeholder="repo"/>
-		<button type="submit">Go</button>
+    <input type="text" placeholder="userName"/>
+    <input type="text" placeholder="repo"/>
+    <button type="submit">Go</button>
 </form>
 ```
 
@@ -525,11 +557,11 @@ import { browserHistory } from 'react-router'
 
 // ...
 handleSubmit(event) {
-	event.preventDefault()
-	const userName = event.target.elements[0].value
-	const repo = event.target.elements[1].value
-	const path = `/repos/${userName}/${repo}`
-	browserHistory.push(path)
+  event.preventDefault()
+  const userName = event.target.elements[0].value
+  const repo = event.target.elements[1].value
+  const path = `/repos/${userName}/${repo}`
+  browserHistory.push(path)
 },
 ```
 
@@ -538,15 +570,15 @@ handleSubmit(event) {
 ```jsx
 export default React.createClass({
 
-	// ask for `router` from context
-	contextTypes: {
-	router: React.PropTypes.object
-	},
+  // ask for `router` from context
+  contextTypes: {
+  router: React.PropTypes.object
+  },
 
-	handleSubmit(event) {
-	// ...
-	this.context.router.push(path)
-	},
+  handleSubmit(event) {
+  // ...
+  this.context.router.push(path)
+  },
 })
 ```
 
@@ -556,24 +588,28 @@ export default React.createClass({
 
 ```jsx
 <Route path="about" component={About} />
-	<Route path="inbox" component={Inbox}>
-	<Redirect from="messages/:id" to="/messages/:id" />
+  <Route path="inbox" component={Inbox}>
+  <Redirect from="messages/:id" to="/messages/:id" />
 </Route>
 ```
 
 上面的代码中，如果用户离开 `/messages/:id`，进入 `/about` 时，会依次触发以下的钩子。
 
-	/messages/:id 的 onLeave
-	/inbox 的 onLeave
-	/about 的 onEnter
+```
+/messages/:id 的 onLeave
+/inbox 的 onLeave
+/about 的 onEnter
+```
 
 下面是一个例子，使用 `onEnter` 钩子替代 <Redirect> 组件。
 
-	<Route path="inbox" component={Inbox}>
-		<Route
-			path="messages/:id"
-			onEnter={
-				({params}, replace) => replace(`/messages/${params.id}`)
-			} 
-		/>
-	</Route>
+```jsx
+<Route path="inbox" component={Inbox}>
+  <Route
+    path="messages/:id"
+    onEnter={
+      ({params}, replace) => replace(`/messages/${params.id}`)
+    }
+  />
+</Route>
+```
