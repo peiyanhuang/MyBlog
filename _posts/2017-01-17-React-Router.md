@@ -131,15 +131,15 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 
 -`replace`（bool）：为 `true` 时，点击链接后将使用新地址替换掉访问历史记录里面的原地址；为 `false` 时，点击链接后将在原有访问历史记录的基础上添加一个新的纪录。默认为 `false`；
 
-```
+```jsx
 <Link to='/courses?sort=name' replace/>
 
-<Link to={{
+<Link to={\n{
   pathname: '/courses',
   search: '?sort=name',
   hash: '#the-hash',
   state: { fromDashboard: true }
-}}/>
+}\n}/>
 ```
 
 #### `<NavLink>`
