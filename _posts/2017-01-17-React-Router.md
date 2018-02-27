@@ -54,9 +54,9 @@ const BasicExample = () => (
 );
 ```
 
-#### [`<Router>`](https://reacttraining.com/react-router/web/api/Router)
+#### `<Router>`
 
-在4.0之前版本的 API 中，`<Router>` 组件的 `children` 只能是 `React Router` 提供的各种组件，如 `<Route>、<IndexRoute>、<Redirect>` 等。而在 React Router 4 中，你可以将各种组件及标签放进 `<Router>` 组件中，他的角色也更像是 `Redux` 中的 `<Provider>`。不同的是 `<Provider>` 是用来保持与 `store` 的更新，而 `<Router>` 是用来保持与 `location` 的同步。
+在4.0之前版本的 API 中，[`<Router>`](https://reacttraining.com/react-router/web/api/Router) 组件的 `children` 只能是 `React Router` 提供的各种组件，如 `<Route>、<IndexRoute>、<Redirect>` 等。而在 React Router 4 中，你可以将各种组件及标签放进 `<Router>` 组件中，他的角色也更像是 `Redux` 中的 `<Provider>`。不同的是 `<Provider>` 是用来保持与 `store` 的更新，而 `<Router>` 是用来保持与 `location` 的同步。
 
 `<Router>` 是所有路由组件共用的底层接口，一般我们的应用并不会使用这个接口，而是使用高级的路由：
 
@@ -68,9 +68,9 @@ const BasicExample = () => (
 
 注意，和之前的 `Router` 不一样，这里 `<Router>` 组件下只允许存在一个子元素，如存在多个则会报错。
 
-#### [`<Route>`](https://reacttraining.com/react-router/web/api/Route)
+#### `<Route>`
 
-我们知道，`Route` 组件主要的作用就是当一个 `location` 匹配路由的 `path` 时，渲染某些UI。示例如下：`
+我们知道，[`<Route>`](https://reacttraining.com/react-router/web/api/Route) 组件主要的作用就是当一个 `location` 匹配路由的 `path` 时，渲染某些UI。示例如下：`
 
 ```jsx
 <Router>
@@ -123,11 +123,12 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 
 注意：`<Route component>` 的优先级要比 `<Route render>` 高，所以不要在同一个 `<Route>` 中同时使用这两个属性。
 
-#### [`<Link>`](https://reacttraining.com/react-router/web/api/Link)
+#### `<Link>`
 
-和之前版本没太大区别，重点看下组件属性：
+[`<Link>`](https://reacttraining.com/react-router/web/api/Link)和之前版本没太大区别，重点看下组件属性：
 
 -`to`（string/object）：要跳转的路径或地址；
+
 -`replace`（bool）：为 `true` 时，点击链接后将使用新地址替换掉访问历史记录里面的原地址；为 `false` 时，点击链接后将在原有访问历史记录的基础上添加一个新的纪录。默认为 `false`；
 
 ```jsx
@@ -141,9 +142,9 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 }}/>
 ```
 
-#### [`<NavLink>`](https://reacttraining.com/react-router/web/api/NavLink)
+#### `<NavLink>`
 
-`<NavLink>` 是 `<Link>` 的一个特定版本, 会在匹配上当前 URL 的时候会给已经渲染的元素添加样式参数，组件属性：
+[`<NavLink>`](https://reacttraining.com/react-router/web/api/NavLink) 是 `<Link>` 的一个特定版本, 会在匹配上当前 URL 的时候会给已经渲染的元素添加样式参数，组件属性：
 
 -`activeClassName`（string）：设置选中样式，默认值为 active；
 -`activeStyle`（object）：当元素被选中时, 为此元素添加样式；
@@ -151,9 +152,9 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 -`strict`（bool）：为 true 时，在确定位置是否与当前 URL 匹配时，将考虑位置 pathname 后的斜线；
 -`isActive`（func）：判断链接是否激活的额外逻辑的功能；
 
-#### [`<Switch>`](https://reacttraining.com/react-router/web/api/Switch)
+#### `<Switch>`
 
-该组件用来渲染匹配地址的第一个 `<Route>` 或者 `<Redirect>`。那么它与使用一堆 `route` 又有什么区别呢？
+[`<Switch>`](https://reacttraining.com/react-router/web/api/Switch) 组件用来渲染匹配地址的第一个 `<Route>` 或者 `<Redirect>`。那么它与使用一堆 `route` 又有什么区别呢？
 
 `<Switch>` 的独特之处是独它仅仅渲染一个路由。相反地，每一个匹配地址(location)的 `<Route>` 都会被渲染。
 
@@ -190,7 +191,7 @@ render((
 ), document.getElementById('app'));
 ```
 
-上面代码中，用户访问根路由/（比如http://www.example.com/），组件APP就会加载到document.getElementById('app')。
+上面代码中，用户访问根路由 `/`（比如http://www.example.com/），组件APP就会加载到 `document.getElementById('app')`。
 你可能还注意到，Router组件有一个参数`history`，它的值`hashHistory`表示，路由的切换由URL的hash变化决定，即URL的#部分发生变化。举例来说，用户访问 http://www.example.com/ ，实际会看到的是 http://www.example.com/#/。
 
 Route组件定义了URL路径与组件的对应关系。你可以同时使用多个Route组件。
