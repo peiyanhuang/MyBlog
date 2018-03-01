@@ -504,11 +504,15 @@ render(
 但是，这种情况需要对服务器改造。否则用户直接向服务器请求某个子路由，会显示网页找不到的404错误。
 如果开发服务器使用的是 webpack-dev-server，加上`--history-api-fallback`参数就可以了。
 
-  "start": "webpack-dev-server --inline --content-base . --history-api-fallback"
+```
+"start": "webpack-dev-server --inline --content-base . --history-api-fallback"
+```
 
 `createMemoryHistory`主要用于服务器渲染。它创建一个内存中的 `history` 对象，不与浏览器 URL 互动。
 
-  const history = createMemoryHistory(location)
+```
+const history = createMemoryHistory(location)
+```
 
 ### Redirect 组件
 
