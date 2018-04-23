@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  javascript中的深拷贝和浅拷贝
-date:   2017-11-23 13:08:00 +0800
+date:   2018-04-23 13:08:00 +0800
 categories: JS
 tag: JS
 ---
@@ -34,13 +34,13 @@ console.log(obj.x); // 输出 3
 
 ```
 function shallowCopy(src) {
-  	var dst = {};
-  	for (var prop in src) {
-    	if (src.hasOwnProperty(prop)) {
-      		dst[prop] = src[prop];
-    	}
-  	}
-  	return dst;
+    var dst = {};
+    for (var prop in src) {
+        if (src.hasOwnProperty(prop)) {
+            dst[prop] = src[prop];
+        }
+    }
+    return dst;
 }
 
 var obj = { a:1, arr: [2,3] };
@@ -117,5 +117,39 @@ let _clone = function(obj){
 };
 ```
 
-简单的 `JSON.parse(JSON.stringify(obj))`, 但只能支持JSON格式的。
+简单的 `JSON.parse(JSON.stringify(obj))`, 但只能支持JSON格式的。这是一种可以实现深拷贝的方法.
+但这种方法的缺陷是会破坏原型链,并且无法拷贝属性值为function的属性。
 
+### 3.Object.assign()
+
+ES6为我们提供了一种十分好用的方法：`Object.assign(target, ...source)`。
+
+`assign`方法接受多个参数，第一个参数`target`为拷贝目标，剩余参数`...source`是拷贝源。此方法可以将`...source`中的属性复制到`target`中，同名属性会进行覆盖，并且在复制过程中实现了'伪'深拷贝。
+
+```javascript
+let foo = {
+    a: 1,
+    b: 2,
+    c: {
+        d: 1,
+    }
+}
+let bar = {};
+Object.assign(bar, foo);
+foo.a++;
+foo.a === 2 //true
+bar.a === 1 //true
+```
+
+乍一看，好像已经实现了深拷贝的效果，对 foo.a 进行的操作并没有体现在 bar.a 中,但是再往后看
+
+```
+foo.c.d++;
+foo.c.d === 2 //true
+bar.c.d === 1 //false
+bar.c.d === 2 //true
+Object.assign()
+```
+
+这是一种可以对非嵌套对象进行深拷贝的方法,如果对象中出现嵌套情况,那么其对被嵌套对象的行为就成了普通的浅拷贝.
+如果真的想进行深拷贝,最简单粗暴地方式就是 JSON 操作。
