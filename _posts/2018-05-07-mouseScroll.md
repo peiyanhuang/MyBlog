@@ -46,4 +46,4 @@ function scrollMouse(event) {
 
 ### 2.全局滚动
 
-[demo]()看这
+[demo](https://github.com/peiyanhuang/learn/tree/master/demo/fullPage)看这
