@@ -154,7 +154,7 @@ export function createElement(type, config, children) {
 
 看了下源码，再打印下 element 看下返回的 ReactElement 实例对象具体是什么：
 
-![ReactElement 实例对象](../images/react/ReactElement.png)
+![ReactElement 实例对象]({{ '/images/react/ReactElement.png' | prepend: site.baseurl }})
 
 接下来看下 [React.Component](https://github.com/facebook/react/blob/master/packages/react/src/ReactBaseClasses.js#L17)
 
@@ -584,7 +584,7 @@ function workLoop(isAsync) {
 3. 构建的同时，生成 Fiber 信息，这些 Fiber 信息实际上就是为了之后在更新时，能够在任意的地方使得树遍历都可以用大循环来搞
 
 最后整理一张导图供参考：
-![流程图](../images/react/React.png)
+![流程图]({{ '/images/react/React.png' | prepend: site.baseurl }})
 
 ### 参考资料
 
