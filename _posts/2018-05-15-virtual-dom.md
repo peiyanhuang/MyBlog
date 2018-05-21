@@ -39,9 +39,7 @@ Virtual DOM 模型当然更加复杂，不止这些属性。
 
 ### 2. 创建 Virtual DOM
 
-Virtual DOM 中的节点称为 ReactNode，它分为 3 种类型 ReactElement、ReactFragment、ReactText，其中 ReactElement 又分为 ReactCompomentElement 和 ReactDOMElement。
-
-React 通过 [createElement](https://github.com/facebook/react/blob/master/packages/react/src/ReactElement.js#L171) 方法创建虚拟元素：
+Virtual DOM 中的节点称为 ReactElement。React 通过 [createElement](https://github.com/facebook/react/blob/master/packages/react/src/ReactElement.js#L171) 方法创建虚拟元素：
 
 Babel 将 JSX 编译成 `React.createElement()` 调用。下面的两个例子是是完全相同的：
 
@@ -59,7 +57,7 @@ const element = React.createElement(
 );
 ```
 
-`createElement` 会返回一个 `ReactElement` 实例对象
+`createElement` 会返回一个 [ReactElement](https://github.com/facebook/react/blob/master/packages/react/src/ReactElement.js#L111) 实例对象
 
 ```js
 export function createElement(type, config, children) {
@@ -235,3 +233,362 @@ var A = _wrapComponent("A")(
 ```
 
 我们发现 render 方法实际上是调用了 `React.createElement` 方法。这前面已经介绍过了。
+
+### 4. 组件的挂载
+
+我们知道可以通过 `ReactDOM.render(component,mountNode)` 的形式对组件挂载，那么挂载的过程又是如何实现的呢？
+
+[ReactDom](https://github.com/facebook/react/blob/master/packages/react-dom/src/client/ReactDOM.js#L581)在此处定义。
+
+```js
+const ReactDOM: Object = {
+    // ...
+    hydrate(element: React$Node, container: DOMContainer, callback: ? Function) {
+        return legacyRenderSubtreeIntoContainer(
+            null,
+            element,
+            container,
+            true,
+            callback
+        );
+    },
+
+    render(
+        element: React$Element < any > ,
+        container: DOMContainer,
+        callback: ? Function
+    ) {
+        return legacyRenderSubtreeIntoContainer(
+            null,
+            element,
+            container,
+            false,
+            callback
+        );
+    },
+
+    unstable_renderSubtreeIntoContainer(
+        parentComponent: React$Component < any, any > ,
+        element: React$Element < any > ,
+        containerNode: DOMContainer,
+        callback: ? Function
+    ) {
+        invariant(
+            parentComponent != null && ReactInstanceMap.has(parentComponent),
+            "parentComponent must be a valid React Component"
+        );
+        return legacyRenderSubtreeIntoContainer(
+            parentComponent,
+            element,
+            containerNode,
+            false,
+            callback
+        );
+    },
+    // ...
+}
+```
+
+我们可以看到，`render` 方法其实调用的是 `legacyRenderSubtreeIntoContainer` 方法。
+
+```js
+function legacyRenderSubtreeIntoContainer(
+    parentComponent: ? React$Component < any, any >, // 当前组件的父组件，第一次渲染时为null
+    children : ReactNodeList, // 要插入DOM中的组件
+    container: DOMContainer, // 要插入的容器节点
+    forceHydrate: boolean,
+    callback: ? Function  // 完成后的回调函数
+) {
+    invariant(
+        isValidContainer(container),
+        "Target container is not a DOM element."
+    );
+
+    if (__DEV__) {
+        topLevelUpdateWarnings(container);
+    }
+
+    let root: Root = (container._reactRootContainer: any);
+    if (!root) {
+        // 如果 root 不存在，则通过 legacyCreateRootFromDOMContainer 初始化一个 ReactRoot 实例
+        // 其是一个 Root.fiber，是一个特殊的 fiber 对象
+        root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
+            container,
+            forceHydrate
+        );
+        if (typeof callback === "function") {
+            const originalCallback = callback;
+            callback = function () {
+                const instance = DOMRenderer.getPublicRootInstance(root._internalRoot);
+                originalCallback.call(instance);
+            };
+        }
+        // Initial mount should not be batched.
+        DOMRenderer.unbatchedUpdates(() => {
+            // Update ReactRoot
+            if (parentComponent != null) {
+                root.legacy_renderSubtreeIntoContainer(
+                    parentComponent,
+                    children,
+                    callback
+                );
+            } else {
+                root.render(children, callback);
+            }
+        });
+    } else {
+        if (typeof callback === "function") {
+            const originalCallback = callback;
+            callback = function () {
+                const instance = DOMRenderer.getPublicRootInstance(root._internalRoot);
+                originalCallback.call(instance);
+            };
+        }
+        // Update
+        if (parentComponent != null) {
+            root.legacy_renderSubtreeIntoContainer(
+                parentComponent,
+                children,
+                callback
+            );
+        } else {
+            root.render(children, callback);
+        }
+    }
+    return DOMRenderer.getPublicRootInstance(root._internalRoot);
+}
+```
+
+1. `legacyCreateRootFromDOMContainer` 方法：
+
+```js
+function legacyCreateRootFromDOMContainer(
+  container: DOMContainer,
+  forceHydrate: boolean,
+): Root {
+  // ...
+
+  // Legacy roots are not async by default.
+  const isAsync = false;
+  return new ReactRoot(container, isAsync, shouldHydrate);
+}
+```
+
+2. `legacy_renderSubtreeIntoContainer` 方法：
+
+```ts
+ReactRoot.prototype.legacy_renderSubtreeIntoContainer = function(
+  parentComponent: ?React$Component<any, any>,
+  children: ReactNodeList,
+  callback: ?() => mixed,
+): Work {
+  const root = this._internalRoot;
+  const work = new ReactWork();
+  callback = callback === undefined ? null : callback;
+  if (__DEV__) {
+    warnOnInvalidCallback(callback, 'render');
+  }
+  if (callback !== null) {
+    work.then(callback);
+  }
+  DOMRenderer.updateContainer(children, root, parentComponent, work._onCommit);
+  return work;
+};
+```
+
+这里的 Async 模式是写死的，不能进行，如果想试试，直接手动修改为 True。
+
+3. `ReactRoot.render` 方法:
+
+```ts
+ReactRoot.prototype.render = function(
+  children: ReactNodeList,
+  callback: ?() => mixed,
+): Work {
+  const root = this._internalRoot;
+  const work = new ReactWork();
+  callback = callback === undefined ? null : callback;
+  if (__DEV__) {
+    warnOnInvalidCallback(callback, 'render');
+  }
+  if (callback !== null) {
+    work.then(callback);
+  }
+  DOMRenderer.updateContainer(children, root, null, work._onCommit);
+  return work;
+};
+```
+
+4. `getPublicRootInstance`
+
+```js
+getPublicRootInstance(
+    container: OpaqueRoot,
+): React$Component<any, any> | PI | null {
+    const containerFiber = container.current;
+    if (!containerFiber.child) {
+    return null;
+    }
+    switch (containerFiber.child.tag) {
+    case HostComponent:
+        return getPublicInstance(containerFiber.child.stateNode);
+    default:
+        return containerFiber.child.stateNode;
+    }
+},
+```
+
+- [DOMRenderer](https://github.com/facebook/react/blob/master/packages/react-dom/src/client/ReactDOM.js#L450)
+- [ReactRoot](https://github.com/facebook/react/blob/master/packages/react-dom/src/client/ReactDOM.js#L332)
+- [ReactWork](https://github.com/facebook/react/blob/master/packages/react-dom/src/client/ReactDOM.js#L279)
+- [updateContainer](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberReconciler.js#L429)
+
+### 5. 渲染更新
+
+我们知道浏览器渲染引擎是单线程的，在 React 15.x 版本及之前版本，计算组件树变更时将会阻塞整个线程，整个渲染过程是连续不中断完成的，而这时的其他任务都会被阻塞，如动画等，这可能会使用户感觉到明显卡顿。
+
+这个版本的调和器可以称为栈调和器（Stack Reconciler），其调和算法大致过程见[React Diff](http://blog.codingplayboy.com/2016/10/27/react_diff/) 算法和 [React Stack Reconciler](https://reactjs.org/docs/implementation-notes.html) 实现。
+
+React 16.x 版本提出了一个更先进的调和器，它允许渲染进程分段完成，而不必须一次性完成，中间可以返回至主进程控制执行其他任务。而这是通过计算部分组件树的变更，并暂停渲染更新，询问主进程是否有更高需求的绘制或者更新任务需要执行，这些高需求的任务完成后才开始渲染。这一切的实现是在代码层引入了一个新的数据结构- Fiber 对象，每一个组件实例对应有一个 fiber 实例，此 fiber 实例负责管理组件实例的更新，渲染任务及与其他 fiber 实例的联系。
+
+这个新推出的调和器就叫做纤维调和器（Fiber Reconciler），它提供的新功能主要有：
+
+1. 可切分，可中断任务；
+2. 可重用各分阶段任务，且可以设置优先级；
+3. 可以在父子组件任务间前进后退切换任务；
+4. render 方法可以返回多元素（即可以返回数组）；
+5. 支持异常边界处理异常；
+
+我们看下 [Fiber](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiber.js#L71) 定义了哪些东西：
+
+```js
+function FiberNode(
+  tag: TypeOfWork,  // 识别 fiber 类型的标志
+  pendingProps: mixed, // Input is the data coming into process this fiber. Arguments. Props.
+  key: null | string, // 唯一标识符
+  mode: TypeOfMode, // 其以及其 subtree 的模式属性
+) {
+  // Instance
+  this.tag = tag;
+  this.key = key;
+  this.type = null;
+  this.stateNode = null;
+
+  // Fiber
+  this.return = null;
+  this.child = null;
+  this.sibling = null;
+  this.index = 0;
+
+  this.ref = null;
+
+  this.pendingProps = pendingProps;
+  this.memoizedProps = null;
+  this.updateQueue = null;
+  this.memoizedState = null;
+
+  this.mode = mode;
+
+  // Effects
+  this.effectTag = NoEffect;
+  this.nextEffect = null;
+
+  this.firstEffect = null;
+  this.lastEffect = null;
+
+  this.expirationTime = NoWork;
+
+  this.alternate = null;
+
+  if (enableProfilerTimer) {
+    this.selfBaseTime = 0;
+    this.treeBaseTime = 0;
+  }
+
+  if (__DEV__) {
+    this._debugID = debugCounter++;
+    this._debugSource = null;
+    this._debugOwner = null;
+    this._debugIsCurrentlyTiming = false;
+    if (!hasBadMapPolyfill && typeof Object.preventExtensions === 'function') {
+      Object.preventExtensions(this);
+    }
+  }
+}
+
+const createFiber = function(
+  tag: TypeOfWork,
+  pendingProps: mixed,
+  key: null | string,
+  mode: TypeOfMode,
+): Fiber {
+  return new FiberNode(tag, pendingProps, key, mode);
+};
+```
+
+Fiber 可以异步实现不同优先级任务的协调执行，目前新版本主流浏览器已经提供了可用API：`requestIdleCallback` 和`requestAnimationFrame`:
+
+- [requestIdleCallback](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)
+- [requestAnimationFrame](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestAnimationFrame)
+
+继续看下去：
+
+- [scheduleWork](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1301)
+- [enqueueUpdate](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactUpdateQueue.js#L232)
+
+render 流程如下：
+
+- [ReactRoot](https://github.com/facebook/react/blob/master/packages/react-dom/src/client/ReactDOM.js#L335) 其实也就是制造一个 ReactRoot Fiber 节点，这是一个特殊的节点，目前研究还没搞明白为什么要这么做;
+- updateContainer/updateContainerAtExpirationTime
+- [scheduleRootUpdate](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberReconciler.js#L99) 这个函数就开始比较重要，当我们调用 render 和 setState 以后，我们都会让 React 进入 「更新」的流程，无论你是首次渲染;
+- enqueueUpdate：这个函数做了一件事情，setState 和 render 的时候，都会创建一个 update，这个方法就是把这个 update 放入队列中，这个队列是一个链表;
+- [scheduleWork]()https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1301 是执行虚拟DOM（fiber树）的更新;
+- [requestWork(root, nextExpirationTimeToWorkOn)](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1477) 请求任务。每当 root 接收到更新时，调度程序就会调用 requestWork。渲染器在将来的某个时刻调用renderRoot;
+- [performWorkOnRoot](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1731)
+- [renderRoot](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L980)
+- [workLoop](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L960) 异步与否在这里走分支;
+
+```js
+function workLoop(isAsync) {
+  if (!isAsync) {
+    // Flush all expired work.
+    while (nextUnitOfWork !== null) {
+      nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    }
+  } else {
+    // Flush asynchronous work until the deadline runs out of time.
+    while (nextUnitOfWork !== null && !shouldYield()) {
+      nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    }
+
+    if (enableProfilerTimer) {
+      // If we didn't finish, pause the "actual" render timer.
+      // We'll restart it when we resume work.
+      pauseActualRenderTimerIfRunning();
+    }
+  }
+}
+```
+
+- [performUnitOfWork](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L899) 这个函数会循环的返回树中的下一个节点，其中的逻辑比较复杂，其做的就是拿到当前的节点，初始化，构建 Fiber 信息（sibling return 等），然后返回节点的子元素出去，子元素作为 next 继续进来找子元素，层层递进，遍历，直到树走完为止;
+- [beginWork](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberBeginWork.js#L1130) 这个函数其实是一个 switch 函数，根据节点 Type 选择不同的策略进行 Mount/update 操作;
+
+里面的 [workInProgress.tag](https://github.com/facebook/react/blob/master/packages/shared/ReactTypeOfWork.js) 标识。
+
+- [reconcileChildren(current, workInProgress, nextChildren)](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberBeginWork.js#L113) 在这里就是处理 React child 的核心逻辑了
+- mountChildFibers/reconcileChildFibers
+- [reconcileChildFibers](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactChildFiber.js#L1199)
+
+1. 统一首次渲染和更新阶段：将首次渲染同样当成更新来处理，因为其实从没有节点，到有节点实际上就是一个更新过程。
+2. 构建流程从递归改为大循环，每一次循环只对本层的节点进行操作，将孩子返回给顶层，让顶层来做循环，在 Async 模式下可以中断等操作
+3. 构建的同时，生成 Fiber 信息，这些 Fiber 信息实际上就是为了之后在更新时，能够在任意的地方使得树遍历都可以用大循环来搞
+
+最后整理一张导图供参考：
+![流程图](../images/react/React.png)
+
+### 参考资料
+
+- [React Fiber Architecture](https://github.com/Foveluy/react-fiber-architecture)
+- [React Fiber初探](https://zhuanlan.zhihu.com/p/31634312)
+- [完全理解React Fiber](http://www.ayqy.net/blog/dive-into-react-fiber/)
+- [React 16 架构研究记录](https://zhuanlan.zhihu.com/p/36926155)
