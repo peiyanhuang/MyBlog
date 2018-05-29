@@ -24,7 +24,7 @@ tag: 前端工具
 ```
 //  用来配置应用层的模块解析，即要被打包的模块
 resolve: {
-    //  第一项扩展非常重要，千万不要忽略，否则经常出现模块无法加载错误  
+    //  第一项扩展非常重要，千万不要忽略，否则经常出现模块无法加载错误
     extensions: ['', '.js', '.es6', '.vue','.css']
 },
 ```
@@ -38,3 +38,26 @@ resolve: {
 ### 3.CSS
 
 webpack提供两个工具处理样式表，`css-loader` 和 `style-loader`，二者处理的任务不同，css-loader使你能够使用类似@import 和 url(...)的方法实现 require()的功能,style-loader将所有的计算后的样式加入页面中，二者组合在一起使你能够把样式表嵌入webpack打包后的JS文件中。
+
+### 4. 支持 browserHistory
+
+1. `webpack-dev-server`: 设置 `historyApiFallback: true`。
+
+2. `webpack-dev-middleware`: 如下设置
+
+```js
+// browserHistory
+app.use("*", (req, res, next) => {
+    const filename = path.resolve(compiler.outputPath, "index.html");
+    compiler.outputFileSystem.readFile(filename, (err, result) => {
+        if (err) {
+            return next(err);
+        }
+        res.set("content-type", "text/html");
+        res.send(result);
+        res.end();
+    });
+});
+```
+
+由于 `webpack-dev-middleware` 只是将文件打包在内存里，所以你没法在 `express` 里直接 `sendFile(dist/index.html')`，因为这个文件实际上还不存在。还好 `webpack` 提供了一个 `outputFileStream`，用来输出其内存里的文件，我们可以利用它来做路由。
