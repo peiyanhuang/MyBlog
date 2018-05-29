@@ -15,15 +15,15 @@ React Router V4 相较于前面三个版本有根本性变化，现于此更新�
 
 首先是遵循 `Just Component` 的 API 设计理念，其次 API 方面也精简了不少。其基于 Lerna 管理多个 Repository。在此代码库包括：
 
--`react-router`: React Router 核心
--`react-router-dom`: 用于 DOM 绑定的 React Router
--`react-router-native`: 用于 React Native 的 React Router
--`react-router-redux`: React Router 和 Redux 的集成
--`react-router-config`: 静态路由配置帮助助手
+- `react-router`: React Router 核心
+- `react-router-dom`: 用于 DOM 绑定的 React Router
+- `react-router-native`: 用于 React Native 的 React Router
+- `react-router-redux`: React Router 和 Redux 的集成
+- `react-router-config`: 静态路由配置帮助助手
 
 #### 1. 插件初引入
 
-注意，入门第一坑就在这里。`react-router` 和 `react-router-dom` 只要引用一个就行了，不同之处就是后者比前者多出了 `<Link>、<BrowserRouter>` 这样的 DOM 类组件。因此我们只需引用 `react-router-dom` 这个包就OK了。当然，如果搭配 `redux`，你需要使用 `react-router-redux`。
+注意，入门第一坑就在这里。`react-router` 和 `react-router-dom` 只要引用一个就行了，不同之处就是后者比前者多出了 `<Link>、<BrowserRouter>` 这样的 DOM 类组件。因此我们只需引用 `react-router-dom` 这个包就OK了。当然，如果搭配 `redux`，你还需要使用 `react-router-redux`。
 
 ```jsx
 import React from "react";
@@ -60,11 +60,11 @@ const BasicExample = () => (
 
 `<Router>` 是所有路由组件共用的底层接口，一般我们的应用并不会使用这个接口，而是使用高级的路由：
 
--[`<BrowserRouter>`](https://reacttraining.com/react-router/web/api/BrowserRouter)：使用 HTML5 提供的 history API 来保持 UI 和 URL 的同步；
--[`<HashRouter>`](https://reacttraining.com/react-router/web/api/HashRouter)：使用 URL 的 hash (例如：window.location.hash) 来保持 UI 和 URL 的同步；
--`<MemoryRouter>`：能在内存保存你 “URL” 的历史纪录(并没有对地址栏读写)；
--`<NativeRouter>`：为使用React Native提供路由支持；
--`<StaticRouter>`：从不会改变地址；
+- [`<BrowserRouter>`](https://reacttraining.com/react-router/web/api/BrowserRouter)：使用 HTML5 提供的 history API 来保持 UI 和 URL 的同步；
+- [`<HashRouter>`](https://reacttraining.com/react-router/web/api/HashRouter)：使用 URL 的 hash (例如：window.location.hash) 来保持 UI 和 URL 的同步；
+- `<MemoryRouter>`：能在内存保存你 “URL” 的历史纪录(并没有对地址栏读写)；
+- `<NativeRouter>`：为使用React Native提供路由支持；
+- `<StaticRouter>`：从不会改变地址；
 
 注意，和之前的 `Router` 不一样，这里 `<Router>` 组件下只允许存在一个子元素，如存在多个则会报错。
 
@@ -93,17 +93,17 @@ const BasicExample = () => (
 
 `<Route>` 组件有如下属性：
 
--`path`（string）: 路由匹配路径。（没有 path 属性的 Route 总是会匹配）；
--`exact`（bool）：为 `true` 时，则要求路径与 `location.pathname` 必须完全匹配；
--`strict`（bool）：为 `true` 时，有结尾斜线的路径只能匹配有斜线的 `location.pathname`；
+- `path`（string）: 路由匹配路径。（没有 path 属性的 Route 总是会匹配）；
+- `exact`（bool）：为 `true` 时，则要求路径与 `location.pathname` 必须完全匹配；
+- `strict`（bool）：为 `true` 时，有结尾斜线的路径只能匹配有斜线的 `location.pathname`；
 
 同时，新版的路由为 `<Route>` 提供了三种渲染内容的方法：
 
--`<Route component>`：在地址匹配的时候React的组件才会被渲染，route props 也会随着一起被渲染；
--`<Route render>`：这种方式对于内联渲染和包装组件却不引起意料之外的重新挂载特别方便；
--`<Route children>`：与 render 属性的工作方式基本一样，除了它是不管地址匹配与否都会被调用；
+- `<Route component>`：在地址匹配的时候React的组件才会被渲染，route props 也会随着一起被渲染；
+- `<Route render>`：这种方式对于内联渲染和包装组件却不引起意料之外的重新挂载特别方便；
+- `<Route children>`：与 render 属性的工作方式基本一样，除了它是不管地址匹配与否都会被调用；
 
-第一种方式没啥可说的，和之前一样，这里我们重点看下 `<Route render>`的渲染方式：
+第一种方式没啥可说的，和之前一样，这里我们重点看下 `<Route render>` 的渲染方式：
 
 ```jsx
 // 行内渲染示例
@@ -127,30 +127,29 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 
 [`Link`](https://reacttraining.com/react-router/web/api/Link)和之前版本没太大区别，重点看下组件属性：
 
--`to`（string/object）：要跳转的路径或地址；
-
--`replace`（bool）：为 `true` 时，点击链接后将使用新地址替换掉访问历史记录里面的原地址；为 `false` 时，点击链接后将在原有访问历史记录的基础上添加一个新的纪录。默认为 `false`；
+- `to`（string/object）：要跳转的路径或地址；
+- `replace`（bool）：为 `true` 时，点击链接后将使用新地址替换掉访问历史记录里面的原地址；为 `false` 时，点击链接后将在原有访问历史记录的基础上添加一个新的纪录。默认为 `false`；
 
 ```jsx
 <Link to='/courses?sort=name' replace/>
 
-<Link to={\n{
+<Link to={{
   pathname: '/courses',
   search: '?sort=name',
   hash: '#the-hash',
   state: { fromDashboard: true }
-}\n}/>
+}}/>
 ```
 
 #### `<NavLink>`
 
 [`<NavLink>`](https://reacttraining.com/react-router/web/api/NavLink) 是 `<Link>` 的一个特定版本, 会在匹配上当前 URL 的时候会给已经渲染的元素添加样式参数，组件属性：
 
--`activeClassName`（string）：设置选中样式，默认值为 active；
--`activeStyle`（object）：当元素被选中时, 为此元素添加样式；
--`exact`（bool）：为 true 时, 只有当地址完全匹配 class 和 style 才会应用；
--`strict`（bool）：为 true 时，在确定位置是否与当前 URL 匹配时，将考虑位置 pathname 后的斜线；
--`isActive`（func）：判断链接是否激活的额外逻辑的功能；
+- `activeClassName`（string）：设置选中样式，默认值为 active；
+- `activeStyle`（object）：当元素被选中时, 为此元素添加样式；
+- `exact`（bool）：为 true 时, 只有当地址完全匹配 class 和 style 才会应用；
+- `strict`（bool）：为 true 时，在确定位置是否与当前 URL 匹配时，将考虑位置 pathname 后的斜线；
+- `isActive`（func）：判断链接是否激活的额外逻辑的功能；
 
 #### `<Switch>`
 
