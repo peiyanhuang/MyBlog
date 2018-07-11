@@ -133,12 +133,12 @@ const FadingRoute = ({ component: Component, ...rest }) => (
 ```jsx
 <Link to='/courses?sort=name' replace/>
 
-<Link to={{
+<Link to={ {
   pathname: '/courses',
   search: '?sort=name',
   hash: '#the-hash',
   state: { fromDashboard: true }
-}}/>
+} }/>
 ```
 
 #### `<NavLink>`
