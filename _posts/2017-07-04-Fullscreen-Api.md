@@ -17,17 +17,17 @@ tag: JS
 
 Element 节点的 `requestFullscreen` 方法，可以使得这个节点全屏。
 
-```
+```js
 function launchFullscreen(element) {
-	if(element.requestFullscreen) {
-	element.requestFullscreen();
-	} else if(element.mozRequestFullScreen) {
-	element.mozRequestFullScreen();
-	} else if(element.msRequestFullscreen){
-	element.msRequestFullscreen();
-	} else if(element.webkitRequestFullscreen) {
-	element.webkitRequestFullScreen();
-	}
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if(element.msRequestFullscreen){
+    element.msRequestFullscreen();
+  } else if(element.webkitRequestFullscreen) {
+    element.webkitRequestFullScreen();
+  }
 }
 
 launchFullscreen(document.documentElement);
