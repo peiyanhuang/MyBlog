@@ -45,5 +45,61 @@ CSS 隐藏的原理是利用 CSS 技术控制网页内容显示的效果。其�
 ### 3.点击劫持漏洞的防御
 
 1. X-FRAME-OPTIONS 机制：该机制有3个选项：`DENY`、`SAMEORIGIN` 和 `ALLOW-FORM origin`。`DENY` 表示任何网页都不能使用 iframe 载入该网页，`SAMEORIGIN` 表示符合同源策略的网页可以使用 iframe 载入该网页。若值为 `ALLOW-FORM`，则可以定义允许 frame 加载的页面地址。
-
 2. 使用 FrameBusting 代码：点击劫持攻击需要首先将目标网站载入到恶意网站中，使用 iframe 载入网页是最有效的方法。Web安全研究人员针对 iframe 特性提出 Frame Busting 代码，使用 JavaScript 脚本阻止恶意网站载入网页。如果检测到网页被非法网页载入，就执行自动跳转功能。Frame Busting代码是一种有效防御网站被攻击者恶意载入的方法，网站开发人员使用Frame Busting代码阻止页面被非法载入。需要指出的情况是，如果用户浏览器禁用JavaScript脚本，那么FrameBusting代码也无法正常运行。所以，该类代码只能提供部分保障功能。
+
+业界普通采用这种做法:
+
+```js
+if(top.location != location)
+{
+　　top.location = self.location;
+}
+```
+
+frame busting 一般由一个条件表达式和纠正动作(即跳转)组成。即将顶层页面导航到当前页面。frame busting 的条件判断语句:
+
+```js
+if (top != self)
+if (top.location != self.location)
+if (top.location != location)
+if (parent.frames.length > 0)
+if (window != top)
+if (window.top !== window.self)
+if (window.self != window.top)
+if (parent && parent != window)
+if (parent && parent.frames && parent.frames.length>0)
+if((self.parent&&!(self.parent===self))&&(self.parent.frames.length!=0))
+```
+
+frame busting 的纠正动作代码:
+
+ ```js
+top.location = self.location
+top.location.href = document.location.href
+top.location.href = self.location.href
+top.location.replace(self.location)
+top.location.href = window.location.href
+top.location.replace(document.location)
+top.location.href = window.location.href
+top.location.href = "URL"
+document.write('')
+top.location = location
+top.location.replace(document.location)
+top.location.replace('URL')
+top.location.href = document.location
+top.location.replace(window.location.href)
+top.location.href = location.href
+self.parent.location = document.location
+parent.location.href = self.document.location
+top.location.href = self.location
+top.location = window.location
+top.location.replace(window.location.pathname)
+window.top.location = window.self.location
+setTimeout(function(){document.body.innerHTML='';},1);
+window.self.onload = function(evt){document.body.innerHTML='';}
+var url = window.location.href; top.location.replace(url)
+```
+
+参考：
+
+- [frame busting 各种姿势，防护总结](https://zhuanlan.zhihu.com/p/27310909)
