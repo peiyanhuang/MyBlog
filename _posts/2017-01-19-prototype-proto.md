@@ -70,5 +70,5 @@ Function.prototype.constructor === Function //true
 
 Object.prototype.constructor === Object //true
 
-Object.constructor === Function；//true 
+Object.constructor === Function；//true
 ```
