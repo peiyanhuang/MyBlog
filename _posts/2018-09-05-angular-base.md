@@ -177,6 +177,6 @@ delete() {
 
 ### 4. 双向数据绑定
 
-Angular 提供一种特殊的双向数据绑定语法：`[(x)]`，此语法结合了属性绑定的方括号 `[x]` 和事件绑定的圆括号 `(x)`。
+Angular 提供一种特殊的[双向数据绑定](https://angular.cn/guide/template-syntax#two-way-binding--span-classsyntaxspan-)语法：`[(x)]`，此语法结合了属性绑定的方括号 `[x]` 和事件绑定的圆括号 `(x)`。
 
 Angular 也提供了 `NgModel` 允许在表单元素上使用双向数据绑定。
