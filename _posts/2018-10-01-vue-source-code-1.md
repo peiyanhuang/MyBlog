@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Vue 源码学习（1）
+title:  Vue 源码学习-Vue构造函数
 date:   2018-10-01 09:58:00 +0800
 categories: Vue
 tag: Vue
@@ -360,7 +360,7 @@ initAssetRegisters(Vue)
 
 `initAssetRegisters` 为 Vue 添加了三个方法：`Vue.component、Vue.directive、Vue.filter`。
 
-### 
+### Vue 平台配置
 
 之前是在 `src/core/index.js` 文件，我们在往上一层文件是在 `src/platforms/web/runtime/index.js`。
 
@@ -422,9 +422,7 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 ```
 
-这里的这四句就是在覆盖默认导出的 `config` 对象的属性。
-
-接着是这两句代码：
+这里的这四句就是在覆盖默认导出的 `config` 对象的属性。接着是这两句代码：
 
 ```js
 // install platform runtime directives & components
@@ -455,3 +453,77 @@ export default {
   TransitionGroup
 }
 ```
+
+之后 `Vue.options` 变成了：
+
+```js
+Vue.options = {
+  components: {
+  KeepAlive,
+    Transition,
+    TransitionGroup
+  },
+  directives: {
+    model,
+    show
+  },
+  filters: Object.create(null),
+  _base: Vue
+}
+```
+
+接下来是这段：
+
+```js
+Vue.prototype.__patch__ = inBrowser ? patch : noop
+
+// public mount method
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el && inBrowser ? query(el) : undefined
+  return mountComponent(this, el, hydrating)
+}
+```
+
+首先在 `Vue.prototype` 上添加 `__patch__` 方法，如果在浏览器环境运行的话，这个方法的值为 `patch` 函数，否则是一个空函数 `noop`。然后又在 `Vue.prototype` 上添加了 `$mount` 方法。
+
+再往下的一段代码是 `vue-devtools` 的全局钩子，它被包裹在 `setTimeout` 中，最后导出了 Vue。
+
+现在我们就看完了 platforms/web/runtime/index.js 文件，该文件的作用是对 Vue 进行平台化地包装：
+
+- 设置平台化的 Vue.config。
+- 在 Vue.options 上混合了两个指令(directives)，分别是 `model` 和 `show`。
+- 在 Vue.options 上混合了两个组件(components)，分别是 `Transition` 和 `TransitionGroup`。
+- 在 Vue.prototype 上添加了两个方法：`__patch__` 和 `$mount`。
+
+### runtime/compiler
+
+看下 `src/runtime/index.js` 文件，这个文件只有两行代码：
+
+```js
+import Vue from './runtime/index'
+
+export default Vue
+```
+
+`运行时` 版本的 Vue 构造函数就已经“成型了”。
+
+完整版的 Vue，入口文件是 `entry-runtime-with-compiler.js`，完整版和运行时版的区别就在于 `compiler`，就是在运行时版的基础上添加 `compiler`。
+
+```js
+const mount = Vue.prototype.$mount
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  // ....
+}
+
+Vue.compile = compileToFunctions
+
+export default Vue
+```
+
+简略代码如上。第一个影响是它重写了 `Vue.prototype.$mount` 方法；第二个影响是添加了 `Vue.compile` 全局API。
