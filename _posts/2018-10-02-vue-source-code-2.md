@@ -156,3 +156,208 @@ callHook(vm, 'created')
 ```
 
 这些方法才是真正起作用的一些初始化方法。在这些初始化方法中，无一例外的都使用到了实例的 `$options` 属性，即 `vm.$options`。所以 `$options` 这个属性的的确确是用于 Vue 实例初始化的，只不过在初始化之前，我们需要一些手段来产生 `$options` 属性，而这就是 `mergeOptions` 函数的作用。
+
+#### 1. mergeOptions()
+
+想要知道 `mergeOptions` 是干什么的，得先弄清楚他的参数。
+
+##### 1.resolveConstructorOptions()
+
+`resolveConstructorOptions()` 代码如下：
+
+```js
+export function resolveConstructorOptions (Ctor: Class<Component>) {
+  let options = Ctor.options
+  if (Ctor.super) {
+    const superOptions = resolveConstructorOptions(Ctor.super)
+    const cachedSuperOptions = Ctor.superOptions
+    if (superOptions !== cachedSuperOptions) {
+      // super option changed,
+      // need to resolve new options.
+      Ctor.superOptions = superOptions
+      // check if there are any late-modified/attached options (#4976)
+      const modifiedOptions = resolveModifiedOptions(Ctor)
+      // update base extend options
+      if (modifiedOptions) {
+        extend(Ctor.extendOptions, modifiedOptions)
+      }
+      options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)
+      if (options.name) {
+        options.components[options.name] = Ctor
+      }
+    }
+  }
+  return options
+}
+```
+
+其中 `Ctor` 即传递进来的参数 `vm.constructor`，在我们的例子中他就是 Vue 构造函数。如果使用 `Vue.extend` 创造一个子类并使用子类创造实例时，那么 `vm.constructor` 就不是 Vue 构造函数，而是子类，比如：
+
+```js
+const Sub = Vue.extend()
+const s = new Sub()
+```
+
+那么 `s.constructor` 自然就是 Sub 而非 Vue。
+
+接下来看下 `if` 判断，`super` 这是子类才有的属性。这个属性是与 `Vue.extend` 有关。之后是
+
+```js
+const superOptions = resolveConstructorOptions(Ctor.super)
+```
+
+递归地调用了 `resolveConstructorOptions` 函数，只不过此时的参数是构造者的父类，之后的代码中，还有一些关于父类的 `options` 属性是否被改变过的判断和操作，并且大家注意这句代码：
+
+```js
+// check if there are any late-modified/attached options (#4976)
+const modifiedOptions = resolveModifiedOptions(Ctor)
+```
+
+注意下注释，根据注释中括号内的 issue 索引去搜一下相关的问题，这句代码是用来解决使用 vue-hot-reload-api 或者 vue-loader 时产生的一个 bug 的。
+
+按照例子，不会走判断语句。此时的 `mergeOptions` 函数的第一个参数就是 `Vue.options`:
+
+```js
+Vue.options = {
+    components: {
+        KeepAlive
+        Transition,
+        TransitionGroup
+    },
+    directives:{
+        model,
+        show
+    },
+    filters: Object.create(null),
+    _base: Vue
+}
+```
+
+第二个参数就是传进来的数据：
+
+```js
+{
+  el: '#app',
+  data: {
+    test: 1
+  }
+}
+```
+
+#### 2.mergeOptions()
+
+```js
+export function mergeOptions (
+  parent: Object,
+  child: Object,
+  vm?: Component
+): Object {
+  if (process.env.NODE_ENV !== 'production') {
+    checkComponents(child)
+  }
+
+  if (typeof child === 'function') {
+    child = child.options
+  }
+
+  normalizeProps(child, vm)
+  normalizeInject(child, vm)
+  normalizeDirectives(child)
+  const extendsFrom = child.extends
+  if (extendsFrom) {
+    parent = mergeOptions(parent, extendsFrom, vm)
+  }
+  if (child.mixins) {
+    for (let i = 0, l = child.mixins.length; i < l; i++) {
+      parent = mergeOptions(parent, child.mixins[i], vm)
+    }
+  }
+  const options = {}
+  let key
+  for (key in parent) {
+    mergeField(key)
+  }
+  for (key in child) {
+    if (!hasOwn(parent, key)) {
+      mergeField(key)
+    }
+  }
+  function mergeField (key) {
+    const strat = strats[key] || defaultStrat
+    options[key] = strat(parent[key], child[key], vm, key)
+  }
+  return options
+}
+```
+
+在非生产环境下，会以 `child` 为参数调用 `checkComponents` 方法，这个方法是用来校验组件的名字是否符合要求的。
+
+```js
+/**
+ * Validate component names
+ */
+function checkComponents (options: Object) {
+  for (const key in options.components) {
+    validateComponentName(key)
+  }
+}
+```
+
+命名规则 [validateComponentName](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L255)，Vue 限定组件的名字由普通的字符和中横线(-)组成，且必须以字母开头，且不能是内置及保留标签。
+
+```js
+export function validateComponentName (name: string) {
+  if (!/^[a-zA-Z][\w-]*$/.test(name)) {
+    warn(
+      'Invalid component name: "' + name + '". Component names ' +
+      'can only contain alphanumeric characters and the hyphen, ' +
+      'and must start with a letter.'
+    )
+  }
+  if (isBuiltInTag(name) || config.isReservedTag(name)) {
+    warn(
+      'Do not use built-in or reserved HTML elements as component ' +
+      'id: ' + name
+    )
+  }
+}
+```
+
+`isBuildInTag()`: 用来检测你所注册的组件是否是内置的标签(slot 和 component)
+
+```js
+export const isBuiltInTag = makeMap('slot,component', true)
+```
+
+`config.isReservedTag()`: 默认一直返回 false，但是在文件 [platforms/web/runtime/index.js](https://github.com/peiyanhuang/vue/blob/dev/src/platforms/web/runtime/index.js#L24) 中有这样一段代码：
+
+```js
+// install platform specific utils
+Vue.config.mustUseProp = mustUseProp
+Vue.config.isReservedTag = isReservedTag
+Vue.config.isReservedAttr = isReservedAttr
+Vue.config.getTagNamespace = getTagNamespace
+Vue.config.isUnknownElement = isUnknownElement
+```
+
+`config.isReservedTag` 指向 [isReservedTag](https://github.com/peiyanhuang/vue/blob/dev/src/platforms/web/util/element.js#L36) 而不是 `no` 了。
+
+接下来是另一个 if 语句：
+
+```js
+if (typeof child === 'function') {
+  child = child.options
+}
+```
+
+这说明 `child` 参数除了是普通的选项对象外，还可以是一个函数，如果是函数的话就取该函数的 `options` 静态属性作为新的 `child`，我们想一想什么样的函数具有 options 静态属性呢？现在我们知道 Vue 构造函数本身就拥有这个属性，其实通过 Vue.extend 创造出来的子类也是拥有这个属性的。所以这就允许我们在进行选项合并的时候，去合并一个 Vue 实例构造者的选项了。
+
+接着看代码，接下来是三个用来规范化选项的函数调用 [normalize*](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L275)：
+
+```js
+normalizeProps(child, vm)
+normalizeInject(child, vm)
+normalizeDirectives(child)
+```
+
+如 `props` 有两种写法，无论开发者使用哪一种写法，在内部都将其规范成同一种方式，这样在选项合并的时候就能够统一处理，这就是上面三个函数的作用。
