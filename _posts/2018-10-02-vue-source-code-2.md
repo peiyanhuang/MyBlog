@@ -11,7 +11,7 @@ tag: Vue
 
 ### Vue 实例
 
-比如有如下 Vue Code: 
+比如有如下 Vue Code:
 
 ```js
 <!-- html -->
@@ -157,11 +157,11 @@ callHook(vm, 'created')
 
 这些方法才是真正起作用的一些初始化方法。在这些初始化方法中，无一例外的都使用到了实例的 `$options` 属性，即 `vm.$options`。所以 `$options` 这个属性的的确确是用于 Vue 实例初始化的，只不过在初始化之前，我们需要一些手段来产生 `$options` 属性，而这就是 `mergeOptions` 函数的作用。
 
-#### 1. mergeOptions()
+### mergeOptions()
 
 想要知道 `mergeOptions` 是干什么的，得先弄清楚他的参数。
 
-##### 1.resolveConstructorOptions()
+#### 2.1 resolveConstructorOptions()
 
 `resolveConstructorOptions()` 代码如下：
 
@@ -244,7 +244,7 @@ Vue.options = {
 }
 ```
 
-#### 2.mergeOptions()
+#### 2.2 mergeOptions()
 
 ```js
 export function mergeOptions (
@@ -350,7 +350,7 @@ if (typeof child === 'function') {
 }
 ```
 
-这说明 `child` 参数除了是普通的选项对象外，还可以是一个函数，如果是函数的话就取该函数的 `options` 静态属性作为新的 `child`，我们想一想什么样的函数具有 options 静态属性呢？现在我们知道 Vue 构造函数本身就拥有这个属性，其实通过 Vue.extend 创造出来的子类也是拥有这个属性的。所以这就允许我们在进行选项合并的时候，去合并一个 Vue 实例构造者的选项了。
+这说明 `child` 参数除了是普通的选项对象外，还可以是一个函数，如果是函数的话就取该函数的 `options` 静态属性作为新的 `child`，我们想一想什么样的函数具有 `options` 静态属性呢？现在我们知道 Vue 构造函数本身就拥有这个属性，其实通过 `Vue.extend` 创造出来的子类也是拥有这个属性的。所以这就允许我们在进行选项合并的时候，去合并一个 Vue 实例构造者的选项了。
 
 接着看代码，接下来是三个用来规范化选项的函数调用 [normalize*](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L275)：
 
@@ -360,4 +360,144 @@ normalizeInject(child, vm)
 normalizeDirectives(child)
 ```
 
+#### 2.3 规范化 props（normalizeProps）
+
 如 `props` 有两种写法，无论开发者使用哪一种写法，在内部都将其规范成同一种方式，这样在选项合并的时候就能够统一处理，这就是上面三个函数的作用。
+
+```js
+/**
+ * Ensure all props option syntax are normalized into the
+ * Object-based format.
+ */
+function normalizeProps (options: Object, vm: ?Component) {
+  const props = options.props
+  if (!props) return
+  const res = {}
+  let i, val, name
+  if (Array.isArray(props)) {
+    i = props.length
+    while (i--) {
+      val = props[i]
+      if (typeof val === 'string') {
+        name = camelize(val)
+        res[name] = { type: null }
+      } else if (process.env.NODE_ENV !== 'production') {
+        warn('props must be strings when using array syntax.')
+      }
+    }
+  } else if (isPlainObject(props)) {
+    for (const key in props) {
+      val = props[key]
+      name = camelize(key)
+      res[name] = isPlainObject(val)
+        ? val
+        : { type: val }
+    }
+  } else if (process.env.NODE_ENV !== 'production') {
+    warn(
+      `Invalid value for option "props": expected an Array or an Object, ` +
+      `but got ${toRawType(props)}.`,
+      vm
+    )
+  }
+  options.props = res
+}
+```
+
+[camelize](https://github.com/peiyanhuang/vue/blob/dev/src/shared/util.js#L153) 函数作用是将中横线转驼峰。
+
+#### 2.4 规范化 inject（normalizeInject）
+
+```js
+/**
+ * Normalize all injections into Object-based format
+ */
+function normalizeInject (options: Object, vm: ?Component) {
+  const inject = options.inject
+  if (!inject) return
+  const normalized = options.inject = {}
+  if (Array.isArray(inject)) {
+    for (let i = 0; i < inject.length; i++) {
+      normalized[inject[i]] = { from: inject[i] }
+    }
+  } else if (isPlainObject(inject)) {
+    for (const key in inject) {
+      const val = inject[key]
+      normalized[key] = isPlainObject(val)
+        ? extend({ from: key }, val)
+        : { from: val }
+    }
+  } else if (process.env.NODE_ENV !== 'production') {
+    warn(
+      `Invalid value for option "inject": expected an Array or an Object, ` +
+      `but got ${toRawType(inject)}.`,
+      vm
+    )
+  }
+}
+```
+
+`inject` 选项的使用方法和写法与 `props` 一样拥有两种，一种是字符串数组，一种是对象语法。`normalizeInject` 的作用也是规范化 `inject`。
+
+#### 2.5 规范化 directives（normalizeDirectives）
+
+```js
+/**
+ * Normalize raw function directives into object format.
+ */
+function normalizeDirectives (options: Object) {
+  const dirs = options.directives
+  if (dirs) {
+    for (const key in dirs) {
+      const def = dirs[key]
+      if (typeof def === 'function') {
+        dirs[key] = { bind: def, update: def }
+      }
+    }
+  }
+}
+```
+
+#### 2.6 extends 和 mixins
+
+看完了 `mergeOptions` 函数里的三个规范化函数之后，我们继续看后面的代码，接下来是这样一段代码：
+
+```js
+const extendsFrom = child.extends
+if (extendsFrom) {
+  parent = mergeOptions(parent, extendsFrom, vm)
+}
+if (child.mixins) {
+  for (let i = 0, l = child.mixins.length; i < l; i++) {
+    parent = mergeOptions(parent, child.mixins[i], vm)
+  }
+}
+```
+
+这段代码是处理 `extends` 选项和 `mixins` 选项的，首先使用变量 `extendsFrom` 保存了对 `child.extends` 的引用，之后的处理都是用 `extendsFrom` 来做，然后判断 `extendsFrom` 是否为真，即 `child.extends` 是否存在，如果存在的话就递归调用 `mergeOptions` 函数将 `parent` 与 `extendsFrom` 进行合并，并将结果作为新的 `parent`。这里要注意，我们之前说过 `mergeOptions` 函数将会产生一个新的对象，所以此时的 `parent` 已经被新的对象重新赋值了。
+
+接着检测 `child.mixins` 选项是否存在，如果存在则使用同样的方式进行操作，不同的是，由于 `mixins` 是一个数组所以要遍历一下。
+
+#### 2.7 Vue 选项的合并
+
+继续看 `mergeOptions` 函数的代码，接下来的一段代码如下：
+
+```js
+const options = {}
+let key
+for (key in parent) {
+  mergeField(key)
+}
+for (key in child) {
+  if (!hasOwn(parent, key)) {
+    mergeField(key)
+  }
+}
+function mergeField (key) {
+  const strat = strats[key] || defaultStrat
+  options[key] = strat(parent[key], child[key], vm, key)
+}
+return options
+```
+
+[Option merge strategies (used in core/util/options)](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L28)
