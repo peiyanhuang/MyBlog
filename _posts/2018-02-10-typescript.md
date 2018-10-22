@@ -25,52 +25,50 @@ document.body.innerHTML = greeter(user);
 
 #### 1.1 基础类型
 
-```
-1.布尔值: 最基本的数据类型就是简单的true/false值。
+```js
+// 1.布尔值: 最基本的数据类型就是简单的true/false值。
 let isDone: boolean = false; 
 
-2.数字: 和JavaScript一样，TypeScript里的所有数字都是浮点数。支持二进制、八进制、十进制和十六进制字面量。
+// 2.数字: 和JavaScript一样，TypeScript里的所有数字都是浮点数。支持二进制、八进制、十进制和十六进制字面量。
 let num: number = 0x12f;
 
-3.字符串: 和JavaScript一样，可以使用双引号（"）或单引号（'）表示字符串, 可以使用模版字符串。
+// 3.字符串: 和JavaScript一样，可以使用双引号（"）或单引号（'）表示字符串, 可以使用模版字符串。
 let name: string = `Bob is ${age} years old`;
 
-4.数组: 有两种方式可以定义数组。 
-第一种，可以在元素类型后面接上 []，表示由此类型元素组成的一个数组：
+// 4.数组: 有两种方式可以定义数组。 
+// 第一种，可以在元素类型后面接上 []，表示由此类型元素组成的一个数组：
 let list: string[] = ['a', 'b', 'c'];
-第二种方式是使用数组泛型，Array<元素类型>：
+// 第二种方式是使用数组泛型，Array<元素类型>：
 let list: Array<number> = [1, 2, 3];
 
-5.元组 Tuple: 
-元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。
+// 5.元组 Tuple: 
+// 元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。
 let x: [string, number, boolean];
 
-6.枚举
-enum类型是对JavaScript标准数据类型的一个补充。
-默认情况下，从0开始为元素编号。也可以手动的指定成员的数值。例如，改成从 1开始编号：
+// 6.枚举
+// enum类型是对JavaScript标准数据类型的一个补充。默认情况下，从0开始为元素编号。也可以手动的指定成员的数值。例如，改成从 1开始编号：
 enum Color {Red = 1, Green, Blue}
 let c: Color = Color.Green;
 let colorName: string = Color[2];  //Green
 
-7.Any
-有时候，我们不希望类型检查器对某些值进行检查而是直接让它们通过编译阶段的检查。 那么我们可以使用 any类型来标记这些变量：
+// 7.Any
+// 有时候，我们不希望类型检查器对某些值进行检查而是直接让它们通过编译阶段的检查。 那么我们可以使用 any类型来标记这些变量：
 let notSure: any = 4;
 
-8.Void
-某种程度上来说，void类型像是与any类型相反，它表示没有任何类型。 当一个函数没有返回值时，你通常会见到其返回值类型是 void：
+// 8.Void
+// 某种程度上来说，void类型像是与any类型相反，它表示没有任何类型。 当一个函数没有返回值时，你通常会见到其返回值类型是 void：
 function warnUser(): void {
     alert("This is my warning message");
 }
-声明一个void类型的变量没有什么大用，因为你只能为它赋予undefined和null：
+// 声明一个void类型的变量没有什么大用，因为你只能为它赋予undefined和null：
 let unusable: void = undefined;
 
-9.Null 和 Undefined
-默认情况下null和undefined是所有类型的子类型。就是说你可以把 null和undefined赋值给number类型的变量。
-然而，当你指定了--strictNullChecks标记，null和undefined只能赋值给void和它们各自。
+// 9.Null 和 Undefined
+// 默认情况下null和undefined是所有类型的子类型。就是说你可以把 null 和 undefined 赋值给 number 类型的变量。然而，当你指定了--strictNullChecks标记，null和undefined只能赋值给void和它们各自。
 
-10.Never
-never类型表示的是那些永不存在的值的类型。 例如， never类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型。
-never类型是任何类型的子类型，也可以赋值给任何类型；然而，没有类型是never的子类型或可以赋值给never类型（除了never本身之外）。 即使 any也不可以赋值给never。
+// 10.Never
+// never类型表示的是那些永不存在的值的类型。 例如， never类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型。
+// never类型是任何类型的子类型，也可以赋值给任何类型；然而，没有类型是never的子类型或可以赋值给never类型（除了never本身之外）。 即使 any也不可以赋值给never。
 ```
 
 #### 1.2 类型断言
@@ -79,7 +77,7 @@ never类型是任何类型的子类型，也可以赋值给任何类型；然而
 
 类型断言有两种形式。 其一是“尖括号”语法：
 
-```
+```js
 let someValue: any = "this is a string";
 
 let strLength: number = (<string>someValue).length;
@@ -87,19 +85,19 @@ let strLength: number = (<string>someValue).length;
 
 另一个为as语法：
 
-```
+```js
 let someValue: any = "this is a string";
 
 let strLength: number = (someValue as string).length;
 ```
 
-两种形式是等价的。 至于使用哪个大多数情况下是凭个人喜好；然而，当你在TypeScript里使用`JSX`时，只有 `as`语法断言是被允许的。
+两种形式是等价的。 至于使用哪个大多数情况下是凭个人喜好；然而，当你在TypeScript里使用 `JSX` 时，只有 `as` 语法断言是被允许的。
 
 ### 2. 接口
 
-使用接口来描述一个拥有`firstName`和`lastName`字段的对象。 在TypeScript中，只要两个类型内部的结构兼容那么那么可以认为他们是兼容的。 这就允许我们在实现接口时候只要保证包含了接口要求的结构就可以，而不必明确地使用 implements语句。
+使用接口来描述一个拥有 `firstName` 和 `lastName` 字段的对象。 在 TypeScript 中，只要两个类型内部的结构兼容那么那么可以认为他们是兼容的。 这就允许我们在实现接口时候只要保证包含了接口要求的结构就可以，而不必明确地使用 `implements` 语句。
 
-```
+```js
 interface Person {
     firstName: string;
     lastName: string;
@@ -125,7 +123,7 @@ interface SquareConfig {
 }
 ```
 
-带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个`?`符号。
+带有可选属性的接口与普通的接口定义差不多，只是在可选属性名字定义的后面加一个 `?` 符号。
 
 ```typescript
 function createSquare(config: SquareConfig): { color: string; area: number } {
@@ -149,7 +147,7 @@ let p1: Point = { x: 10, y: 20 };
 p1.x = 5; // error!
 ```
 
-TypeScript具有`ReadonlyArray<T>`类型，它与`Array<T>`相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
+TypeScript具有 `ReadonlyArray<T>` 类型，它与 `Array<T>` 相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
 
 ```typescript
 let a: number[] = [1, 2, 3, 4];
@@ -199,7 +197,7 @@ interface SquareConfig {
 }
 ```
 
-还有最后一种跳过这些检查的方式它就是将这个对象赋值给另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
+还有最后一种跳过这些检查的方式它就是将这个对象赋值给另一个变量： 因为 squareOptions 不会经过额外属性检查，所以编译器不会报错。
 
 ```typescript
 let squareOptions = { colour: "red", width: 100 };
