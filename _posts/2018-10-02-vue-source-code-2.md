@@ -478,7 +478,7 @@ if (child.mixins) {
 
 接着检测 `child.mixins` 选项是否存在，如果存在则使用同样的方式进行操作，不同的是，由于 `mixins` 是一个数组所以要遍历一下。
 
-#### 2.7 Vue 选项的合并
+### Vue 选项的合并
 
 继续看 `mergeOptions` 函数的代码，接下来的一段代码如下：
 
@@ -500,4 +500,339 @@ function mergeField (key) {
 return options
 ```
 
-[Option merge strategies (used in core/util/options)](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L28)
+`satrts` 是什么？
+
+```js
+/**
+ * Option overwriting strategies are functions that handle
+ * how to merge a parent option value and a child option
+ * value into the final value.
+ */
+const strats = config.optionMergeStrategies
+```
+
+它是一个常量，这个常量的值为 `config.optionMergeStrategies`，这个 `config` 对象是全局配置对象，来自于 `core/config.js` 文件，此时 `config.optionMergeStrategies` 还只是一个空的对象。[Option merge strategies (used in core/util/options)](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L28)
+
+所以，当 `starts[key]` 不存在时，`start` 就等于 `defaultStrat` 这个函数。
+
+```js
+/**
+ * Default strategy.
+ */
+const defaultStrat = function (parentVal: any, childVal: any): any {
+  return childVal === undefined
+    ? parentVal
+    : childVal
+}
+```
+
+`starts[key]` 的方法在下面。
+
+#### 3.1 选项 el、propsData 的合并策略
+
+```js
+/**
+ * Options with restrictions
+ */
+if (process.env.NODE_ENV !== 'production') {
+  strats.el = strats.propsData = function (parent, child, vm, key) {
+    if (!vm) {
+      warn(
+        `option "${key}" can only be used during instance ` +
+        'creation with the `new` keyword.'
+      )
+    }
+    return defaultStrat(parent, child)
+  }
+}
+```
+
+函数中的 `vm` 来自于 `mergeOptions` 函数的第三个参数。所以当调用 `mergeOptions` 函数且不传递第三个参数的时候，那么在策略函数中就拿不到 vm 参数。所以我们可以猜测到一件事，那就是 `mergeOptions` 函数除了在 `_init` 方法中被调用之外，还在其他地方被调用，且没有传递第三个参数。那么到底是在哪里被调用的呢？这里可以先明确地告诉大家，就是在 `Vue.extend` 方法中被调用的，大家可以打开 `core/global-api/extend.js` 文件找到 `Vue.extend` 方法，其中有这么一段代码：
+
+```js
+Sub.options = mergeOptions(
+  Super.options,
+  extendOptions
+)
+```
+
+可以发现，此时调用 `mergeOptions` 函数就没有传递第三个参数，也就是说通过 `Vue.extend` 创建子类的时候 `mergeOptions` 会被调用，此时策略函数就拿不到第三个参数。
+
+所以现在就比较明朗了，在策略函数中通过判断是否存在 `vm` 就能够得知 `mergeOptions` 是在实例化时调用(使用 new 操作符走 _init 方法)还是在继承时调用(Vue.extend)，而子组件的实现方式就是通过实例化子类完成的，子类又是通过 Vue.extend 创造出来的，所以我们就能通过对 `vm` 的判断而得知是否是子组件了。
+
+接着看 `strats.el` 和 `strats.propsData` 策略函数的代码，返回了 `defaultStrat(parent, child)`。这个函数很简单，前面已经展示过了。
+
+#### 3.2 data 的合并策略
+
+```js
+strats.data = function (
+  parentVal: any,
+  childVal: any,
+  vm?: Component
+): ?Function {
+  if (!vm) {
+    if (childVal && typeof childVal !== 'function') {
+      process.env.NODE_ENV !== 'production' && warn(
+        'The "data" option should be a function ' +
+        'that returns a per-instance value in component ' +
+        'definitions.',
+        vm
+      )
+
+      return parentVal
+    }
+    return mergeDataOrFn(parentVal, childVal)
+  }
+
+  return mergeDataOrFn(parentVal, childVal, vm)
+}
+```
+
+[mergeDataOrFn/mergeData](https://github.com/peiyanhuang/vue/blob/dev/src/core/util/options.js#L47)
+
+先通过 `vm` 判断是否是子组件，是的话，子组件中的 `data` 必须是一个返回对象的函数。如果不是函数，除了给你一段警告之外，会直接返回 `parentVal`。如果 `childVal` 是函数类型，那说明满足了子组件的 `data` 选项需要是一个函数的要求，那么就直接返回 `mergeDataOrFn` 函数的执行结果。
+
+如果不是子组件，那也直接返回 `mergeDataOrFn` 函数的执行结果，不同的是参数多了个 `vm`。
+
+`mergeDataOrFn` 函数永远返回一个函数。
+
+1. 为什么最终 `strats.data` 会被处理成一个函数？
+
+这是因为，通过函数返回数据对象，保证了每个组件实例都有一个唯一的数据副本，避免了组件间数据互相影响。后面讲到 Vue 的初始化的时候大家会看到，在初始化数据状态的时候，就是通过执行 `strats.data` 函数来获取数据并对其进行处理的。
+
+2. 为什么不在合并阶段就把数据合并好，而是要等到初始化的时候再合并数据？
+
+这个问题是什么意思呢？我们知道在合并阶段 `strats.data` 将被处理成一个函数，但是这个函数并没有被执行，而是到了后面初始化的阶段才执行的，这个时候才会调用 `mergeData` 对数据进行合并处理，那这么做的目的是什么呢？
+
+其实这么做是有原因的，后面讲到 Vue 的初始化的时候，大家就会发现 `inject` 和 `props` 这两个选项的初始化是先于 `data` 选项的，这就保证了我们能够使用 `props` 初始化 `data` 中的数据。
+
+#### 3.3 生命周期钩子选项的合并策略
+
+```js
+/**
+ * Hooks and props are merged as arrays.
+ */
+function mergeHook (
+  parentVal: ?Array<Function>,
+  childVal: ?Function | ?Array<Function>
+): ?Array<Function> {
+  return childVal
+    ? parentVal
+      ? parentVal.concat(childVal)
+      : Array.isArray(childVal)
+        ? childVal
+        : [childVal]
+    : parentVal
+}
+
+LIFECYCLE_HOOKS.forEach(hook => {
+  strats[hook] = mergeHook
+})
+
+<!-- shared/constants.js -->
+export const LIFECYCLE_HOOKS = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed',
+  'activated',
+  'deactivated',
+  'errorCaptured'
+]
+```
+
+`mergeHook` 返回的总是数组。`parentVal` 也必定是数组。因为如下：
+
+```js
+const Parent = Vue.extend({
+  created: function () {
+    console.log('parentVal')
+  }
+})
+
+const Child = new Parent({
+  created: function () {
+    console.log('childVal')
+  }
+})
+```
+
+其中 `Child` 是使用 `new Parent` 生成的，所以对于 `Child` 来讲，`childVal` 是：
+
+```js
+created: function () {
+  console.log('childVal')
+}
+```
+
+而 `parentVal` 已经不是 `Vue.options.created` 了，而是 `Parent.options.created`，那么 `Parent.options.created` 是什么呢？它其实是通过 `Vue.extend` 函数内部的 `mergeOptions` 处理过的，所以它应该是这样的：
+
+```js
+Parent.options.created = [
+  created: function () {
+    console.log('parentVal')
+  }
+]
+```
+
+生命周期钩子是可以写成数组的，虽然 Vue 的文档里没有，`: Array.isArray(childVal) ? childVal : [childVal]`。
+
+#### 3.4 资源(assets)选项的合并策略
+
+在 Vue 中 directives、filters 以及 components 被认为是资源。
+
+```js
+/**
+ * Assets
+ *
+ * When a vm is present (instance creation), we need to do
+ * a three-way merge between constructor options, instance
+ * options and parent options.
+ */
+function mergeAssets (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): Object {
+  const res = Object.create(parentVal || null)
+  if (childVal) {
+    process.env.NODE_ENV !== 'production' && assertObjectType(key, childVal, vm)
+    return extend(res, childVal)
+  } else {
+    return res
+  }
+}
+
+ASSET_TYPES.forEach(function (type) {
+  strats[type + 's'] = mergeAssets
+})
+
+<!-- shared/constants.js -->
+export const ASSET_TYPES = [
+  'component',
+  'directive',
+  'filter'
+]
+```
+
+上面的代码本身逻辑很简单，首先以 `parentVal` 为原型创建对象 `res`，然后判断是否有 `childVal`，如果有的话使用 `extend` 函数将 `childVal` 上的属性混合到 `res` 对象上并返回。如果没有 `childVal` 则直接返回 `res`。
+
+举个例子，大家知道任何组件的模板中我们都可以直接使用 `<transition/>` 组件或者 `<keep-alive/>` 等，但是我们并没有在我们自己的组件实例的 `components` 选项中显式地声明这些组件。那么这是怎么做到的呢？其实答案就在 `mergeAssets` 函数中。以下面的代码为例：
+
+```js
+var v = new Vue({
+  el: '#app',
+  components: {
+    ChildComponent: ChildComponent
+  }
+})
+```
+
+上面的代码中，我们创建了一个 Vue 实例，并注册了一个子组件 `ChildComponent`，此时 `mergeAssets` 方法内的 `childVal` 就是例子中的 `components` 选项：
+
+```js
+components: {
+  ChildComponent: ChildComponent
+}
+```
+
+而 `parentVal` 就是 `Vue.options.components`，我们知道 `Vue.options` 如下：
+
+```js
+Vue.options = {
+  components: {
+    KeepAlive,
+    Transition,
+    TransitionGroup
+  },
+  directives: Object.create(null),
+  directives:{
+    model,
+    show
+  },
+  filters: Object.create(null),
+  _base: Vue
+}
+```
+
+所以 `Vue.options.components` 就应该是一个对象：
+
+```js
+{
+  KeepAlive,
+  Transition,
+  TransitionGroup
+}
+```
+
+也就是说 `parentVal` 就是如上包含三个内置组件的对象，所以经过如下这句话之后：
+
+```js
+const res = Object.create(parentVal || null)
+```
+
+你可以通过 `res.KeepAlive` 访问到 `KeepAlive` 对象，因为虽然 res 对象自身属性没有 `KeepAlive`，但是它的原型上有。
+
+然后再经过 `return extend(res, childVal)` 这句话之后，res 变量将被添加 `ChildComponent` 属性，最终 res 如下：
+
+```js
+res = {
+  ChildComponent
+  // 原型
+  __proto__: {
+    KeepAlive,
+    Transition,
+    TransitionGroup
+  }
+}
+```
+
+#### 3.5 选项 watch 的合并策略
+
+```js
+/**
+ * Watchers.
+ *
+ * Watchers hashes should not overwrite one
+ * another, so we merge them as arrays.
+ */
+strats.watch = function (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): ?Object {
+  // work around Firefox's Object.prototype.watch...
+  if (parentVal === nativeWatch) parentVal = undefined
+  if (childVal === nativeWatch) childVal = undefined
+  /* istanbul ignore if */
+  if (!childVal) return Object.create(parentVal || null)
+  if (process.env.NODE_ENV !== 'production') {
+    assertObjectType(key, childVal, vm)
+  }
+  if (!parentVal) return childVal
+  const ret = {}
+  extend(ret, parentVal)
+  for (const key in childVal) {
+    let parent = ret[key]
+    const child = childVal[key]
+    if (parent && !Array.isArray(parent)) {
+      parent = [parent]
+    }
+    ret[key] = parent
+      ? parent.concat(child)
+      : Array.isArray(child) ? child : [child]
+  }
+  return ret
+}
+```
+
+在 Firefox 浏览器中 `Object.prototype` 拥有原生的 `watch` 函数，所以即便一个普通的对象你没有定义 `watch` 属性，但是依然可以通过原型链访问到原生的 `watch` 属性，这就会给 Vue 在处理选项的时候造成迷惑，因为 Vue 也提供了一个叫做 `watch` 的选项，即使你的组件选项中没有写 `watch` 选项，但是 Vue 通过原型访问到了原生的 `watch`。这不是我们想要的，所以上面两句代码的目的是一个变通方案，当发现组件选项是浏览器原生的 `watch` 时，那说明用户并没有提供 Vue 的 `watch` 选项，直接重置为 `undefined。`
+
+在非生产环境下使用 `assertObjectType` 函数对 `childVal` 进行类型检测，检测其是否是一个纯对象，我们知道 Vue 的 `watch` 选项需要是一个纯对象。
+
