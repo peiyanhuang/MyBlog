@@ -836,3 +836,52 @@ strats.watch = function (
 
 在非生产环境下使用 `assertObjectType` 函数对 `childVal` 进行类型检测，检测其是否是一个纯对象，我们知道 Vue 的 `watch` 选项需要是一个纯对象。
 
+#### 3.6 props、methods、inject、computed 的合并策略
+
+```js
+/**
+ * Other object hashes.
+ */
+strats.props =
+strats.methods =
+strats.inject =
+strats.computed = function (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): ?Object {
+  if (childVal && process.env.NODE_ENV !== 'production') {
+    assertObjectType(key, childVal, vm)
+  }
+  if (!parentVal) return childVal
+  const ret = Object.create(null)
+  extend(ret, parentVal)
+  if (childVal) extend(ret, childVal)
+  return ret
+}
+```
+
+#### 3.7 provide 的合并策略
+
+最后一个选项的合并策略，就是 `provide` 选项的合并策略，只有一句代码，如下：
+
+```js
+strats.provide = mergeDataOrFn
+```
+
+也就是说 `provide` 选项的合并策略与 `data` 选项的合并策略相同，都是使用 `mergeDataOrFn` 函数。
+
+#### 3.8 总结
+
+现在我们了解了 Vue 中是如何合并处理选项的，接下来我们稍微做一个总结：
+
+- 对于 el、propsData 选项使用默认的合并策略 defaultStrat。
+- 对于 data 选项，使用 mergeDataOrFn 函数进行处理，最终结果是 data 选项将变成一个函数，且该函数的执行结果为真正的数据对象。
+- 对于 生命周期钩子 选项，将合并成数组，使得父子选项中的钩子函数都能够被执行
+- 对于 directives、filters 以及 components 等资源选项，父子选项将以原型链的形式被处理，正是因为这样我们才能够在任何地方都使用内置组件、指令等。
+- 对于 watch 选项的合并处理，类似于生命周期钩子，如果父子选项都有相同的观测字段，将被合并为数组，这样观察者都将被执行。
+- 对于 props、methods、inject、computed 选项，父选项始终可用，但是子选项会覆盖同名的父选项字段。
+- 对于 provide 选项，其合并策略使用与 data 选项相同的 mergeDataOrFn 函数。
+- 最后，以上没有提及到的选项都将使默认选项 defaultStrat。
+- 最最后，默认合并策略函数 defaultStrat 的策略是：只要子选项不是 undefined 就使用子选项，否则使用父选项。
