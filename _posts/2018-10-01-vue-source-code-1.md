@@ -527,3 +527,5 @@ export default Vue
 ```
 
 简略代码如上。第一个影响是它重写了 `Vue.prototype.$mount` 方法；第二个影响是添加了 `Vue.compile` 全局API。
+
+[Vue技术内幕](http://hcysun.me/vue-design/art/3vue-example.html)

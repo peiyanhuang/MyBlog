@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Vue 源码学习-Vue实例
+title:  Vue 源码学习-Vue实例(1)
 date:   2018-10-02 09:58:00 +0800
 categories: Vue
 tag: Vue
@@ -97,9 +97,9 @@ if (options && options._isComponent) {
     initInternalComponent(vm, options)
 } else {
     vm.$options = mergeOptions(
-    resolveConstructorOptions(vm.constructor),
-    options || {},
-    vm
+      resolveConstructorOptions(vm.constructor),
+      options || {},
+      vm
     )
 }
 /* istanbul ignore else */
@@ -885,3 +885,5 @@ strats.provide = mergeDataOrFn
 - 对于 provide 选项，其合并策略使用与 data 选项相同的 mergeDataOrFn 函数。
 - 最后，以上没有提及到的选项都将使默认选项 defaultStrat。
 - 最最后，默认合并策略函数 defaultStrat 的策略是：只要子选项不是 undefined 就使用子选项，否则使用父选项。
+
+[Vue技术内幕](http://hcysun.me/vue-design/art/3vue-example.html)
