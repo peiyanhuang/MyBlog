@@ -189,7 +189,7 @@ function getOuterHTML (el: Element): string {
 if (template) {
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    mark('compile')
+    mark('compile') // 统计编译器性能
   }
 
   const { render, staticRenderFns } = compileToFunctions(template, {
@@ -203,13 +203,13 @@ if (template) {
 
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    mark('compile end')
+    mark('compile end') // 统计编译器性能
     measure(`vue ${this._name} compile`, 'compile', 'compile end')
   }
 }
 ```
 
-在处理完 `options.template` 选项之后，`template` 变量中存储着最终用来生成渲染函数的字符串，但正如前面提到过的 `template` 变量可能是一个空字符串，所以在上面代码中第一句高亮的代码对 `template` 进行判断，只有在 `template` 存在的情况下才会执行 `if` 语句块内的代码，而 `if` 语句块内的代码的作用就是使用 `compileToFunctions` 函数将模板(`template`)字符串编译为渲染函数(`render`)，并将渲染函数添加到 `vm.$options` 选项中(`options` 是 `vm.$options` 的引用)。对于 `compileToFunctions` 函数我们会在讲解 `Vue` 编译器的时候详细说明，现在大家只需要知道他的作用即可，实际上在 `src/platforms/web/entry-runtime-with-compiler.js` 文件的底部我们可以看到这样一句代码：
+在处理完 `options.template` 选项之后，`template` 变量中存储着最终用来生成渲染函数的字符串，但正如前面提到过的 `template` 变量可能是一个空字符串，所以在上面代码中第一句代码对 `template` 进行判断，只有在 `template` 存在的情况下才会执行 `if` 语句块内的代码，而 `if` 语句块内的代码的作用就是使用 `compileToFunctions` 函数将模板(`template`)字符串编译为渲染函数(`render`)，并将渲染函数添加到 `vm.$options` 选项中(`options` 是 `vm.$options` 的引用)。对于 `compileToFunctions` 函数我们会在讲解 `Vue` 编译器的时候详细说明，现在大家只需要知道他的作用即可，实际上在 `src/platforms/web/entry-runtime-with-compiler.js` 文件的底部我们可以看到这样一句代码：
 
 ```js
 Vue.compile = compileToFunctions
@@ -217,35 +217,7 @@ Vue.compile = compileToFunctions
 
 `Vue.compile` 函数是 `Vue` 暴露给开发者的工具函数，他能够将字符串编译为渲染函数。而上面这句代码证明了 `Vue.compile` 函数就是 `compileToFunctions` 函数。
 
-另外注意如下代码中高亮的部分：
-
-```js {3-5,17-20}
-if (template) {
-  /* istanbul ignore if */
-  if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    mark('compile')
-  }
-
-  const { render, staticRenderFns } = compileToFunctions(template, {
-    shouldDecodeNewlines,
-    shouldDecodeNewlinesForHref,
-    delimiters: options.delimiters,
-    comments: options.comments
-  }, this)
-  options.render = render
-  options.staticRenderFns = staticRenderFns
-
-  /* istanbul ignore if */
-  if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    mark('compile end')
-    measure(`vue ${this._name} compile`, 'compile', 'compile end')
-  }
-}
-```
-
-这两段高亮的代码是用来统计编译器性能的，我们在 `Vue.prototype._init` 函数中已经遇到过类似的代码，详细内容可以在 [以一个例子为线索](./art/3vue-example.md) 以及 [perf.js 文件代码说明](../appendix/core-util.md#perf-js-文件代码说明) 这两个章节中查看。
-
-最后我们来做一下总结，实际上完整版 `Vue` 的 `$mount` 函数要做的核心事情就是编译模板(`template`)字符串为渲染函数，并将渲染函数赋值给 `vm.$options.render` 选项，这个选项将会在真正挂载组件的 `mountComponent` 函数中。
+实际上完整版 `Vue` 的 `$mount` 函数要做的核心事情就是编译模板(`template`)字符串为渲染函数，并将渲染函数赋值给 `vm.$options.render` 选项，这个选项将会在真正挂载组件的 `mountComponent` 函数中。
 
 ## 渲染函数的观察者
 
@@ -269,11 +241,11 @@ vm.$el = el
 
 在组件实例对象上添加 `$el` 属性，其值为挂载元素 `el`。我们知道 `$el` 的值是组件模板根元素的引用，如下代码：
 
-```html {1,6}
+```jsx
 <div id="foo"></div>
 
 <script>
-const new Vue({
+const vm = new Vue({
   el: '#foo',
   template: '<div id="bar"></div>'
 })
@@ -282,7 +254,7 @@ const new Vue({
 
 上面代码中，挂载元素是一个 `id` 为 `foo` 的 `div` 元素，而组件模板是一个 `id` 为 `bar` 的 `div` 元素。那么大家思考一个问题：`vm.$el` 的值应该是哪一个 `div` 元素的引用？答案是：**`vm.$el` 是 `id` 为 `bar` 的 `div` 的引用**。这是因为 `vm.$el` 始终是组件模板的根元素。由于我们传递了 `template` 选项指定了模板，那么 `vm.$el` 自然就是 `id` 为 `bar` 的 `div` 的引用。假设我们没有传递 `template` 选项，那么根据我们前面的分析，`el` 选项指定的挂载点将被作为组件模板，这个时候 `vm.$el` 则是 `id` 为 `foo` 的 `div` 元素的引用。
 
-再结合 `mountComponent` 函数体的这句话：`vm.$el = el`，有的同学就会有疑问了，这里明明把 `el` 挂载元素赋值给了 `vm.$el`，那么 `vm.$el` 怎么可能引用的是 `template` 选项指定的模板的根元素呢？其实这里仅仅是暂时赋值而已，这是为了给虚拟DOM的 `patch` 算法使用的，实际上 `vm.$el` 会被 `patch` 算法的返回值重写，为了证明这一点我们可以打开 `src/core/instance/lifecycle.js` 文件找到 `Vue.prototype._update` 方法，如下高亮代码所示：
+再结合 `mountComponent` 函数体的这句话：`vm.$el = el`，有的同学就会有疑问了，这里明明把 `el` 挂载元素赋值给了 `vm.$el`，那么 `vm.$el` 怎么可能引用的是 `template` 选项指定的模板的根元素呢？其实这里仅仅是暂时赋值而已，这是为了给虚拟DOM的 `patch` 算法使用的，实际上 `vm.$el` 会被 `patch` 算法的返回值重写，为了证明这一点我们可以打开 `src/core/instance/lifecycle.js` 文件找到 `Vue.prototype._update` 方法，如下代码所示：
 
 ```js {6,9}
 Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
@@ -300,7 +272,7 @@ Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
 }
 ```
 
-正如上面高亮的两句代码所示的那样，`vm.$el` 的值将被 `vm.__patch__` 函数的返回值重写。不过现在大家或许还不清楚 `Vue.prototype._update` 的作用是什么，这块内容我们将在后面的章节详细讲解。
+正如上面代码所示的那样，`vm.$el` 的值将被 `vm.__patch__` 函数的返回值重写。不过现在大家或许还不清楚 `Vue.prototype._update` 的作用是什么，这块内容我们将在后面的章节详细讲解。
 
 我们继续查看 `mountComponent` 函数的代码，接下来是一段 `if` 语句块：
 
@@ -398,7 +370,7 @@ new Watcher(vm, updateComponent, noop, {
 }, true /* isRenderWatcher */)
 ```
 
-前面说过，这将是我们第一次真正意义上的遇到观察者构造函数 `Watcher`，我们在 [揭开数据响应系统的面纱](./art/7vue-reactive.md) 一章中有提到过，正是因为 `watcher` 对表达式的求值，触发了数据属性的 `get` 拦截器函数，从而收集到了依赖，当数据变化时能够触发响应。在上面的代码中 `Watcher` 观察者实例将对 `updateComponent` 函数求值，我们知道 `updateComponent` 函数的执行会间接触发渲染函数(`vm.$options.render`)的执行，而渲染函数的执行则会触发数据属性的 `get` 拦截器函数，从而将依赖(`观察者`)收集，当数据变化时将重新执行 `updateComponent` 函数，这就完成了重新渲染。同时我们把上面代码中实例化的观察者对象称为 **渲染函数的观察者**。
+前面说过，这将是我们第一次真正意义上的遇到观察者构造函数 `Watcher`，我们在 揭开数据响应系统的面纱 一章中有提到过，正是因为 `watcher` 对表达式的求值，触发了数据属性的 `get` 拦截器函数，从而收集到了依赖，当数据变化时能够触发响应。在上面的代码中 `Watcher` 观察者实例将对 `updateComponent` 函数求值，我们知道 `updateComponent` 函数的执行会间接触发渲染函数(`vm.$options.render`)的执行，而渲染函数的执行则会触发数据属性的 `get` 拦截器函数，从而将依赖(`观察者`)收集，当数据变化时将重新执行 `updateComponent` 函数，这就完成了重新渲染。同时我们把上面代码中实例化的观察者对象称为 **渲染函数的观察者**。
 
 ## 初识 Watcher
 
@@ -737,7 +709,7 @@ export function popTarget () {
 }
 ```
 
-在 `src/core/observer/dep.js` 文件中定义了 `Dep` 类，我们在 [揭开数据响应系统的面纱](./art/7vue-reactive.md) 一章中就遇到过 `Dep` 类，当时我们说每个响应式数据的属性都通过闭包引用着一个用来收集属于自身依赖的“筐”，实际上那个“筐”就是 `Dep` 类的实例对象。更多关于 `Dep` 类的内容我们会在合适的地方讲解，现在我们的主要目的是搞清楚 `pushTarget` 函数是做什么的。在上面这段代码中我们可以看到 `Dep` 类拥有一个静态属性，即 `Dep.target` 属性，该属性的初始值为 `null`，其实 `pushTarget` 函数的作用就是用来为 `Dep.target` 属性赋值的，`pushTarget` 函数会将接收到的参数赋值给 `Dep.target` 属性，我们知道传递给 `pushTarget` 函数的参数就是调用该函数的观察者对象，所以 `Dep.target` 保存着一个观察者对象，其实这个观察者对象就是即将要收集的目标。
+在 `src/core/observer/dep.js` 文件中定义了 `Dep` 类，我们在 揭开数据响应系统的面纱 一章中就遇到过 `Dep` 类，当时我们说每个响应式数据的属性都通过闭包引用着一个用来收集属于自身依赖的“筐”，实际上那个“筐”就是 `Dep` 类的实例对象。更多关于 `Dep` 类的内容我们会在合适的地方讲解，现在我们的主要目的是搞清楚 `pushTarget` 函数是做什么的。在上面这段代码中我们可以看到 `Dep` 类拥有一个静态属性，即 `Dep.target` 属性，该属性的初始值为 `null`，其实 `pushTarget` 函数的作用就是用来为 `Dep.target` 属性赋值的，`pushTarget` 函数会将接收到的参数赋值给 `Dep.target` 属性，我们知道传递给 `pushTarget` 函数的参数就是调用该函数的观察者对象，所以 `Dep.target` 保存着一个观察者对象，其实这个观察者对象就是即将要收集的目标。
 
 我们再回到 `this.get()` 方法中，如下是简化后的代码：
 
@@ -1000,7 +972,7 @@ removeSub (sub: Watcher) {
 }
 ```
 
-它的内容很简单，接收一个要被移除的观察者作为参数，然后使用 `remove` 工具函数，将该观察者从 `this.subs` 数组中移除。其中 `remove` 工具函数来自 `src/shared/util.js` 文件，可以在 [shared/util.js 文件工具方法全解](../appendix/shared-util.md#remove) 中查看。
+它的内容很简单，接收一个要被移除的观察者作为参数，然后使用 `remove` 工具函数，将该观察者从 `this.subs` 数组中移除。其中 `remove` 工具函数来自 `src/shared/util.js` 文件。
 
 ## 触发依赖的过程
 
@@ -1231,19 +1203,11 @@ if (this.user) {
 </script>
 ```
 
-如上代码所示，我们在模板中使用了数据对象的 `name` 属性，这意味着 `name` 属性将会收集渲染函数的观察者作为依赖，接着我们在 `mounted` 钩子中修改了 `name` 属性的值，这样就会触发响应：**渲染函数的观察者会重新求值，完成重渲染**，这个过程可以用一张图来描述，如下图所示：
+如上代码所示，我们在模板中使用了数据对象的 `name` 属性，这意味着 `name` 属性将会收集渲染函数的观察者作为依赖，接着我们在 `mounted` 钩子中修改了 `name` 属性的值，这样就会触发响应：**渲染函数的观察者会重新求值，完成重渲染**
 
-![](http://7xlolm.com1.z0.glb.clouddn.com/2018-05-25-082631.jpg)
+“同步更新”会导致什么问题？很显然这会导致每次属性值的变化都会引发一次重新渲染，假设我们要修改两个属性的值，那么同步更新将导致两次的重渲染，你可能会同时修改很多属性的值，如果每次属性值的变化都要重新渲染，就会导致严重的性能问题，而异步更新队列就是用来解决这个问题的。
 
-上图描述了一个同步的视图更新过程，从属性值的变化到完成重新渲染，这是一个同步更新的过程，大家思考一下“同步更新”会导致什么问题？很显然这会导致每次属性值的变化都会引发一次重新渲染，假设我们要修改两个属性的值，那么同步更新将导致两次的重渲染，如下图所示：
-
-![](http://7xlolm.com1.z0.glb.clouddn.com/2018-05-23-131015.jpg)
-
-有时候这是致命的缺陷，想象一下复杂业务场景，你可能会同时修改很多属性的值，如果每次属性值的变化都要重新渲染，就会导致严重的性能问题，而异步更新队列就是用来解决这个问题的，为了让大家更好地理解，我们同样用一张图来描述异步更新的过程，如下：
-
-![](http://7xlolm.com1.z0.glb.clouddn.com/2018-05-25-103029.jpg)
-
-上图描述了异步更新的过程，与同步更新的不同之处在于，每次修改属性的值之后并没有立即重新求值，而是将需要执行更新操作的观察者放入一个队列中。当我们修改 `name` 属性值时，由于 `name` 属性收集了渲染函数的观察者(后面我们称其为 `renderWatcher`)作为依赖，所以此时 `renderWatcher` 会被添加到队列中，接着我们修改了 `age` 属性的值，由于 `age` 属性也收集了 `renderWatcher` 作为依赖，所以此时也会尝试将 `renderWatcher` 添加到队列中，但是由于 `renderWatcher` 已经存在于队列中了，所以并不会重复添加，这样队列中将只会存在一个 `renderWatcher`。当所有的突变完成之后，再一次性的执行队列中所有观察者的更新方法，同时清空队列，这样就达到了优化的目的。
+异步更新与同步更新的不同之处在于，每次修改属性的值之后并没有立即重新求值，而是将需要执行更新操作的观察者放入一个队列中。当我们修改 `name` 属性值时，由于 `name` 属性收集了渲染函数的观察者(后面我们称其为 `renderWatcher`)作为依赖，所以此时 `renderWatcher` 会被添加到队列中，接着我们修改了 `age` 属性的值，由于 `age` 属性也收集了 `renderWatcher` 作为依赖，所以此时也会尝试将 `renderWatcher` 添加到队列中，但是由于 `renderWatcher` 已经存在于队列中了，所以并不会重复添加，这样队列中将只会存在一个 `renderWatcher`。当所有的突变完成之后，再一次性的执行队列中所有观察者的更新方法，同时清空队列，这样就达到了优化的目的。
 
 接下来我们就从具体代码入手，看一看其具体实现，我们知道当修改一个属性的值时，会通过执行该属性所收集的所有观察者对象的 `update` 方法进行更新，那么我们就找到观察者对象的 `update` 方法，如下：
 
@@ -2813,9 +2777,7 @@ compA () {
 
 大家想一想这个函数的执行会发生什么事情？我们知道数据对象的 `a` 属性是响应式的，所以如上函数的执行将会触发属性 `a` 的 `get` 拦截器函数。所以这会导致属性 `a` 将会收集到一个依赖，这个依赖实际上就是计算属性的观察者对象。
 
-现在思路大概明朗了，如果计算属性 `compA` 依赖了数据对象的 `a` 属性，那么属性 `a` 将收集计算属性 `compA` 的 **计算属性观察者对象**，而 **计算属性观察者对象** 将收集 **渲染函数观察者对象**，整个路线是这样的：
-
-![](http://7xlolm.com1.z0.glb.clouddn.com/2018-06-10-074626.png)
+现在思路大概明朗了，如果计算属性 `compA` 依赖了数据对象的 `a` 属性，那么属性 `a` 将收集计算属性 `compA` 的 **计算属性观察者对象**，而 **计算属性观察者对象** 将收集 **渲染函数观察者对象**。
 
 假如此时我们修改响应式属性 `a` 的值，那么将触发属性 `a` 所收集的所有依赖，这其中包括计算属性的观察者。我们知道触发某个响应式属性的依赖实际上就是执行该属性所收集到的所有观察者的 `update` 方法，现在我们就找到 `Watcher` 类的 `update` 方法，如下：
 
@@ -2850,9 +2812,7 @@ update () {
 
 如上高亮代码所示，由于响应式数据收集到了计算属性观察者对象，所以当计算属性观察者对象的 `update` 方法被执行时，如上 `if` 语句块的代码将被执行，因为 `this.computed` 属性为真。接着检查了 `this.dep.subs.length === 0` 的真假，我们知道既然是计算属性的观察者，那么 `this.dep` 中将收集渲染函数作为依赖(或其他观察该计算属性变化的观察者对象作为依赖)，所以当依赖的数量不为 `0` 时，在 `else` 语句块内会调用 `this.dep.notify()` 方法继续触发响应，这会导致 `this.dep.subs` 属性中收集到的所有观察者对象的更新，如果此时 `this.dep.subs` 中包含渲染函数的观察者，那么这就会导致重新渲染，最终完成视图的更新。
 
-以上就是计算属性的实现思路，本质上计算属性观察者对象就是一个桥梁，它搭建在响应式数据与渲染函数观察者中间，另外大家注意上面的代码中并非直接调用 `this.dep.notify()` 方法触发响应，而是将这个方法作为 `this.getAndInvoke` 方法的回调去执行的，为什么这么做呢？那是因为 `this.getAndInvoke` 方法会重新求值并对比新旧值是否相同，如果满足相同条件则不会触发响应，只有当值确实变化时才会触发响应，这就是文档中的描述，现在你明白了吧：
-
-![](http://7xlolm.com1.z0.glb.clouddn.com/2018-06-10-080745.png)
+以上就是计算属性的实现思路，本质上计算属性观察者对象就是一个桥梁，它搭建在响应式数据与渲染函数观察者中间，另外大家注意上面的代码中并非直接调用 `this.dep.notify()` 方法触发响应，而是将这个方法作为 `this.getAndInvoke` 方法的回调去执行的，为什么这么做呢？那是因为 `this.getAndInvoke` 方法会重新求值并对比新旧值是否相同，如果满足相同条件则不会触发响应，只有当值确实变化时才会触发响应，这就是文档中的描述.
 
 ## 同步执行观察者
 
