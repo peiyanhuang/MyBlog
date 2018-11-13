@@ -1701,7 +1701,7 @@ observeArray (items: Array<any>) {
 
 这里我们补讲 `defineReactive` 函数中的一段代码，如下：
 
-```js {7-9}
+```js
 get: function reactiveGetter () {
   const value = getter ? getter.call(obj) : val
   if (Dep.target) {
@@ -1721,7 +1721,7 @@ get: function reactiveGetter () {
 
 为了弄清楚这个问题，假设我们有如下代码：
 
-```js {2，8-10}
+```js
 <div id="demo">
   {{arr}}
 </div>
@@ -1748,7 +1748,7 @@ const ins = new Vue({
 
 数据对象中的 `arr` 属性是一个数组，并且数组的一个元素是另外一个对象。之前讲过了，上面的对象在经过观测后将变成如下这个样子：
 
-```js {3-4}
+```js
 {
   arr: [
     { a: 1, __ob__ /* 我们将该 __ob__ 称为 ob2 */ },
@@ -1789,7 +1789,7 @@ function dependArray (value: Array<any>) {
 
 那么为什么数组需要这样处理，而纯对象不需要呢？那是因为 **数组的索引是非响应式的**。现在我们已经知道了数据响应系统对纯对象和数组的处理方式是不同，对于纯对象只需要逐个将对象的属性重新定义为访问器属性，并且当属性的值同样为纯对象时进行递归定义即可，而对于数组的处理则是通过拦截数组变异方法的方式，也就是说如下代码是触发不了响应的：
 
-```js {7}
+```js
 const ins = new Vue({
   data: {
     arr: [1, 2]
@@ -1805,7 +1805,7 @@ ins.arr[0] = 3  // 不能触发响应
 
 现在我们是时候讲解一下 `Vue.set` 和 `Vue.delete` 函数的实现了，我们知道 `Vue` 数据响应系统的原理的核心是通过 `Object.defineProperty` 函数将数据对象的属性转换为访问器属性，从而使得我们能够拦截到属性的读取和设置，但正如官方文档中介绍的那样，`Vue` 是没有能力拦截到为一个对象(或数组)添加属性(或元素)的，而 `Vue.set` 和 `Vue.delete` 就是为了解决这个问题而诞生的。同时为了方便使用， `Vue` 还在实例对象上定义了 `$set` 和 `$delete` 方法，实际上 `$set` 和 `$delete` 方法仅仅是 `Vue.set` 和 `Vue.delete` 的别名，为了证明这点，我们首先来看看 `$set` 和 `$delete` 的实现，还记得 `$set` 和 `$delete` 方法定义在哪里吗？`$set` 和 `$delete` 定义在 `src/core/instance/state.js` 文件的 `stateMixin` 函数中，如下代码：
 
-```js {4-5}
+```js
 export function stateMixin (Vue: Class<Component>) {
   // 省略...
 
@@ -1826,7 +1826,7 @@ export function stateMixin (Vue: Class<Component>) {
 
 接着我们再来看看 `Vue.set` 和 `Vue.delete` 函数的定义，我们发现这两个函数是在 `initGlobalAPI` 函数中定义的，打开 `src/core/global-api/index.js` 文件，找到 `initGlobalAPI` 函数如下：
 
-```js {4,5}
+```js
 export function initGlobalAPI (Vue: GlobalAPI) {
   // 省略...
 
@@ -1865,7 +1865,7 @@ if (process.env.NODE_ENV !== 'production' &&
 
 紧接着又是一段 `if` 语句块，如下：
 
-```js {1}
+```js
 if (Array.isArray(target) && isValidArrayIndex(key)) {
   target.length = Math.max(target.length, key)
   target.splice(key, 1, val)
@@ -1875,7 +1875,7 @@ if (Array.isArray(target) && isValidArrayIndex(key)) {
 
 这段代码对 `target` 和 `key` 这两个参数做了校验，如果 `target` 是一个数组，并且 `key` 是一个有效的数组索引，那么就会执行 `if` 语句块的内容。在校验 `key` 是否是有效的数组索引时使用了 `isValidArrayIndex` 函数。也就是说当我们尝试使用 `Vue.set/$set` 为数组设置某个元素值的时候就会执行 `if` 语句块的内容，如下例子：
 
-```js {3,7}
+```js
 const ins = new Vue({
   data: {
     arr: [1, 2]
@@ -1888,7 +1888,7 @@ ins.$set(ins.$data.arr, 0, 3) // 能够触发响应
 
 上面的代码中我们直接修改 `arr[0]` 的值是不能够触发响应的，但是如果我们使用 `$set` 函数重新设置 `arr` 数组索引为 `0` 的元素的值，这样是能够触发响应的，我们看看 `$set` 函数是如何实现的，注意如下代码：
 
-```js {2-4}
+```js
 if (Array.isArray(target) && isValidArrayIndex(key)) {
   target.length = Math.max(target.length, key)
   target.splice(key, 1, val)
@@ -1933,7 +1933,7 @@ if (hasOwn(target, key)) {
 
 我们继续看代码，接下来是这样一段代码，这是 `set` 函数剩余的全部代码，如下：
 
-```js {1,13-14}
+```js
 const ob = (target: any).__ob__
 if (target._isVue || (ob && ob.vmCount)) {
   process.env.NODE_ENV !== 'production' && warn(
@@ -1955,7 +1955,7 @@ return val
 
 再看如下代码：
 
-```js {9-12}
+```js
 const ob = (target: any).__ob__
 if (target._isVue || (ob && ob.vmCount)) {
   process.env.NODE_ENV !== 'production' && warn(
@@ -1992,7 +1992,7 @@ if (target._isVue || (ob && ob.vmCount)) {
 
 第二个条件是：`(ob && ob.vmCount)`，我们知道 `ob` 就是 `target.__ob__` 那么 `ob.vmCount` 是什么呢？为了搞清这个问题，我们回到 `observe` 工厂函数中，如下代码：
 
-```js {3-5}
+```js
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   // 省略...
   if (asRootData && ob) {
@@ -2004,7 +2004,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 
 `observe` 函数接收两个参数，第二个参数指示着被观测的数据对象是否是根数据对象，什么叫根数据对象呢？那就看 `asRootData` 什么时候为 `true` 即可，我们找到 `initData` 函数中，他在 `src/core/instance/state.js` 文件中，如下：
 
-```js {10}
+```js
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -2020,7 +2020,7 @@ function initData (vm: Component) {
 
 可以看到在调用 `observe` 观测 `data` 对象的时候 `asRootData` 参数为 `true`。而在后续的递归观测中调用 `observe` 的时候省略了 `asRootData` 参数。所以所谓的根数据对象就是 `data` 对象。这时候我们再来看如下代码：
 
-```js {3-5}
+```js
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   // 省略...
   if (asRootData && ob) {
@@ -2034,7 +2034,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 
 那么为什么不允许在根数据对象上添加属性呢？因为这样做是永远触发不了依赖的。原因就是根数据对象的 `Observer` 实例收集不到依赖(观察者)，如下：
 
-```js {4,6}
+```js
 const data = {
   obj: {
     a: 1

@@ -19,7 +19,7 @@ tag: Vue
 
 打开 `src/core/instance/init.js` 文件并找到 `Vue.prototype._init` 函数，如下代码所示：
 
-```js {18}
+```js
 Vue.prototype._init = function (options?: Object) {
   // 省略...
 
@@ -74,7 +74,7 @@ return mountComponent(this, el, hydrating)
 
 第二个定义 `$mount` 函数的地方是 `src/platforms/web/entry-runtime-with-compiler.js` 文件，我们知道这个文件是完整版 `Vue` 的入口文件，在该文件中重新定义了 `$mount` 函数，但是保留了运行时 `$mount` 的功能，并在此基础上为 `$mount` 函数添加了编译模板的能力，接下来我们详细讲解一下完整版 `$mount` 函数的实现，打开 `src/platforms/web/entry-runtime-with-compiler.js` 文件，如下：
 
-```js {1,2,7}
+```js
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -185,7 +185,7 @@ function getOuterHTML (el: Element): string {
 
 接下来我们继续看代码，在处理完 `template` 选项之后，代码运行到了最关键的阶段，如下：
 
-```js {1,7,13}
+```js
 if (template) {
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -256,7 +256,7 @@ const vm = new Vue({
 
 再结合 `mountComponent` 函数体的这句话：`vm.$el = el`，有的同学就会有疑问了，这里明明把 `el` 挂载元素赋值给了 `vm.$el`，那么 `vm.$el` 怎么可能引用的是 `template` 选项指定的模板的根元素呢？其实这里仅仅是暂时赋值而已，这是为了给虚拟DOM的 `patch` 算法使用的，实际上 `vm.$el` 会被 `patch` 算法的返回值重写，为了证明这一点我们可以打开 `src/core/instance/lifecycle.js` 文件找到 `Vue.prototype._update` 方法，如下代码所示：
 
-```js {6,9}
+```js
 Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
   // 省略...
 
@@ -340,7 +340,7 @@ if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
 
 既然功能相同，我们就直接看 `else` 语句块的代码，因为它要简洁的多：
 
-```js {5-7}
+```js
 let updateComponent
 if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
   // 省略...
@@ -491,7 +491,7 @@ if (options) {
 
 * `options.before`，可以理解为 `Watcher` 实例的钩子，当数据变化之后，触发更新之前，调用在创建渲染函数的观察者实例对象时传递的 `before` 选项。如下代码：
 
-```js {2-6}
+```js
 new Watcher(vm, updateComponent, noop, {
   before () {
     if (vm._isMounted) {
@@ -605,7 +605,7 @@ const bailRE = /[^\w.$]/
 
 回过头来，如果参数 `path` 不满足正则 `bailRE`，那么如下的代码将被执行：
 
-```js {5-12}
+```js
 export function parsePath (path: string): any {
   if (bailRE.test(path)) {
     return
@@ -625,7 +625,7 @@ export function parsePath (path: string): any {
 
 看完了 `parsePath` 函数，我们再回到如下这段代码中：
 
-```js {5-13}
+```js
 if (typeof expOrFn === 'function') {
   this.getter = expOrFn
 } else {
@@ -689,7 +689,7 @@ get () {
 
 如上是 `this.get()` 方法的全部代码，一上来调用了 `pushTarget(this)` 函数，并将当前观察者实例对象作为参数传递，这里的 `pushTarget` 函数来自于 `src/core/observer/dep.js` 文件，如下代码所示：
 
-```js {8}
+```js
 export default class Dep {
   // 省略...
 }
@@ -729,7 +729,7 @@ get () {
 
 在调用 `pushTarget` 函数之后，定义了 `value` 变量，该变量的值为 `this.getter` 函数的返回值，我们知道观察者对象的 `this.getter` 属性是一个函数，这个函数的执行就意味着对被观察目标的求值，并将得到的值赋值给 `value` 变量，而且我们可以看到 `this.get` 方法的最后将 `value` 返回，为什么要强调这一点呢？如下代码所示：
 
-```js {13}
+```js
 constructor (
   vm: Component,
   expOrFn: string | Function,
@@ -759,7 +759,7 @@ constructor (
 
 这段模板被编译将生成如下渲染函数：
 
-```js {6}
+```js
 // 编译生成的渲染函数是一个匿名函数
 function anonymous () {
   with (this) {
@@ -773,7 +773,7 @@ function anonymous () {
 
 大家看不懂渲染函数没关系，关于模板到渲染函数的编译过程我们会在编译器相关章节为大家讲解，现在大家只需要注意如上那句代码，可以发现渲染函数的执行会读取数据属性 `name` 的值，这将会触发 `name` 属性的 `get` 拦截器函数，如下代码截取自 `defineReactive` 函数：
 
-```js {3,4}
+```js
 get: function reactiveGetter () {
   const value = getter ? getter.call(obj) : val
   if (Dep.target) {
@@ -850,7 +850,7 @@ addDep (dep: Dep) {
 
 这段模板的不同之处在于我们使用了两次 `name` 数据，那么相应的渲染函数也将变为如下这样：
 
-```js {5}
+```js
 function anonymous () {
   with (this) {
     return _c('div',
@@ -863,7 +863,7 @@ function anonymous () {
 
 可以看到，渲染函数的执行将读取两次数据对象 `name` 属性的值，这必然会触发两次 `name` 属性的 `get` 拦截器函数，同样的道理，`dep.depend` 也将被触发两次，最后导致 `dep.addSub` 方法被执行了两次，且参数一模一样，这样就产生了同一个观察者被收集多次的问题。所以我们不能像如上那样修改 `addDep` 函数的代码，那么此时我相信大家也应该知道如下代码的含义了：
 
-```js {3-5}
+```js
 addDep (dep: Dep) {
   const id = dep.id
   if (!this.newDepIds.has(id)) {
@@ -880,7 +880,7 @@ addDep (dep: Dep) {
 
 不过有的同学可能注意到了，如下代码所示：
 
-```js {6}
+```js
 addDep (dep: Dep) {
   const id = dep.id
   if (!this.newDepIds.has(id)) {
@@ -895,7 +895,7 @@ addDep (dep: Dep) {
 
 这里的判断条件 `!this.depIds.has(id)` 是什么意思呢？我们知道 `newDepIds` 属性用来避免在 **一次求值** 的过程中收集重复的依赖，其实 `depIds` 属性是用来在 **多次求值** 中避免收集重复依赖的。什么是多次求值，其实所谓多次求值是指当数据变化时重新求值的过程。大家可能会疑惑，难道重新求值的时候不能用 `newDepIds` 属性来避免收集重复的依赖吗？不能，原因在于每一次求值之后 `newDepIds` 属性都会被清空，也就是说每次重新求值的时候对于观察者实例对象来讲 `newDepIds` 属性始终是全新的。虽然每次求值之后会清空 `newDepIds` 属性的值，但在清空之前会把 `newDepIds` 属性的值以及 `newDeps` 属性的值赋值给 `depIds` 属性和 `deps` 属性，这样重新求值的时候 `depIds` 属性和 `deps` 属性将会保存着上一次求值中 `newDepIds` 属性以及 `newDeps` 属性的值。为了证明这一点，我们来看一下观察者对象的求值方法，即 `get()` 方法：
 
-```js {12}
+```js
 get () {
   pushTarget(this)
   let value
@@ -915,7 +915,7 @@ get () {
 
 可以看到在 `finally` 语句块内调用了观察者对象的 `cleanupDeps` 方法，这个方法的作用正如我们前面所说的那样，每次求值完毕后都会使用 `depIds` 属性和 `deps` 属性保存 `newDepIds` 属性和 `newDeps` 属性的值，然后再清空 `newDepIds` 属性和 `newDeps` 属性的值，如下是 `cleanupDeps` 方法的源码：
 
-```js {9-16}
+```js
 cleanupDeps () {
   let i = this.deps.length
   while (i--) {
@@ -986,7 +986,7 @@ removeSub (sub: Watcher) {
 
 我们知道这段模板将会被编译成渲染函数，接着创建一个渲染函数的观察者，从而对渲染函数求值，在求值的过程中会触发数据对象 `name` 属性的 `get` 拦截器函数，进而将该观察者收集到 `name` 属性通过闭包引用的“筐”中，即收集到 `Dep` 实例对象中。这个 `Dep` 实例对象是属于 `name` 属性自身所拥有的，这样当我们尝试修改数据对象 `name` 属性的值时就会触发 `name` 属性的 `set` 拦截器函数，这样就有机会调用 `Dep` 实例对象的 `notify` 方法，从而触发了响应，如下代码截取自 `defineReactive` 函数中的 `set` 拦截器函数：
 
-```js {3}
+```js
 set: function reactiveSetter (newVal) {
   // 省略...
   dep.notify()
@@ -995,7 +995,7 @@ set: function reactiveSetter (newVal) {
 
 如上代码所示，可以看到当属性值变化时确实通过 `set` 拦截器函数调用了 `Dep` 实例对象的 `notify` 方法，这个方法就是用来通知变化的，我们找到 `Dep` 类的 `notify` 方法，如下：
 
-```js {6,21}
+```js
 export default class Dep {
   // 省略...
 
@@ -1073,7 +1073,7 @@ run () {
 
 现在我们终于找到了更新变化的根源，那就是 `getAndInvoke` 方法，如下：
 
-```js {2}
+```js
 getAndInvoke (cb: Function) {
   const value = this.get()
   if (
@@ -1103,7 +1103,7 @@ getAndInvoke (cb: Function) {
 
 在 `getAndInvoke` 方法中，第一句代码就调用了 `this.get` 方法，这意味着重新求值，这也证明了我们在上一小节中的假设。对于渲染函数的观察者来讲，重新求值其实等价于重新执行渲染函数，最终结果就是重新生成了虚拟DOM并更新真实DOM，这样就完成了重新渲染的过程。在重新调用 `this.get` 方法之后是一个 `if` 语句块，实际上对于渲染函数的观察者来讲并不会执行这个 `if` 语句块，因为 `this.get` 方法的返回值其实就等价于 `updateComponent` 函数的返回值，这个值将永远都是 `undefined`。实际上 `if` 语句块内的代码是为非渲染函数类型的观察者准备的，它用来对比新旧两次求值的结果，当值不相等的时候会调用通过参数传递进来的回调。我们先看一下判断条件，如下：
 
-```js {3，7-8}
+```js
 const value = this.get()
 if (
   value !== this.value ||
@@ -1201,7 +1201,7 @@ if (this.user) {
 </script>
 ```
 
-如上代码所示，我们在模板中使用了数据对象的 `name` 属性，这意味着 `name` 属性将会收集渲染函数的观察者作为依赖，接着我们在 `mounted` 钩子中修改了 `name` 属性的值，这样就会触发响应：**渲染函数的观察者会重新求值，完成重渲染**
+如上代码所示，我们在模板中使用了数据对象的 `name` 属性，这意味着 `name` 属性将会收集渲染函数的观察者作为依赖，接着我们在 `mounted` 钩子中修改了 `name` 属性的值，这样就会触发响应：**渲染函数的观察者会重新求值，完成重渲染**。
 
 “同步更新”会导致什么问题？很显然这会导致每次属性值的变化都会引发一次重新渲染，假设我们要修改两个属性的值，那么同步更新将导致两次的重渲染，你可能会同时修改很多属性的值，如果每次属性值的变化都要重新渲染，就会导致严重的性能问题，而异步更新队列就是用来解决这个问题的。
 
@@ -1209,7 +1209,7 @@ if (this.user) {
 
 接下来我们就从具体代码入手，看一看其具体实现，我们知道当修改一个属性的值时，会通过执行该属性所收集的所有观察者对象的 `update` 方法进行更新，那么我们就找到观察者对象的 `update` 方法，如下：
 
-```js {8}
+```js
 update () {
   /* istanbul ignore else */
   if (this.computed) {
@@ -1258,7 +1258,7 @@ export function queueWatcher (watcher: Watcher) {
 
 `queueWatcher` 函数接收观察者对象作为参数，首先定义了 `id` 常量，它的值是观察者对象的唯一 `id`，然后执行 `if` 判断语句，如下是简化的代码：
 
-```js {3-4}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -1276,7 +1276,7 @@ let has: { [key: number]: ?true } = {}
 
 当 `queueWatcher` 函数被调用之后，会尝试将该观察者放入队列中，并将该观察者的 `id` 值登记到 `has` 对象上作为 `has` 对象的属性同时将该属性值设置为 `true`。该 `if` 语句以及变量 `has` 的作用就是用来避免将相同的观察者重复入队的。在该 `if` 语句块内执行了真正的入队操作，如下代码部分所示：
 
-```js {6}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -1305,7 +1305,7 @@ let flushing = false
 
 `flushing` 变量是一个标志，我们知道放入队列 `queue` 中的所有观察者将会在突变完成之后统一执行更新，当更新开始时会将 `flushing` 变量的值设置为 `true`，代表着此时正在执行更新，所以根据判断条件 `if (!flushing)` 可知只有当队列没有执行更新时才会简单地将观察者追加到队列的尾部，有的同学可能会问：“难道在队列执行更新的过程中还会有观察者入队的操作吗？”，实际上是会的，典型的例子就是计算属性，比如队列执行更新时经常会执行渲染函数观察者的更新，渲染函数中很可能有计算属性的存在，由于计算属性在实现方式上与普通响应式属性有所不同，所以当触发计算属性的 `get` 拦截器函数时会有观察者入队的行为，这个时候我们需要特殊处理，也就是 `else` 分支的代码，如下：
 
-```js {10-14}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -1330,7 +1330,7 @@ export function queueWatcher (watcher: Watcher) {
 
 接着我们再来看如下代码：
 
-```js {7-15}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -1369,7 +1369,7 @@ let waiting = false
 
 为什么需要这个标志呢？我们看 `if` 语句块内的代码就知道了，在 `if` 语句块内先将 `waiting` 的值设置为 `true`，这意味着无论调用多少次 `queueWatcher` 函数，该 `if` 语句块的代码只会执行一次。接着调用 `nextTick` 并以 `flushSchedulerQueue` 函数作为参数，其中 `flushSchedulerQueue` 函数的作用之一就是用来将队列中的观察者统一执行更新的。对于 `nextTick` 相信大家已经很熟悉了，其实最好理解的方式就是把 `nextTick` 看做 `setTimeout(fn, 0)`，如下：
 
-```js {9}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -1439,7 +1439,7 @@ if (isIOS) setTimeout(noop)
 
 使用 `Promise` 是最理想的方案，但是如果宿主环境不支持 `Promise`，我们就需要降级处理，即注册 `(macro)task`，这就是 `else` 语句块内代码所做的事情：
 
-```js {5}
+```js
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   // 省略...
 } else {
@@ -1476,7 +1476,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 
 将一个回调函数注册为 `(macro)task` 的方式有很多，如 `setTimeout`、`setInterval` 以及 `setImmediate` 等等，但不同的方案之间是有区别的，通过上面的代码我们可以看到 `setTimeout` 被作为最后的备选方案：
 
-```js {11-13}
+```js
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   // 省略...
 } else if (typeof MessageChannel !== 'undefined' && (
@@ -1495,7 +1495,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 
 而首选方案是 `setImmediate`：
 
-```js {2-4}
+```js
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   macroTimerFunc = () => {
     setImmediate(flushCallbacks)
@@ -1513,7 +1513,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 
 如果宿主环境支持原生 `setImmediate` 函数，则使用 `setImmediate` 注册 `(macro)task`，为什么首选 `setImmediate` 呢？这是有原因的，因为 `setImmediate` 拥有比 `setTimeout` 更好的性能，这个问题很好理解，`setTimeout` 在将回调注册为 `(macro)task` 之前要不停的做超时检测，而 `setImmediate` 则不需要，这就是优先选用 `setImmediate` 的原因。但是 `setImmediate` 的缺陷也很明显，就是它的兼容性问题，到目前为止只有IE浏览器实现了它，所以为了兼容非IE浏览器我们还需要做兼容处理，只不过此时还轮不到 `setTimeout` 上场，而是使用 `MessageChannel`：
 
-```js {8-13}
+```js
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   // 省略...
 } else if (typeof MessageChannel !== 'undefined' && (
@@ -1536,7 +1536,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 
 现在是时候仔细看一下 `nextTick` 函数都做了什么事情了，不过为了更融入理解 `nextTick` 函数的代码，我们需要从 `$nextTick` 方法入手，如下：
 
-```js {3-5}
+```js
 export function renderMixin (Vue: Class<Component>) {
   // 省略...
   Vue.prototype.$nextTick = function (fn: Function) {
@@ -1618,7 +1618,7 @@ function flushCallbacks () {
 
 很好理解，首先将变量 `pending` 重置为 `false`，接着开始执行回调，但需要注意的是在执行 `callbacks` 队列中的回调函数时并没有直接遍历 `callbacks` 数组，而是使用 `copies` 常量保存一份 `callbacks` 的复制，然后遍历 `copies` 数组，并且在遍历 `copies` 数组之前将 `callbacks` 数组清空：`callbacks.length = 0`。为什么要这么做呢？这么做肯定是有原因的，我们模拟一下整个异步更新的流程就明白了，如下代码：
 
-```js {3，5}
+```js
 created () {
   this.name = 'HcySunYang'
   this.$nextTick(() => {
@@ -1684,7 +1684,7 @@ callbacks = [
 
 最后我们再来讲一下，当调用 `$nextTick` 方法时不传递回调函数时，是如何实现返回 `Promise` 实例对象的，实现很简单我们来看一下 `nextTick` 函数的代码，如下：
 
-```js {5-9}
+```js
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   // 省略...
@@ -1699,7 +1699,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
 
 如上代码所示，当 `nextTick` 函数没有接收到 `cb` 参数时，会检测当前宿主环境是否支持 `Promise`，如果支持则直接返回一个 `Promise` 实例对象，并且将 `resolve` 函数赋值给 `_resolve` 变量，`_resolve` 变量声明在 `nextTick` 函数的顶部。同时再来看如下代码：
 
-```js {10-12}
+```js
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {
@@ -1753,7 +1753,7 @@ Vue.prototype.$watch = function (
 
 `$watch` 方法允许我们观察数据对象的某个属性，当属性变化时执行回调。所以 `$watch` 方法至少接收两个参数，一个要观察的属性，以及一个回调函数。通过上面的代码我们发现，`$watch` 方法接收三个参数，除了前面介绍的两个参数之后还接收第三个参数，它是一个选项参数，比如是否立即执行回调或者是否深度观测等。我们可以发现这三个参数与 `Watcher` 类的构造函数中的三个参数相匹配，如下：
 
-```js {4-6}
+```js
 export default class Watcher {
   constructor (
     vm: Component,
@@ -1861,7 +1861,7 @@ this.active = false
 
 以上就是 `$watch` 方法的实现，以及如何解除观察的实现。不过不要忘了我们前面所讲的这些内容是假设传递给 `$watch` 方法的第二个参数是一个函数，如果不是函数呢？比如是一个纯对象，这时如下代码就会被执行：
 
-```js {7-9}
+```js
 Vue.prototype.$watch = function (
   expOrFn: string | Function,
   cb: any,
@@ -1953,7 +1953,7 @@ if (isPlainObject(handler)) {
 
 这样就可正常通过 `$watch` 方法创建观察者了。另外我们注意 `createWatcher` 函数中如下这段代码：
 
-```js {11-13}
+```js
 function createWatcher (
   vm: Component,
   expOrFn: string | Function,
@@ -1988,7 +1988,7 @@ methods: {
 
 上例中我们使用了 `watch` 选项，接下来我们就顺便来看一下 `watch` 选项是如何初始化的，找到 `initState` 函数，如下：
 
-```js {12-14}
+```js
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
@@ -2025,7 +2025,7 @@ function initWatch (vm: Component, watch: Object) {
 
 可以看到 `initWatch` 函数就是通过对 `watch` 选项遍历，然后通过 `createWatcher` 函数创建观察者对象的，需要注意的是上面代码中有一个判断条件，如下代码所示：
 
-```js {4}
+```js
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
@@ -2071,7 +2071,7 @@ watch: {
 
 这段代码使用 `watch` 选项观测了数据对象的 `a` 属性，我们知道 `watch` 方法内部是通过创建 `Watcher` 实例对象来实现观测的，在创建 `Watcher` 实例对象时会读取 `a` 的值从而触发属性 `a` 的 `get` 拦截器函数，最终将依赖收集。但问题是如果属性 `a` 的值是一个对象，如下：
 
-```js {3-5}
+```js
 data () {
   return {
     a: {
@@ -2090,7 +2090,7 @@ watch: {
 
 深度观测就是用来解决这个问题的，深度观测的原理很简单，既然属性 `a.b` 中没有收集到观察者，那么我们就主动读取一下 `a.b` 的值，这样不就能够触发属性 `a.b` 的 `get` 拦截器函数从而收集到观察者了吗，其实 `Vue` 就是这么做的，只不过你需要将 `deep` 选项参数设置为 `true`，主动告诉 `Watcher` 实例对象你现在需要的是深度观测。我们找到 `Watcher` 类的 `get` 方法，如下：
 
-```js {6, 16-18}
+```js
 get () {
   pushTarget(this)
   let value
@@ -2146,7 +2146,7 @@ function _traverse (val: any, seen: SimpleSet) {
 
 接下来我们看一下 `_traverse` 函数是如何遍历访问数据对象的，如下是 `_traverse` 函数的全部代码：
 
-```js {7-13}
+```js
 function _traverse (val: any, seen: SimpleSet) {
   let i, keys
   const isA = Array.isArray(val)
@@ -2258,7 +2258,7 @@ function _traverse (val: any, seen: SimpleSet) {
 
 如果被观察属性的值 `val` 是一个循环引用的对象，那么上面的代码将导致死循环，为了避免这种情况的发生，我们可以使用一个变量来存储那些已经被遍历过的对象，当再次遍历该对象时程序会发现该对象已经被遍历过了，这时会跳过遍历，从而避免死循环，如下代码所示：
 
-```js {7-13}
+```js
 function _traverse (val: any, seen: SimpleSet) {
   let i, keys
   const isA = Array.isArray(val)
@@ -2293,7 +2293,7 @@ function _traverse (val: any, seen: SimpleSet) {
 
 到目前为止，我们对响应系统的了解已经足够多了，是时候研究一下计算属性的实现了，实际上很多看上去神奇的东西在良好设计的系统中实现起来并没有想象的那么复杂，计算属性就是典型的案例，它本质上就是一个惰性求值的观察者。我们回到 `src/core/instance/state.js` 文件中的 `initState` 函数，因为计算属性是在这里被初始化的，如代码所示：
 
-```js {11}
+```js
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
@@ -2476,7 +2476,7 @@ if (!(key in vm)) {
 
 `defineComputed` 函数就定义在 `initComputed` 函数的下方，如下是 `defineComputed` 函数的签名及最后一句代码：
 
-```js {7}
+```js
 export function defineComputed (
   target: any,
   key: string,
@@ -2654,7 +2654,7 @@ depend () {
 
 `depend` 方法的内容很简单，检查 `this.dep` 和 `Dep.target` 是否全部有值，如果都有值的情况下便会执行 `this.dep.depend` 方法。这里我们首先要知道 `this.dep` 属性是什么，实际上计算属性的观察者与其他观察者对象不同，不同之处首先会体现在创建观察者实例对象的时候，如下是 `Watcher` 类的 `constructor` 方法中的一段代码：
 
-```js {9-11}
+```js
 constructor (
   vm: Component,
   expOrFn: string | Function,
@@ -2676,7 +2676,7 @@ constructor (
 
 现在我们再回到 `Watcher` 类的 `depend` 方法中：
 
-```js {3}
+```js
 depend () {
   if (this.dep && Dep.target) {
     this.dep.depend()
@@ -2694,7 +2694,7 @@ this.dep.subs = [renderWatcher]
 
 这样 `computedGetter` 函数中的 `watcher.depend()` 语句我们就讲解完了，但 `computedGetter` 函数还没执行完，接下来要执行的是 `watcher.evaluate()` 语句：
 
-```js {5}
+```js
 sharedPropertyDefinition.get = function computedGetter () {
   const watcher = this._computedWatchers && this._computedWatchers[key]
   if (watcher) {
@@ -2720,7 +2720,7 @@ evaluate () {
 
 这段代码的关键在于求值的这句代码，如部分所示：
 
-```js {3}
+```js
 evaluate () {
   if (this.dirty) {
     this.value = this.get()
@@ -2732,7 +2732,7 @@ evaluate () {
 
 我们在计算属性的初始化一节中讲过了，在创建计算属性观察者对象时传递给 `Watcher` 类的第二个参数为 `getter` 常量，它的值就是开发者在定义计算属性时的函数(或 `userDef.get`)，如下代码所示：
 
-```js {5,12}
+```js
 function initComputed (vm: Component, computed: Object) {
   // 省略...
   for (const key in computed) {
@@ -2779,7 +2779,7 @@ compA () {
 
 假如此时我们修改响应式属性 `a` 的值，那么将触发属性 `a` 所收集的所有依赖，这其中包括计算属性的观察者。我们知道触发某个响应式属性的依赖实际上就是执行该属性所收集到的所有观察者的 `update` 方法，现在我们就找到 `Watcher` 类的 `update` 方法，如下：
 
-```js {3,18}
+```js
 update () {
   /* istanbul ignore else */
   if (this.computed) {
@@ -2831,7 +2831,7 @@ new Vue({
 
 `Vue` 官方推出了 [vue-test-utils](https://github.com/vuejs/vue-test-utils) 测试工具库，这个库的一个特点是，当你使用它去辅助测试 `Vue` 单文件组件时，数据变更将会以同步的方式触发组件变更，这对于测试而言会提供很大帮助。大家思考一下 [vue-test-utils](https://github.com/vuejs/vue-test-utils) 库是如何实现这个功能的？我们知道开发者在开发组件的时候基本不太可能手动地指定一个观察者为同步的，所以 [vue-test-utils](https://github.com/vuejs/vue-test-utils) 库需要有能力拿到组件的定义并人为地把组件中定义的所有观察者都转换为同步的，这是一个繁琐并容易引起 `bug` 的工作，为了解决这个问题，`Vue` 提供了 `Vue.config.async` 全局配置，它的默认值为 `true`，我们可以在 `src/core/config.js` 文件中看到这样一句代码，如下：
 
-```js {8}
+```js
 export default ({
   // 省略...
 
@@ -2847,7 +2847,7 @@ export default ({
 
 这个全局配置将决定 `Vue` 中的观察者以何种方式执行，默认是异步执行的，当我们将其修改为 `Vue.config.async = false` 时，所有观察者都将会同步执行。其实现方式很简单，我们打开 `src/core/observer/scheduler.js` 文件，找到 `queueWatcher` 函数：
 
-```js {9-12}
+```js
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -2870,7 +2870,7 @@ export function queueWatcher (watcher: Watcher) {
 
 为了实现同步执行的观察者，除了把 `flushSchedulerQueue` 函数从 `nextTick` 中提取出来之外，还需要做一件事儿，我们打开 `src/core/observer/dep.js` 文件，找到 `notify` 方法，如下：
 
-```js {4-9}
+```js
 notify () {
   // stabilize the subscriber list first
   const subs = this.subs.slice()
