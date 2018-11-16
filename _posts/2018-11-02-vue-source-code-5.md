@@ -2026,18 +2026,7 @@ function initWatch (vm: Component, watch: Object) {
 可以看到 `initWatch` 函数就是通过对 `watch` 选项遍历，然后通过 `createWatcher` 函数创建观察者对象的，需要注意的是上面代码中有一个判断条件，如下代码所示：
 
 ```js
-function initWatch (vm: Component, watch: Object) {
-  for (const key in watch) {
-    const handler = watch[key]
-    if (Array.isArray(handler)) {
-      for (let i = 0; i < handler.length; i++) {
-        createWatcher(vm, key, handler[i])
-      }
-    } else {
-      createWatcher(vm, key, handler)
-    }
-  }
-}
+if (Array.isArray(handler))
 ```
 
 通过这个条件我们可以发现 `handler` 常量可以是一个数组，`handler` 常量是什么呢？它的值是 `watch[key]`，也就是说我们在使用 `watch` 选项时可以通过传递数组来实现创建多个观察者，如下：
@@ -2171,7 +2160,7 @@ function _traverse (val: any, seen: SimpleSet) {
 }
 ```
 
-注意上面代码中的部分，现在我们把部分代码删除，那么 `_traverse` 函数将变成如下这个样子：
+注意我们把部分代码删除，那么 `_traverse` 函数将变成如下这个样子：
 
 ```js
 function _traverse (val: any, seen: SimpleSet) {
@@ -2236,25 +2225,7 @@ obj1.data = obj2
 obj2.data = obj1
 ```
 
-上面代码中我们定义了两个对象，分别是 `obj1` 和 `obj2`，并且 `obj1.data` 属性引用了 `obj2`，而 `obj2.data` 属性引用了 `obj1`，这是一个典型的循环引用，假如我们使用 `obj1` 或 `obj2` 这两个对象中的任意一个对象出现在 `Vue` 的响应式数据中，如果不做防循环引用的处理，将会导致死循环，如下代码：
-
-```js
-function _traverse (val: any, seen: SimpleSet) {
-  let i, keys
-  const isA = Array.isArray(val)
-  if ((!isA && !isObject(val)) || Object.isFrozen(val) || val instanceof VNode) {
-    return
-  }
-  if (isA) {
-    i = val.length
-    while (i--) _traverse(val[i], seen)
-  } else {
-    keys = Object.keys(val)
-    i = keys.length
-    while (i--) _traverse(val[keys[i]], seen)
-  }
-}
-```
+上面代码中我们定义了两个对象，分别是 `obj1` 和 `obj2`，并且 `obj1.data` 属性引用了 `obj2`，而 `obj2.data` 属性引用了 `obj1`，这是一个典型的循环引用，假如我们使用 `obj1` 或 `obj2` 这两个对象中的任意一个对象出现在 `Vue` 的响应式数据中，如果不做防循环引用的处理，将会导致死循环。
 
 如果被观察属性的值 `val` 是一个循环引用的对象，那么上面的代码将导致死循环，为了避免这种情况的发生，我们可以使用一个变量来存储那些已经被遍历过的对象，当再次遍历该对象时程序会发现该对象已经被遍历过了，这时会跳过遍历，从而避免死循环，如下代码所示：
 
