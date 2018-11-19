@@ -3,7 +3,7 @@ layout: post
 title:  点击劫持(ClickJacking)
 date:   2018-08-13 19:58:00 +0800
 categories: 网络安全
-tag: 开发者
+tag: 其它
 ---
 
 * content
@@ -102,4 +102,4 @@ var url = window.location.href; top.location.replace(url)
 
 参考：
 
-- [frame busting 各种姿势，防护总结](https://zhuanlan.zhihu.com/p/27310909)
+* [frame busting 各种姿势，防护总结](https://zhuanlan.zhihu.com/p/27310909)
