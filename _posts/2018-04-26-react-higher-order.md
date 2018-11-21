@@ -31,8 +31,8 @@ class Goodbye extends Component {
     componentDidMount() {
         setTimeout(() => {
             this.setState({
-	            username: username
-	        });
+                username: username
+            });
         }, 100);
     }
 
@@ -54,8 +54,8 @@ class Welcome extends Component {
     componentDidMount() {
         setTimeout(() => {
             this.setState({
-	            username: username
-	        });
+                username: username
+            });
         }, 100);
     }
 
@@ -73,20 +73,20 @@ class Welcome extends Component {
 const MyContainer = (MyComponent) => {
     return class extends React.Component {
         constructor(props) {
-	        super(props);
-	        this.state = {
-	            username: ''
-	        }
-	    }
+            super(props);
+            this.state = {
+                username: ''
+            }
+        }
 
-	    componentDidMount() {
-	        setTimeout(() => {
-	            this.setState({
-		            username: username
-		        });
-	        }, 100);
-	    }
-        
+        componentDidMount() {
+            setTimeout(() => {
+                this.setState({
+                    username: username
+                });
+            }, 100);
+        }
+
         render() {
             return (
                 <MyComponent { ...this.state }></MyComponent>
@@ -117,13 +117,12 @@ class Goodbye extends Component {
             <div>Goodbye {this.props.username}</div>
         )
     }
-} 
+}
 ```
 
 这里高阶组件就是把 username 通过 props 传递给目标组件了。目标组件只管从 props 里面拿来用就好了。
 
-
-#### 抽象 state
+#### 2.1 抽象 state
 
 我们可以通过 MyContainer 提供的 props 和回调函数抽象 state，将原组件抽象为展示型组件，分离内部状态。例如：
 
@@ -141,7 +140,7 @@ const MyContainer = (MyComponent) => {
 
             this.onNameChange = this.onNameChange.bind(this);
         }
-        
+
         onNameChange(event) {
             this.setState({
                 name: event.target.value
@@ -184,7 +183,7 @@ export default Container;
 
 这里，我把 `input` 组件中对 `name prop` 的 `onChange` 方法提取到高阶组件中，这样就有效的抽象了同样的 `state` 操作。
 
-#### 通过 refs 使用引用
+#### 2.2 通过 refs 使用引用
 
 在高阶组件中，我们可以接受 MyComponent 的引用。把上述 MyContainer 稍作修改
 
@@ -201,7 +200,7 @@ const MyContainer = (MyComponent) => {
             this.onNameChange = this.onNameChange.bind(this);
             this.refCallback = this.refCallback.bind(this);
         }
-        
+
         onNameChange(event) {
             this.setState({
                 name: event.target.value
