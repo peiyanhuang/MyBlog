@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  组件性能优化--PureComponent
-date:   2018-11-20 13:08:00 +0800
+date:   2017-11-20 13:08:00 +0800
 categories: React
 tag: React
 ---
