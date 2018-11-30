@@ -542,7 +542,7 @@ render 流程如下：
 - updateContainer/updateContainerAtExpirationTime
 - [scheduleRootUpdate](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberReconciler.js#L99) 这个函数就开始比较重要，当我们调用 render 和 setState 以后，我们都会让 React 进入 「更新」的流程，无论你是首次渲染;
 - enqueueUpdate：这个函数做了一件事情，setState 和 render 的时候，都会创建一个 update，这个方法就是把这个 update 放入队列中，这个队列是一个链表;
-- [scheduleWork]()https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1301 是执行虚拟DOM（fiber树）的更新;
+- [scheduleWork](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1793) 是执行虚拟DOM（fiber树）的更新;
 - [requestWork(root, nextExpirationTimeToWorkOn)](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1477) 请求任务。每当 root 接收到更新时，调度程序就会调用 requestWork。渲染器在将来的某个时刻调用renderRoot;
 - [performWorkOnRoot](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L1731)
 - [renderRoot](https://github.com/facebook/react/blob/master/packages/react-reconciler/src/ReactFiberScheduler.js#L980)
