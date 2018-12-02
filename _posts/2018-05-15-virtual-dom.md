@@ -588,6 +588,7 @@ function workLoop(isAsync) {
 
 ### 参考资料
 
+- [React Fiber架构](https://zhuanlan.zhihu.com/p/37095662)
 - [React Fiber Architecture](https://github.com/Foveluy/react-fiber-architecture)翻译[地址](https://github.com/xxn520/react-fiber-architecture-cn)
 - [React Fiber初探](https://zhuanlan.zhihu.com/p/31634312)
 - [完全理解React Fiber](http://www.ayqy.net/blog/dive-into-react-fiber/)
