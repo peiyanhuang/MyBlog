@@ -13,14 +13,14 @@ tag: Angular
 
 #### 1.1 模板表达式
 
-表达式(`\{\{}}`)可以把计算后的字符串插入到 HTML 元素标签内的文本或对标签的属性进行赋值。
+表达式(`{ { } }`)可以把计算后的字符串插入到 HTML 元素标签内的文本或对标签的属性进行赋值。
 
 在属性绑定中也会看到模板表达式，它出现在 = 右侧的引号中，像这样：`[property]="expression"`。
 
 ```html
 <h3>
-  \{{ title }}
-  <img src="{{imageUrl}}" style="height:30px">
+  { { title } }
+  <img src="{ { imageUrl } }" style="height:30px">
   <img [src]="heroImageUrl">
   <p>The sum of 1 + 1 is {{1 + 1}}</p>
   <p>The sum of 1 + 1 is {{ getValue() }}</p>
