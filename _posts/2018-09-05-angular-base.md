@@ -66,25 +66,33 @@ JavaScript 中那些具有或可能引发副作用的表达式是被禁止的，
 
 ### 2. 属性的绑定
 
-```
 HTML attribute 与 DOM property 的对比
 
 要想理解 Angular 绑定如何工作，重点是搞清 HTML attribute 和 DOM property 之间的区别。
-attribute 是由 HTML 定义的。property 是由 DOM (Document Object Model) 定义的。
+
+`attribute` 是由 HTML 定义的。`property` 是由 DOM (Document Object Model) 定义的。
+
 - 少量 HTML attribute 和 property 之间有着 1:1 的映射，如 id。
 - 有些 HTML attribute 没有对应的 property，如 colspan。
 - 有些 DOM property 没有对应的 attribute，如 textContent。
 - 大量 HTML attribute 看起来映射到了 property…… 但却不像你想的那样！
+
 最后一类尤其让人困惑…… 除非你能理解这个普遍原则：
-attribute 初始化 DOM property，然后它们的任务就完成了。property 的值可以改变；attribute 的值不能改变。
-例如，当浏览器渲染 <input type="text" value="Bob"> 时，它将创建相应 DOM 节点， 它的 value 这个 property 被初始化为 “Bob”。
-当用户在输入框中输入 “Sally” 时，DOM 元素的 value 这个 property 变成了 “Sally”。 但是该 HTML 的 value 这个 attribute 保持不变。如果你读取 input 元素的 attribute，就会发现确实没变： input.getAttribute('value') // 返回 "Bob"。
-HTML 的 value 这个 attribute 指定了初始值；DOM 的 value 这个 property 是当前值。
-disabled 这个 attribute 是另一种特例。按钮的 disabled 这个 property 是 false，因为默认情况下按钮是可用的。 当你添加 disabled 这个 attribute 时，只要它出现了按钮的 disabled 这个 property 就初始化为 true，于是按钮就被禁用了。
-添加或删除 disabled 这个 attribute 会禁用或启用这个按钮。但 attribute 的值无关紧要，这就是你为什么没法通过 <button disabled="false">仍被禁用</button> 这种写法来启用按钮。
-设置按钮的 disabled 这个 property（如，通过 Angular 绑定）可以禁用或启用这个按钮。 这就是 property 的价值。
+
+`attribute` 初始化 `DOM property`，然后它们的任务就完成了。`property` 的值可以改变；`attribute` 的值不能改变。
+
+例如，当浏览器渲染 `<input type="text" value="Bob">` 时，它将创建相应 DOM 节点， 它的 `value` 这个 `property` 被初始化为 “Bob”。
+
+当用户在输入框中输入 “Sally” 时，DOM 元素的 `value` 这个 `property` 变成了 “Sally”。 但是该 HTML 的 `value` 这个 `attribute` 保持不变。如果你读取 `input` 元素的 `attribute`，就会发现确实没变： `input.getAttribute('value') // 返回 "Bob"`。
+
+HTML 的 `value` 这个 `attribute` 指定了初始值；DOM 的 `value` 这个 `property` 是当前值。
+
+`disabled` 这个 `attribute` 是另一种特例。按钮的 `disabled` 这个 `property` 是 `false`，因为默认情况下按钮是可用的。 当你添加 `disabled` 这个 `attribute` 时，只要它出现了按钮的 `disabled` 这个 `property` 就初始化为 `true`，于是按钮就被禁用了。
+
+添加或删除 `disabled` 这个 `attribute` 会禁用或启用这个按钮。但 `attribute` 的值无关紧要，这就是你为什么没法通过 `<button disabled="false">` 仍被禁用 `</button>` 这种写法来启用按钮。
+
+设置按钮的 `disabled` 这个 `property`（如，通过 Angular 绑定）可以禁用或启用这个按钮。 这就是 `property` 的价值。
 就算名字相同，HTML attribute 和 DOM property 也不是同一样东西。
-```
 
 模板绑定是通过 `property` 和事件来工作的，而不是 `attribute`。在 Angular 的中，`attribute` 唯一的作用是用来初始化元素和指令的状态。 当进行数据绑定时，只是在与元素和指令的 `property` 和事件打交道，而 `attribute` 就完全靠边站了。
 
@@ -111,7 +119,7 @@ disabled 这个 attribute 是另一种特例。按钮的 disabled 这个 propert
 
 #### 2.1 CSS类绑定
 
-CSS 类绑定绑定的语法与属性绑定类似。但方括号中的部分不是元素的属性名，而是由class前缀，一个点 (.)和 CSS 类的名字组成，其中后两部分是可选的。形如：[class.class-name]。
+CSS 类绑定绑定的语法与属性绑定类似。但方括号中的部分不是元素的属性名，而是由class前缀，一个点 (.)和 CSS 类的名字组成，其中后两部分是可选的。形如：`[class.class-name]`。
 
 ```html
 <!-- 当 badCurly 有值时 class 这个 attribute 设置的内容会被完全覆盖 -->
@@ -124,7 +132,7 @@ CSS 类绑定绑定的语法与属性绑定类似。但方括号中的部分不�
 
 #### 2.2 样式绑定
 
-样式绑定的语法与属性绑定类似。 但方括号中的部分不是元素的属性名，而由style前缀，一个点 (.)和 CSS 样式的属性名组成。 形如：[style.style-property]。
+样式绑定的语法与属性绑定类似。 但方括号中的部分不是元素的属性名，而由 style 前缀，一个点 (.) 和 CSS 样式的属性名组成。 形如：`[style.style-property]`。
 
 ```html
 <button [style.color]="isSpecial ? 'red': 'green'">Red</button>
@@ -177,6 +185,45 @@ delete() {
 
 ### 4. 双向数据绑定
 
-Angular 提供一种特殊的[双向数据绑定](https://angular.cn/guide/template-syntax#two-way-binding--span-classsyntaxspan-)语法：`[(x)]`，此语法结合了属性绑定的方括号 `[x]` 和事件绑定的圆括号 `(x)`。
+Angular 提供一种特殊的[双向数据绑定](https://angular.cn/guide/template-syntax#two-way-binding--span-classsyntaxspan-)语法：`[(x)]`，此语法结合了属性绑定的方括号 `[x]` 和事件绑定的圆括号 `(x)`。双向绑定语法实际上是属性绑定和事件绑定的语法糖。
 
 Angular 也提供了 `NgModel` 允许在表单元素上使用双向数据绑定。
+
+### 5. 模板引用变量 (#var)
+
+模板引用变量通常用来引用模板中的某个 DOM 元素，它还可以引用 Angular 组件或指令或 Web Component。
+
+使用井号 `#` 来声明引用变量。 `#phone` 的意思就是声明一个名叫 `phone` 的变量来引用 `<input>` 元素。你可以在模板中的任何地方引用模板引用变量。
+
+也可以用 `ref-` 前缀代替 `#`。
+
+```jsx
+<input #phone placeholder="phone number">
+
+<button (click)="callPhone(phone.value)">Call</button>
+```
+
+如果应用导入过 `FormsModule`，那么对于 `<form>` 的模板引用变量会有不同。
+
+```html
+<form (ngSubmit)="onSubmit(heroForm)" #heroForm="ngForm">
+  <div class="form-group">
+    <label for="name">Name
+      <input class="form-control" name="name" required [(ngModel)]="hero.name">
+    </label>
+  </div>
+  <button type="submit" [disabled]="!heroForm.form.valid">Submit</button>
+</form>
+<div [hidden]="!heroForm.form.valid">
+  {{submitMessage}}
+</div>
+```
+
+这里的 `heroForm` 实际上是一个 Angular `NgForm` 指令的引用，因此具备了跟踪表单中的每个控件的值和有效性的能力。
+
+原生的 `<form>` 元素没有 `form` 属性，但 `NgForm` 指令有。这就解释了为何当 `heroForm.form.valid` 是无效时你可以禁用提交按钮，并能把整个表单控件树传给父组件的 `onSubmit` 方法。
+
+**模板引用变量**的作用范围是整个模板。
+
+### 6. 输入和输出属性
+
