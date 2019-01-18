@@ -232,7 +232,7 @@ mySearch = function(src, sub) {
 
 #### 2.5 可索引的类型
 
-与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。 
+与使用接口描述函数类型差不多，我们也可以描述那些能够“通过索引得到”的类型，比如a[10]或ageMap["daniel"]。可索引类型具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。
 
 ```typescript
 interface StringArray {
@@ -243,6 +243,29 @@ let myArray: StringArray;
 myArray = ["Bob", "Fred"];
 
 let myStr: string = myArray[0];
+```
+
+可以同时使用两种类型的索引，但是数字索引的返回值必须是字符串索引返回值类型的子类型。
+
+```ts
+class Animal {
+    name: string;
+}
+class Dog extends Animal {
+    breed: string;
+}
+
+/* 错误：使用数值型的字符串索引，有时会得到完全不同的Animal */
+interface NotOkay {
+    [x: number]: Animal;
+    [x: string]: Dog;
+}
+
+/* 正确 */
+interface NotOkay {
+    [x: number]: Dog;
+    [x: string]: Animal;
+}
 ```
 
 #### 2.6 类类型
@@ -263,6 +286,8 @@ class Clock implements ClockInterface {
     constructor(h: number, m: number) { }
 }
 ```
+
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
 
 #### 2.7 混合类型
 
@@ -324,10 +349,14 @@ class Button extends Control implements SelectableControl {
     select() { }
 }
 
+class TextBox extends Control {
+    select() { }
+}
+
 // 错误：“Image”类型缺少“state”属性。
 class Image implements SelectableControl {
     select() { }
 }
 ```
 
-在Control类内部，是允许通过SelectableControl的实例来访问私有成员state的。 实际上， SelectableControl就像Control一样，并拥有一个select方法。 Button和TextBox类是SelectableControl的子类（因为它们都继承自Control并有select方法），但Image和Location类并不是这样的。
+在 `Control` 类内部，是允许通过 `SelectableControl` 的实例来访问私有成员 `state` 的。 实际上，`SelectableControl` 就像 `Control` 一样，并拥有一个 `select` 方法。 `Button` 和 `TextBox` 类是 `SelectableControl` 的子类（因为它们都继承自 Control 并有 select 方法），但 `Image` 类并不是这样的。
