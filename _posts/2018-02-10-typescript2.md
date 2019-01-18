@@ -27,13 +27,13 @@ class Animals {
     }
 }
 
-let p = new Animals("Pandan")
-p.move(22)
+let p = new Animals("Pandan");
+p.move(22);
 ```
 
 #### 1.1 public
 
-在TypeScript里，成员都默认为 `public`，也可以明确的将一个成员标记成 `public`。
+在 TypeScript 里，成员都默认为 `public`，也可以明确的将一个成员标记成 `public`。
 
 ```typescript
 class Student {
@@ -59,7 +59,16 @@ document.body.innerHTML = greeter(user);
 
 #### 1.2 private
 
-当成员被标记成 `private`时，它就不能在声明它的类的外部访问。
+当成员被标记成 `private` 时，它就不能在声明它的类的外部访问。
+
+```ts
+class Animal {
+    private name: string;
+    constructor(theName: string) { this.name = theName; }
+}
+
+new Animal("Cat").name; // 错误: 'name' 是私有的.
+```
 
 #### 1.3 protected
 
@@ -92,9 +101,23 @@ console.log(howard.name); // 错误
 
 #### 1.4 readonly
 
-可以使用 `readonly` 关键字将属性设置为只读的。
+可以使用 `readonly` 关键字将属性设置为只读的。只读属性必须在声明时或构造函数里被初始化。
 
-只读属性必须在声明时或构造函数里被初始化。
+```ts
+class Octopus {
+    readonly name: string;
+    readonly numberOfLegs: number = 8;
+    constructor (theName: string) {
+        this.name = theName;
+    }
+}
+let dad = new Octopus("Man with the 8 strong legs");
+dad.name = "Man with the 3-piece suit"; // 错误! name 是只读的.
+```
+
+* 参数属性
+
+在上面的例子中，我们必须在Octopus类里定义一个只读成员 name和一个参数为 theName的构造函数，并且立刻将 theName的值赋给 name，这种情况经常会遇到。 参数属性可以方便地让我们在一个地方定义并初始化一个成员。 下面的例子是对之前 Octopus类的修改版，使用了参数属性：
 
 #### 1.5 存取器 get 和 set
 
