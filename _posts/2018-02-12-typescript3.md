@@ -13,7 +13,7 @@ tag: TypeScript
 
 ### 1.1 函数类型
 
-我们可以给每个参数添加类型之后再为函数本身添加返回值类型。 TypeScript能够根据返回语句自动推断出返回值类型，因此我们通常省略它。
+我们可以给每个参数添加类型之后再为函数本身添加返回值类型。 TypeScript 能够根据返回语句自动推断出返回值类型，因此我们通常省略它。
 
 ```typescript
 function add(x: number, y: number): number {
@@ -38,11 +38,27 @@ let myAdd: (baseValue: number, increment: number) => number =
 
 在参数名旁使用 `?` 表示可选参数。可选参数必须跟在必须参数后面。
 
-在TypeScript里，我们也可以为参数提供一个 默认值 当用户没有传递这个参数或传递的值是 undefined 时。 它们叫做有默认初始化值的参数。
+在 TypeScript 里，我们也可以为参数提供一个 默认值 当用户没有传递这个参数或传递的值是 `undefined` 时。 它们叫做有默认初始化值的参数。在所有必须参数后面的带默认初始化的参数都是可选的。
+
+与普通可选参数不同的是，带默认值的参数不需要放在必须参数的后面。 如果带默认值的参数出现在必须参数前面，用户必须明确的传入  `undefined` 值来获得默认值。
+
+* 剩余参数
+
+必要参数，默认参数和可选参数有个共同点：它们表示某一个参数。 有时，你想同时操作多个参数，或者你并不知道会有多少参数传递进来。 在 JavaScript 里，你可以使用 `arguments` 来访问所有传入的参数。
+
+在 TypeScript 里，你可以把所有参数收集到一个变量里：
+
+```ts
+function buildName(firstName: string, ...restOfName: string[]) {
+  return firstName + " " + restOfName.join(" ");
+}
+
+let employeeName = buildName("Joseph", "Samuel", "Lucas", "MacKinzie");
+```
 
 ### 1.2 重载
 
-JavaScript本身是个动态语言。 JavaScript里函数根据传入不同的参数而返回不同类型的数据。这时，可以为同一个函数提供多个函数类型定义来进行函数重载。 编译器会根据这个列表去处理函数的调用。
+JavaScript 本身是个动态语言。 JavaScript 里函数根据传入不同的参数而返回不同类型的数据。这时，可以为同一个函数提供多个函数类型定义来进行函数重载。 编译器会根据这个列表去处理函数的调用。
 
 ```typescript
 let suits = ["hearts", "spades", "clubs", "diamonds"];
