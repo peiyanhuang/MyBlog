@@ -2,8 +2,8 @@
 layout: post
 title:  node 热更新
 date:   2019-02-11 19:00:00 +0800
-categories: node
-tag: node
+categories: Node
+tag: Node
 ---
 
 * content
