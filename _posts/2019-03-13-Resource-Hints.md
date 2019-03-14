@@ -115,7 +115,7 @@ var hint = document.querySelector('[rel="prefetch"]');
 hint.href = './the.other.nextpage.js';
 ```
 
-### 5.Preload
+### 6.Preload
 
 既然提到了 Resource Hint，那么不得不介绍一下与其类似的 Preload。`preload` 也是加载资源的功能，但区别于 `prefetch` 的是，`prefetch` 的目的在于针对即将访问的页面使用低优先级来提前预加载资源，而 `preload` 则会针对当前页面使用高优先级来加载资源，如字体文件，图片等，但值得注意的是，它不会阻塞 `onload` 事件的执行。
 
