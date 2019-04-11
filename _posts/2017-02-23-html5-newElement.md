@@ -2,13 +2,12 @@
 layout: post
 title:  Html5 新增标签及属性
 date:   2017-02-23 15:58:00 +0800
-categories: 2017
-tag: HTML5
+categories: HTML
+tag: HTML
 ---
 
 * content
 {:toc}
-
 
 [HTML 中的表单新属性](https://developer.mozilla.org/zh-CN/docs/Web/Guide/HTML/Forms_in_HTML)
 
@@ -31,26 +30,26 @@ tag: HTML5
 -`<figure>` 代表一个和文档有关的图例。
 -`<figcaption>` 代表一个图例的说明。
 
-```
+```html
 <figure>
-	<img src="..." alt="picture">	
-	<figcaption>Fig1. picture</figcaption>
+  <img src="..." alt="picture">
+  <figcaption>Fig1. picture</figcaption>
 </figure>
 ```
 
--`<mark>` 代表一段需要被高亮的引用 文字。
+-`<mark>` 代表一段需要被高亮的引用文字。
 
--`<ruby>` 代表被ruby 注释 标记的文本，如中文汉字和它的拼音。
--`<rt>` 代表ruby 注释 ，如中文拼音。
+-`<ruby>` 代表被 ruby 注释 标记的文本，如中文汉字和它的拼音。
+-`<rt>` 代表 ruby 注释 ，如中文拼音。
 -`<rp>` 代表 ruby 注释两边的额外插入文本 ，用于在不支持 ruby 注释显示的浏览器中提供友好的注释显示。
 
-```
+```html
 <ruby>
-	明日 <rp>(</rp><rt>Ashita</rt><rp>)</rp>
+  明日 <rp>(</rp><rt>Ashita</rt><rp>)</rp>
 </ruby>
 ```
 
--`<bdi>` 代表需要脱离 父元素文本方向的一段文本。它允许嵌入一段不同或未知文本方向格式的文本。
+-`<bdi>` 代表需要脱离父元素文本方向的一段文本。它允许嵌入一段不同或未知文本方向格式的文本。
 
 -`<wbr>` 代表建议换行 (Word Break Opportunity) ，当文本太长需要换行时将会在此处添加换行符。
 
@@ -72,9 +71,11 @@ tag: HTML5
 
 -`<datalist>` 代表提供给其他控件的一组预定义选项 。
 
-```
-<label>Choose a browser from this list:
-<input list="browsers" name="myBrowser" /></label>
+```html
+<label>
+  Choose a browser from this list:
+  <input list="browsers" name="myBrowser" />
+</label>
 <datalist id="browsers">
   <option value="Chrome">
   <option value="Firefox">
@@ -84,7 +85,7 @@ tag: HTML5
 </datalist>
 ```
 
--`<keygen>` 代表一个密钥对生成器 控件。
+-`<keygen>` 代表一个密钥对生成器控件。
 
 -`<output>` 代表计算值 。
 
@@ -95,7 +96,7 @@ tag: HTML5
 -`<details>` 代表一个用户可以(点击)获取额外信息或控件的小部件 。
 -`<summary>` 代表 `<details>` 元素的综述 或标题 。
 
-```
+```html
 <details>
   <summary>Some details</summary>
   <p>More info about the details.</p>

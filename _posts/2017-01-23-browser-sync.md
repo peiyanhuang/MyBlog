@@ -2,7 +2,7 @@
 layout: post
 title:  browser-sync
 date:   2017-01-23 20:58:00 +0800
-categories: 2017
+categories: 前端工具
 tag: 前端工具
 ---
 

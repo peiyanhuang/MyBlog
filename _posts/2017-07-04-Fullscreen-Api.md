@@ -2,7 +2,7 @@
 layout: post
 title:  全屏显示(Fullscreen API)
 date:   2017-07-04 19:58:00 +0800
-categories: HTML5
+categories: JS
 tag: JS
 ---
 
@@ -17,17 +17,17 @@ tag: JS
 
 Element 节点的 `requestFullscreen` 方法，可以使得这个节点全屏。
 
-```
+```js
 function launchFullscreen(element) {
-	if(element.requestFullscreen) {
-	element.requestFullscreen();
-	} else if(element.mozRequestFullScreen) {
-	element.mozRequestFullScreen();
-	} else if(element.msRequestFullscreen){
-	element.msRequestFullscreen();
-	} else if(element.webkitRequestFullscreen) {
-	element.webkitRequestFullScreen();
-	}
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if(element.msRequestFullscreen){
+    element.msRequestFullscreen();
+  } else if(element.webkitRequestFullscreen) {
+    element.webkitRequestFullScreen();
+  }
 }
 
 launchFullscreen(document.documentElement);

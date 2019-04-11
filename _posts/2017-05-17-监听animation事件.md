@@ -2,7 +2,7 @@
 layout: post
 title:  使用js捕获css3动画
 date:   2017-05-17 21:38:00 +0800
-categories: 2017
+categories: JS
 tag: JS
 ---
 

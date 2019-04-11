@@ -2,8 +2,8 @@
 layout: post
 title:  MVC、MVP和MVVM
 date:   2017-02-10 18:58:00 +0800
-categories: 2017
-tag: Others
+categories: 开发者
+tag: 开发者
 ---
 
 * content

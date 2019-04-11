@@ -2,8 +2,8 @@
 layout: post
 title:  WebSocket及轮询
 date:   2016-12-07 20:58:00 +0800
-categories: 2016
-tag: HTML5
+categories: HTML
+tag: HTML
 ---
 
 * content

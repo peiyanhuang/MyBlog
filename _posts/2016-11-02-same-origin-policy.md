@@ -2,7 +2,7 @@
 layout: post
 title:  同源策略
 date:   2016-11-02 19:58:00 +0800
-categories: 2016
+categories: JS
 tag: JS
 ---
 
