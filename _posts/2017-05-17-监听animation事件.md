@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  使用js捕获css3动画
+title:  animation 事件
 date:   2017-05-17 21:38:00 +0800
 categories: JS
 tag: JS
@@ -43,34 +43,34 @@ css3动画功能强大，但是不像js，没有逐帧控制，但是可以通�
 }
 ```
 
-上面动画的效果是：当id为anim的元素加上enable的class的时候，执行动画flash 3 次，每次执行事件是1s。
+上面动画的效果是：当 id 为 anim 的元素加上 enable 的 class 的时候，执行动画 flash 3 次，每次执行事件是 1s。
 
 当触发动画的时候，有三种类型的事件触发：
 
 - 1.`animationstart`
 
-```
+```js
 var anim = document.getElementById("anim");
 anim.addEventListener("animationstart", AnimationListener, false);
 ```
 
-动画第一次开始的时候触发animationstart事件。
+动画第一次开始的时候触发 animationstart 事件。
 
 - 2.`animationiteration`
 
-```
+```js
 anim.addEventListener("animationiteration", AnimationListener, false);
 ```
 
-除了首次开始动画外，其它每次开始动画迭代都触发animationiteration事件。
+除了首次开始动画外，其它每次开始动画迭代都触发 animationiteration 事件。
 
-- 3. `animationend`
+- 3.`animationend`
 
-```
+```js
 anim.addEventListener("animationend", AnimationListener, false);
 ```
 
-动画结束的时候触发animationend事件。
+动画结束的时候触发 animationend 事件。
 
 ### 浏览器的支持情况
 
@@ -82,9 +82,9 @@ Opera：animationstart、 animationiteration、 animationend
 IE10：MSAnimationStart、 MSAnimationIteration、 MSAnimationEnd
 ```
 
-一段兼容性的监听css3动画的js代码:
+一段兼容性的监听 css3 动画的js代码:
 
-```
+```js
 var prefixedEvent = (type) => {
 	var pfx = ["webkit", "moz", "MS", "o", ""];
 	for (var p = 0; p < pfx.length; p++) {
@@ -96,55 +96,55 @@ var prefixedEvent = (type) => {
 };
 ```
 
-也可以用jquery提供的one方法来监听动画。
+也可以用 jquery 提供的 one 方法来监听动画。
 
 ### 事件对象
 
-在上面的代码中,动画事件触发的时候将会调用动画监听函数。一个事件对象作为一个参数传递。在标准的属性和方法中,它还提供了:
+在上面的代码中，动画事件触发的时候将会调用动画监听函数。一个事件对象作为一个参数传递。在标准的属性和方法中,它还提供了:
 
 - animationName：css3动画的名称（如上面例子中的名称：flash）  
-- elapsedTime：动画开始以来的执行事件（以秒为单位）
+- elapsedTime：动画开始以来的执行时间（以秒为单位）
 
 我们可以检测动画的结束，如：
 
-```
+```js
 if (e.animationName == "flash" && e.type.toLowerCase().indexOf("animationend") >= 0) {
-	...
+	// ...
 }
 ```
 
-代码中我们可以在动画执行结束后删除相应的class或应用新的动画等
+代码中我们可以在动画执行结束后删除相应的 class 或应用新的动画等
 
-但是如果我们想改变CSS animation(动画)执行过程中的动画，还需要一点技巧！
+但是如果我们想改变 CSS animation(动画)执行过程中的动画，还需要一点技巧！
 
 [http://css-tricks.com/controlling-css-animations-transitions-javascript/](http://css-tricks.com/controlling-css-animations-transitions-javascript/)
 
 - **animation-play-state属性**
 
-当你想在动画执行过程中暂停，并且接下来让动画接着执行。这时CSS的animation-play-state属性是非常有用的。你可以可以通过JavaScript像这样更改CSS(注意你的前缀)：
+当你想在动画执行过程中暂停，并且接下来让动画接着执行。这时 CSS 的 `animation-play-state` 属性是非常有用的。你可以可以通过 JavaScript 像这样更改 CSS(注意你的前缀)：
 
-```
+```js
 element.style.webkitAnimationPlayState = "paused";
 element.style.webkitAnimationPlayState = "running";
 ```
 
-然而当使用animation-play-state让CSS 动画暂停时，动画中的元素变形也会以相同的方式被阻止。你不能使这种变形暂停在某个状态，使它变形，使它恢复，更不用期望它能从新的变形状态中恢复到流畅运行。为了实现这些控制，我们需要做一些更复杂的工作。
+然而当使用 `animation-play-state` 让 CSS 动画暂停时，动画中的元素变形也会以相同的方式被阻止。你不能使这种变形暂停在某个状态，使它变形，使它恢复，更不用期望它能从新的变形状态中恢复到流畅运行。为了实现这些控制，我们需要做一些更复杂的工作。
 
 - **获取当前keyvalue的百分比**
 
-不幸的是，在这个阶段没有办法获得当前CSS动画关键帧的“完成百分比”。最好的获取近似值的方法是使用setInterval 函数在动画过程中迭代100次。它的本质是：动画持续的时间(单位是毫秒)/100。例如，如果动画时长4秒，则得到的setInterval的执行时间是每40毫秒(4000 / 100)。
+不幸的是，在这个阶段没有办法获得当前 CSS 动画关键帧的“完成百分比”。最好的获取近似值的方法是使用 setInterval 函数在动画过程中迭代100次。它的本质是：动画持续的时间(单位是毫秒)/100。例如，如果动画时长4秒，则得到的 setInterval 的执行时间是每40毫秒(4000 / 100)。
 
 这种做法很不理想，因为函数实际运行频率要远少于每40毫秒。我发现将它设为39毫秒更准确。但这个也不是好实现，因为它依赖于浏览器，并非所有浏览器下都能得到很完美效果。
 
 - **获取当前动画的CSS属性值**
 
-你可以用 `document.styleSheets` 来获取与页面关联的样式表的集合，然后通过for循环取得具体的样式表。以下是如何使用JavaScript来找到一个特定动画值的 `CSSKeyFrameRules` 对象：
+你可以用 `document.styleSheets` 来获取与页面关联的样式表的集合，然后通过for循环取得具体的样式表。以下是如何使用 JavaScript 来找到一个特定动画值的 `CSSKeyFrameRules` 对象：
 
-```
+```js
 function findKeyframesRule(rule){
 	var ss = document.styleSheets;
-	for(var i = 0;i < ss.length;++i){
-		for(var j = 0;j<ss[i].cssRules.length;++j){
+	for(var i = 0; i < ss.length; ++i){
+		for(var j = 0; j < ss[i].cssRules.length; ++j){
 			if(ss[i].cssRules[j].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE && ss[i].cssRules[j].name == rule){
 				return ss[i].cssRules[j];
 			}
@@ -154,9 +154,9 @@ function findKeyframesRule(rule){
 }
 ```
 
-我们一旦调用上面的函数(例如 `var keyframes= findKeyframesRule(anim)` )，就可以通过 `keyframes.cssRules.length` 获得该对象的动画长度(这个动画中关键帧的总数量)。然后使用JavaScript的.map方法把获得到的每个关键帧值上的“%”过滤掉，这样JavaScript就可以把这些值作为数字使用。
+我们一旦调用上面的函数(例如 `var keyframes= findKeyframesRule(anim)` )，就可以通过 `keyframes.cssRules.length` 获得该对象的动画长度(这个动画中关键帧的总数量)。然后使用 JavaScript 的 `.map` 方法把获得到的每个关键帧值上的 `%` 过滤掉，这样 JavaScript 就可以把这些值作为数字使用。
 
-```
+```js
 // Makes an array of the current percent values
 // in the animation
 var keyframeString = [];
@@ -170,13 +170,13 @@ var keys = keyframeString.map(function(str) {
 	});
 ```
 
-这里keys是一个包含所有动画关键帧数值的数组。
+这里 `keys` 是一个包含所有动画关键帧数值的数组。
 
 - **改变实际的动画**
 
-在循环动画演示过程中，我们需要两个变量：一个用来跟踪从最近的起始位置开始移动了多少度，另一个用来跟踪从原来的起始位置开始移动了多少度。我们可以使用setInterval函数(在环形移动度数时消耗的时间)改变第一个变量。然后我们可以使用下面的代码，当单击该按钮时更新第二个变量。
+在循环动画演示过程中，我们需要两个变量：一个用来跟踪从最近的起始位置开始移动了多少度，另一个用来跟踪从原来的起始位置开始移动了多少度。我们可以使用 setInterval 函数(在环形移动度数时消耗的时间)改变第一个变量。然后我们可以使用下面的代码，当单击该按钮时更新第二个变量。
 
-```
+```js
 totalCurrentPercent += currentPercent;
 // Since it's in percent it shouldn't ever be over 100
 if (totalCurrentPercent > 100) {
@@ -186,7 +186,7 @@ if (totalCurrentPercent > 100) {
 
 然后我们可以使用以下函数，在之前我们获得的关键帧数组里，找出与当前总百分比值最接近的关键帧值。
 
-```
+```js
 function getClosest(keyframe) {
 	// curr stands for current keyframe
 	var curr = keyframe[0];
@@ -204,35 +204,35 @@ function getClosest(keyframe) {
 }
 ```
 
-要获得新动画第一关键帧的位置值，我们可以使用JavaScript的.IndexOf方法。然后我们根据这个值，删除原来的关键帧定义，重新定义该关键帧。
+要获得新动画第一关键帧的位置值，我们可以使用 JavaScript 的 `.IndexOf` 方法。然后我们根据这个值，删除原来的关键帧定义，重新定义该关键帧。
 
-```
+```js
 for (var i = 0, j = keyframeString.length; i < j; i ++) {
 	keyframes.deleteRule(keyframeString[i]);
 }
 ```
 
-接下来，我们需要把圆的度数值转换成相应的百分比值。我们可以通过第一关键帧的位置值与3.6简单的相乘得到(因为10 0 * 3.6 = 360)。
+接下来，我们需要把圆的度数值转换成相应的百分比值。我们可以通过第一关键帧的位置值与 3.6 简单的相乘得到(因为100 * 3.6 = 360)。
 
-最后，我们基于上面获得变量创建新的规则。每个规则之间有45度的差值，是因为我们在绕圈过程中拥有八个不同的关键帧，360(一个圆的度数)除以8是45。
+最后，我们基于上面获得变量创建新的规则。每个规则之间有 45 度的差值，是因为我们在绕圈过程中拥有八个不同的关键帧，360(一个圆的度数)除以 8 是 45。
 
-```
+```js
 // Prefix here as needed
-keyframes.insertRule("0% {
+keyframes.insertRule(`0% {
 	-webkit-transform: translate(100px,100px) rotate(" + (multiplier + 0) + "deg)
 	translate(-100px,-100px) rotate(" + (multiplier + 0) + "deg);
 	background-color:red;
-}");
-keyframes.insertRule("13% {
+}`);
+keyframes.insertRule(`13% {
 	-webkit-transform: translate(100px,100px) rotate(" + (multiplier + 45) + "deg)
 	translate(-100px,-100px) rotate(" + (multiplier + 45) + "deg);
-}");
-...continued...
+}`);
+// ...continued...
 ```
 
-然后我们通过setInterval重置当前百分比值来使它可以再次运行。注意上面使用的是WebKit前缀，为了使它兼容更多的浏览器，我们需要做一些UA的嗅探来确定采用哪个前缀：
+然后我们通过 setInterval 重置当前百分比值来使它可以再次运行。注意上面使用的是 WebKit 前缀，为了使它兼容更多的浏览器，我们需要做一些UA的嗅探来确定采用哪个前缀：
 
-```
+```js
 var browserPrefix;
 navigator.sayswho= (function(){
 	var N = navigator.appName, ua = navigator.userAgent, tem;
@@ -249,27 +249,27 @@ navigator.sayswho= (function(){
 
 ### 检查css属性支持
 
-```
+```js
 var isSupportCss = (() => {
-   	var div = document.createElement('div'),
-      	vendors = 'Ms O Moz Webkit'.split(' '),
-      	len = vendors.length;
- 
-   	return (prop) => {
-      	if ( prop in div.style ) return true;
- 
-      	prop = prop.replace(/^[a-z]/, (val) => {
-         	return val.toUpperCase();
-      	});
- 
-      	while(len--) {
-      		if (len < 0) {
-      			return false;
-      		}else if ( vendors[len] + prop in div.style ) {
-            	return true;
-         	} 
-      	}
-      	return false;
-   	};
+	var div = document.createElement('div'),
+	vendors = 'Ms O Moz Webkit'.split(' '),
+	len = vendors.length;
+
+	return (prop) => {
+		if ( prop in div.style ) return true;
+
+		prop = prop.replace(/^[a-z]/, (val) => {
+			return val.toUpperCase();
+		});
+
+		while(len--) {
+			if (len < 0) {
+				return false;
+			} else if ( vendors[len] + prop in div.style ) {
+				return true;
+			} 
+		}	
+		return false;
+	};
 })();
 ```
