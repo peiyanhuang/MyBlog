@@ -30,19 +30,19 @@ tag: JS
 import md5 from 'md5';
 
 export function md5File (file) {
-	return new Promise((resolve, reject) => {
-		const fileName = file.name
-		// 读取文件:
+  return new Promise((resolve, reject) => {
+    const fileName = file.name
+    // 读取文件:
     const reader = new FileReader();
     reader.onload = function(e) {
       const data = e.target.result;
       resolve(md5(`${fileName}${data}`));
     };
     reader.onerror = function(e) {
-    	reject(e)
+      reject(e)
     }
     reader.readAsArrayBuffer(file);
-	});
+  });
 }
 ```
 
@@ -50,14 +50,14 @@ export function md5File (file) {
 
 ```js
 export function sliceFile (file, fileMD5 blockSize = 1024 * 1024) {
-	const fileSize = file.size;
-	const blockNum = Math.ceil(fileSize / blockSize);
-	for (let i = 0; i < blockNum; i++) {
-		let end = (i + 1) * blockSize >= fileSize ? fileSize : (i + 1) * blockSize
+  const fileSize = file.size;
+  const blockNum = Math.ceil(fileSize / blockSize);
+  for (let i = 0; i < blockNum; i++) {
+    let end = (i + 1) * blockSize >= fileSize ? fileSize : (i + 1) * blockSize
     let fileChunks = file.slice(i * blockSize, end)
-    
+
     // upload(fileMD5, fileChunks, blockNum, i)
-	}
+  }
 }
 ```
 
