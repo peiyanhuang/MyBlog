@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  React 应用的 Docker 化(译文)
-date:   2019-05-25 19:00:00 +0800
+date:   2019-06-25 19:00:00 +0800
 categories: 开发者
 tag: 译文
 ---
@@ -98,9 +98,8 @@ $ docker run -v ${PWD}:/app -v /app/node_modules -p 3001:3000 --rm sample:dev
 
 将浏览器打开到 `http://localhost:3001/`，您应该会看到该应用程序。尝试在代码编辑器中更改 App 组件。你应该看到应用程序的热重载。完成后关闭服务器。
 
-> 添加 `-it` 会发生什么？
-> `$ docker run -it -v ${PWD}:/app -v /app/node_modules -p 3001:3000 --rm sample:dev`
-> 检查您的理解，并自己查看。
+>添加 `-it` 会发生什么？
+>`$ docker run -it -v ${PWD}:/app -v /app/node_modules -p 3001:3000 --rm sample:dev`检查您的理解，并自己查看。
 
 
 想使用 Docker Compose？将 `docker-compose.yml` 文件添加到项目根目录：
