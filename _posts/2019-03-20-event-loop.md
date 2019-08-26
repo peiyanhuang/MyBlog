@@ -94,13 +94,17 @@ NodeJS 中宏队列主要有4个，由上面的介绍可以看到，回调事件
 
 NodeJS 中微队列主要有2个：
 
-* Next Tick Queue：是放置 process.nextTick(callback) 的回调任务的
+* Next Tick Queue：是放置 `process.nextTick(callback)` 的回调任务的
 * Other Micro Queue：放置其他 microtask，比如 Promise 等
 
-大体解释一下NodeJS的Event Loop过程：
+大体解释一下 NodeJS 的 Event Loop过程：
 
-1. 执行全局Script的同步代码
-2. 执行microtask微任务，先执行所有Next Tick Queue中的所有任务，再执行Other Microtask Queue中的所有任务
-3. 开始执行macrotask宏任务，共6个阶段，从第1个阶段开始执行相应每一个阶段macrotask中的所有任务，注意，这里是所有每个阶段宏任务队列的所有任务
+1. 执行全局 Script 的同步代码
+2. 执行 microtask 微任务，先执行所有 Next Tick Queue 中的所有任务，再执行 Other Microtask Queue 中的所有任务
+3. 开始执行 macrotask 宏任务，共6个阶段，从第1个阶段开始执行相应每一个阶段macrotask中的所有任务，注意，这里是所有每个阶段宏任务队列的所有任务
 4. Timers Queue -> 步骤2 -> I/O Queue -> 步骤2 -> Check Queue -> 步骤2 -> Close Callback Queue -> 步骤2 -> Timers Queue
 5. ......
+
+### 参考
+
+[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
