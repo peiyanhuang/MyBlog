@@ -31,9 +31,8 @@ tsc ***.ts
 
 TypeScript 使用 `tsc` 来编译 `.ts` 文件。
 
--不带任何输入文件的情况下调用``tsc`，编译器会从当前目录开始去查找 `tsconfig.json` 文件，逐级向上搜索父目录。
-
--不带任何输入文件的情况下调用 `tsc`，且使用命令行参数 `--project`（或-p）指定一个包含 `tsconfig.json` 文件的目录。
+- 不带任何输入文件的情况下调用 `tsc`，编译器会从当前目录开始去查找 `tsconfig.json` 文件，逐级向上搜索父目录。
+- 不带任何输入文件的情况下调用 `tsc`，且使用命令行参数 `--project`（或-p）指定一个包含 `tsconfig.json` 文件的目录。
 
 当命令行上指定了输入文件时，`tsconfig.json` 文件会被忽略。
 
@@ -55,7 +54,7 @@ TypeScript 使用 `tsc` 来编译 `.ts` 文件。
     "exclude": [
         "node_modules",
         "**/*.spec.ts"
-    ]
+    ],
 
     // 或者使用 files 属性
     "files": [
@@ -72,7 +71,7 @@ TypeScript 使用 `tsc` 来编译 `.ts` 文件。
 
 常用的选项如下：
 
--`target`: 指定ECMAScript目标版本 "ES3"（默认）， "ES5"， "ES6"/ "ES2015"， "ES2016"， "ES2017"或 "ESNext"。
+-`target`: 指定ECMAScript目标版本 "ES3"（默认）, "ES5", "ES6", "ES2015", "ES2016", "ES2017"或"ESNext"。
 
 -`module`: 指定生成哪个模块系统代码： "None"， "CommonJS"， "AMD"， "System"， "UMD"， "ES6"或 "ES2015"。
 
