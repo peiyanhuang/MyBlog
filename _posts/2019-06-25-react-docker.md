@@ -2,8 +2,8 @@
 layout: post
 title:  React 应用的 Docker 化(译文)
 date:   2019-06-25 19:00:00 +0800
-categories: 开发者
-tag: 译文
+categories: 译文
+tag: Docker
 ---
 
 * content
