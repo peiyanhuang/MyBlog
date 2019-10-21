@@ -46,20 +46,20 @@ export default function Button()  {
   const [list, setList] = useState([{id: 1, label: "0"}]);
 
   function handleClick()  {
-  	let listCopy = Array.from(list);
-  	listCopy.push({id: list.length + 1, label: Math.floor(Math.random() * 100)})
-  	setList(listCopy);
+    let listCopy = Array.from(list);
+    listCopy.push({id: list.length + 1, label: Math.floor(Math.random() * 100)})
+    setList(listCopy);
     return setButtonText("Thanks, been clicked!");
   }
 
   return  (<div>
-		<button onClick={handleClick}>{buttonText}</button>
-		{
-			list.map(item => {
-				return <p key={item.id}>{item.id}: {item.label}</p>
-			})
-		}
-	</div>);
+    <button onClick={handleClick}>{buttonText}</button>
+    {
+      list.map(item => {
+        return <p key={item.id}>{item.id}: {item.label}</p>
+      })
+    }
+  </div>);
 }
 ```
 
