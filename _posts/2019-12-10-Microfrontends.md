@@ -316,7 +316,7 @@ scripts.forEach(src => {
 - 缺点：用户体验不一致
 - 缺点：需要JavaScript
 
-### Siteless UIs
+#### Siteless UIs
 
 这个主题应该值得我们单独一片文章，但是由于我们列出了所有模式，所以我不想在这里忽略它。采用SPA组合的方法，我们所缺少的只是将脚本源与服务解耦（或独立集中化），以及共享运行时。
 
@@ -339,4 +339,259 @@ Siteless UIs 的示意图如下所示:
 
 总的来说，架构图看起来与前面提到的SPA组成非常相似。但是，`feed service` 以及与运行时的耦合带来了其他好处（以及该领域中任何框架都需要解决的挑战）。
 
-最大的优势在于，一旦克服了这些挑战，就应该拥有出色的开发经验。可以完全自定义用户体验，将模块视为灵活的可选功能。
+最大的优势在于，一旦克服了这些挑战，就应该拥有出色的开发经验。可以完全自定义用户体验，将模块视为灵活的可选功能。因此，可以在功能（相应的实现）和许可（访问功能的权限）之间实现清晰的分隔。
+
+此模式最简单的实现之一如下：
+
+```js
+// app-shell/main.js
+window.app = {
+  registerPage(url, cb) {}
+  // ...
+};
+
+showLoading();
+
+fetch("https://feed.piral.io/api/v1/pilet/sample")
+  .then(res => res.json())
+  .then(body =>
+    Promise.all(
+      body.items.map(
+        item =>
+          new Promise(resolve => {
+            const script = document.createElement("script");
+            script.src = item.link;
+            script.onload = resolve;
+            document.body.appendChild(script);
+          })
+      )
+    )
+  )
+  .catch(err => console.error(err))
+  .then(() => hideLoading());
+
+// module/index.jsx
+import * as React from "react";
+import { render } from "react-dom";
+import { Page } from "./Page";
+
+if (window.app !== undefined) {
+  window.app.registerPage("/sample", element => {
+    render(<Page />, element);
+  });
+}
+```
+
+这使用全局变量从app shell共享API。但是，使用这种方法我们已经看到了一些挑战：
+
+- 如果一个模块崩溃怎么办？
+- 如何共享依赖项（避免将其与每个模块捆绑在一起，如简单实现所示）？
+- 如何获得正确的类型？
+- 如何调试？
+- 如何进行正确的路由跳转？
+
+实现所有这些功能本身就是一个主题。关于调试，我们应该采用与所有 serverless 框架（例如AWS Lambda，Azure Functions）相同的方法。而且我们应该提供一个模拟器，它的视为类似于真实环境；除此之外它可以在本地运行并且可以脱机工作。
+
+在这部分中，我们找到以下解决方案：
+
+- [Piral](https://piral.io/)
+
+这种方法的优缺点是什么？
+
+- 优点：加强关注点分离
+- 优点：支持资源共享，避免开销
+- 优点：一致的嵌入式用户体验
+- 缺点：对共享资源的严格依赖管理
+- 缺点：需要另一块（可管理的）基础架构
+- 缺点：需要JavaScript
+
+### 微前端框架
+
+最后，我们应该看看如何使用提供的框架之一来实现微前端。我们选择 [Piral](https://piral.io/)，因为这是我最熟悉的那个。
+
+在下面，我们从两个方面来解决这个问题。首先，在这种情况下，我们从一个模块（即微前端）开始。然后，我们将逐步创建一个app shell。
+
+对于模块，我们使用[my Mario5 toy project](https://github.com/FlorianRappl/mario5-sample-pilet)。这是一个几年前开始的项目，该项目是以JavaScript实现Super Mario，称为“ Mario5”。之后是TypeScript教程/重写，名为“Mario5TS”，此后一直保持最新。
+
+对于app shell，我们利用[the sample Piral instance](https://github.com/smapiot/piral/tree/develop/src/samples/sample-piral)的示例。这一步展示了所有概念。它还始终保持最新状态。
+
+让我们从一个模块开始，该模块在 Piral 框架中称为堆(`pilet`)。堆的核心是一个JavaScript根模块，该模块通常位于 `src/index.tsx` 中。
+
+#### A Pilet
+
+从空堆开始，我们得到以下根模块：
+
+```js
+import { PiletApi } from "sample-piral";
+
+export function setup(app: PiletApi) {}
+```
+
+我们需要导出一个名为 `setup` 的特殊命名的函数。稍后将使用这一部分来集成我们应用程序的特定部分。
+
+例如，使用 React 我们可以注册一个菜单项或一个图块以始终显示：
+
+```js
+import "./Styles/tile.scss";
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { PiletApi } from "sample-piral";
+
+export function setup(app: PiletApi) {
+  app.registerMenu(() => <Link to="/mario5">Mario 5</Link>);
+
+  app.registerTile(
+    () => (
+      <Link to="/mario5" className="mario-tile">
+        Mario5
+      </Link>
+    ),
+    {
+      initialColumns: 2,
+      initialRows: 2
+    }
+  );
+}
+```
+
+由于我们的图块需要某种样式，因此我们样式添加到堆中。到目前为止很好。所有直接包含的资源将始终在app shell上可用。
+
+现在是时候整合游戏本身了。我们决定将其放在专用页面中，甚至模式对话框也可能很酷。所有代码都位于 `mario.ts` 中，并且可以与标准 DOM 兼容-暂时还没有 React。
+
+由于 React 也支持托管节点的操作，因此我们使用了一个引用钩子来附加游戏。
+
+```js
+import "./Styles/tile.scss";
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { PiletApi } from "sample-piral";
+import { appendMarioTo } from "./mario";
+
+export function setup(app: PiletApi) {
+  app.registerMenu(() => <Link to="/mario5">Mario 5</Link>);
+
+  app.registerTile(
+    () => (
+      <Link to="/mario5" className="mario-tile">
+        Mario5
+      </Link>
+    ),
+    {
+      initialColumns: 2,
+      initialRows: 2
+    }
+  );
+
+  app.registerPage("/mario5", () => {
+    const host = React.useRef();
+    React.useEffect(() => {
+      const gamePromise = appendMarioTo(host.current, {
+        sound: true
+      });
+      gamePromise.then(game => game.start());
+      return () => gamePromise.then(game => game.pause());
+    });
+    return <div ref={host} />;
+  });
+}
+```
+
+从理论上讲，我们还可以添加其他功能，例如恢复游戏或延迟加载包含游戏的游戏包。现在，只有通过 `import()` 函数的调用才能延迟加载声音。
+
+启动 `pilet` 将通过[https://gist.github.com/0678ac99f4653843159cf8e54ad06422](https://gist.github.com/0678ac99f4653843159cf8e54ad06422)
+
+也可意完全使用 Piral CLI。Piral CLI安装在本地，也可以全局安装直接在命令行中使用，例如 `pilet debug`。
+
+也可以通过本地安装来构建 `pilet`​​。
+
+```shell
+npm run build-pilet
+```
+
+#### The App Shell
+
+现在该创建一个App Shell了。之前，我们已经有一个App Shell程序（例如，先前的示例已经创建了一个简单的App Shell），但在我看来，更看重的是如何模块化的开发。
+
+使用 `Piral` 创建一个App Shell简单的就像和安装 `piral` 一样。为了使其更加简单，Piral CLI还支持新App Shell创建的脚手架。
+
+无论使用哪种方式，我们最终得到的会像下面一样的：
+
+```js
+import * as React from "react";
+import { render } from "react-dom";
+import { createInstance, Piral, Dashboard } from "piral";
+import { Layout, Loader } from "./layout";
+
+const instance = createInstance({
+  requestPilets() {
+    return fetch("https://feed.piral.io/api/v1/pilet/sample")
+      .then(res => res.json())
+      .then(res => res.items);
+  }
+});
+
+const app = (
+  <Piral instance={instance}>
+    <SetComponent name="LoadingIndicator" component={Loader} />
+    <SetComponent name="Layout" component={Layout} />
+    <SetRoute path="/" component={Dashboard} />
+  </Piral>
+);
+
+render(app, document.querySelector("#app"));
+```
+
+这里我们做了三件事：
+
+1. 我们建立了所有的引用（imports）和库（libraries）
+2. 我们创建了Piral实例；提供所有功能选项（最重要的是声明pilets的来源）
+3. 我们使用组件和自定义布局渲染App Shell
+
+实际的渲染是React完成的。
+
+构建App Shell很简单-最后，它是一个标准捆绑程序（Parcel），用于处理整个应用程序。输出是一个文件夹，其中包含要放在Web服务器或静态存储器上的所有文件。
+
+### 兴趣点
+
+术语“Siteless UI”可能需要一些解释。我将首先从名称开始：如所见，它是对 `Serverless Computing` 的直接引用。当然Serverless 对于使用过这个技术的来说可能是一个好术语，但它也可能会引起误解和错误。UIs 通常可以部署在 serverless 的基础架构上（例如，Amazon S3，Azure Blob Storage，Dropbox）。这是“在客户端上呈现UI”而不是进行服务器端呈现的好处之一。
+
+但是，我想遵循“一个UI不能不存在主机”这样一件事。与Serverless功能相似，后者要求运行时位于某个地方，否则无法启动。
+
+让我们比较相似之处。首先，让我们从微前端到前端UI的结合开始，微服务一直是后端服务。在这种情况下，我们应该具有：
+
+- 可以独立启动
+- 提供独立的URL
+- 具有独立的生命周期（启动，回收，关闭）
+- 进行独立部署
+- 定义独立的用户/状态管理
+- 作为专用网络服务器在某处运行（例如，作为docker映像）
+- 如果结合使用，我们将使用类似网关的结构
+
+非常棒，某些适用于此的地方要注意，其中一些与SPA的构成有些矛盾，siteless UIs 也是。
+
+现在，如果猜想变为以下情况时我们将其进行比较：siteless UIs 应该是前端UI，serverless 就是后端服务。在这种情况下，我们看到：
+
+- 需要运行时才能启动
+- 在运行时给定的环境中提供URL
+- 与运行时定义的生存期相关
+- 进行独立部署
+- 定义了部分独立，部分共享（但受控/隔离）的用户/状态管理
+- 在其他地方（例如在客户端上）的非运营基础架构上运行
+
+如果您同意这看起来像是一个完美的类比-太棒了！如果没有，请在评论中提供您的观点。我仍然会尝试看看这是怎么回事，以及是否遵循这个好主意。非常感激！
+
+### 进一步阅读
+
+以下帖子和文章可能有助于获得完整的图片：
+
+- [Bits and Pieces, 11/2019](https://blog.bitsrc.io/building-react-microfrontends-using-piral-c26eb206310e)
+- [dev.to, 11/2019](https://dev.to/florianrappl/microfrontends-based-on-react-4oo9)
+- [LogRocket, 02/2019](https://blog.logrocket.com/taming-the-front-end-monolith-dbaede402c39/)
+- [Micro frontends — a microservice approach to front-end web development](https://medium.com/@tomsoderlund/micro-frontends-a-microservice-approach-to-front-end-web-development-f325ebdadc16)
+- [Micro Front-Ends: Available Solutions](https://medium.embengineering.com/micro-front-ends-whats-the-best-solution-3bc31218eae4)
+- [Exploring micro-frontends](https://medium.com/@benjamin.d.johnson/exploring-micro-frontends-87a120b3f71c)
+- [6 micro-front-end types in direct comparison: These are the pros and cons (translated)](https://bit.ly/2K1zbu2)
+
+### 结论
+
+微前端并不适合所有人。地狱，他们甚至没有解决所有问题。但是什么是技术呢？他们当然填补了一个空白。根据具体问题，可以使用其中一种模式。非常高兴我们拥有许多多样且富有成果的解决方案。现在唯一的问题是选择-并明智地选择！
