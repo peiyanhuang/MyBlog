@@ -9,7 +9,7 @@ tag: 前端工具
 * content
 {:toc}
 
-前面vue2.0和webpack都已经有接触了些，现在开始学习如何构造自己的vue2.0 + vuex + vue-router + webpack环境。
+前面 vue2.0 和 webpack 都已经有接触了些，现在开始学习如何构造自己的 vue2.0 + vuex + vue-router + webpack 环境。
 
 ### 1. 开始
 
@@ -21,7 +21,7 @@ npm install 安装 'package.json' 中的依赖项。
 
 上代码：
 
-```
+```js
 var webpack = require("webpack"); 
 var path = require("path");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -47,51 +47,51 @@ module.exports = {
 		}
 	},
 	module: {
-	    rules: [
-	      	{
-	      		test: /\.css$/, 
-	      		use: ['css-loader', 'style.loader'],
-	      	},
-	      	{
-	      		test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-	      		use: 'url-loader?limit=10240'
-	      	},
-	      	{
-	        	test: /\.js$/,
-	        	exclude: /node_modules/,
-	        	use: [{
-	        		loader: 'babel-loader',
-	        		options: {
-	          			presets: ['es2015']
-	        		}
-	        	}]
-	      	},
-	      	{
-	      		test: /\.vue?/,
-	      		use: 'vue-loader',
-	      	}
-	    ]
+		rules: [
+			{
+				test: /\.css$/, 
+				use: ['css-loader', 'style.loader'],
+			},
+			{
+				test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+				use: 'url-loader?limit=10240'
+			},
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [{
+					loader: 'babel-loader',
+					options: {
+							presets: ['es2015']
+					}
+				}]
+			},
+			{
+				test: /\.vue?/,
+				use: 'vue-loader',
+			}
+		]
 	},
 	plugins: [
 		//压缩插件
-	    new webpack.optimize.UglifyJsPlugin({
-	    	sourceMap: true,
-	      	compress: {
-	        	warnings: false
-	      	}
-	    }),
-	    //提取公共脚本
-	    new webpack.optimize.CommonsChunkPlugin({
-	    	name: 'vendor', 
-	    	filename: 'bound.js'
-	    }),
-	    //自动生成html
-	    new HtmlWebpackPlugin({
-	    	filename: './index.html',
-            template: path.join(__dirname + '/app/index.html'),
-            inject: true
-	    })
-  	],
+		new webpack.optimize.UglifyJsPlugin({
+			sourceMap: true,
+				compress: {
+					warnings: false
+				}
+		}),
+		//提取公共脚本
+		new webpack.optimize.CommonsChunkPlugin({
+			name: 'vendor', 
+			filename: 'bound.js'
+		}),
+		//自动生成html
+		new HtmlWebpackPlugin({
+			filename: './index.html',
+			template: path.join(__dirname + '/app/index.html'),
+			inject: true
+		})
+	],
 };
 ```
 
@@ -105,7 +105,7 @@ module.exports = {
 
 在build目录中创建一个dev-server.js文件，并写入内容：
 
-```
+```js
 // 引入必要的模块
 const express = require('express');
 const webpack = require('webpack');
@@ -121,11 +121,11 @@ var compiler = webpack(config);
 
 // 使用 webpack-dev-middleware 中间件
 var devMiddleware = webpackDevMiddleware(compiler, {
-    publicPath: config.output.publicPath,
-    stats: {
-        colors: true,
-        chunks: false
-    }
+	publicPath: config.output.publicPath,
+	stats: {
+		colors: true,
+		chunks: false
+	}
 });
 app.use(devMiddleware);
 
@@ -133,11 +133,11 @@ app.use(express.static(__dirname));
 
 // 监听 8888端口，开启服务器
 app.listen(8888, function (err) {
-    if (err) {
-        console.log(err);
-        return;
-    }
-    console.log('Listening at http://localhost:8888');
+	if (err) {
+		console.log(err);
+		return;
+	}
+	console.log('Listening at http://localhost:8888');
 });
 ```
 
@@ -147,7 +147,7 @@ app.listen(8888, function (err) {
 
 第1步: 在build目录下新建一个webpack.dev.conf.js文件，意思是开发模式下要读取的配置文件，并写入一下内容：
 
-```
+```js
 /*
  *  配置 热重载
  */
@@ -159,8 +159,8 @@ var config = require('../webpack.config');
 
 config.plugins = config.plugins.concat([
 	//new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+	new webpack.HotModuleReplacementPlugin(),
+	new webpack.NoEmitOnErrorsPlugin(),
 ]);
 
 // 动态向入口配置中注入 webpack-hot-middleware/client
@@ -168,8 +168,8 @@ config.plugins = config.plugins.concat([
 var devClient = 'webpack-hot-middleware/client';
 
 Object.keys(config.entry).forEach(function (name, i) {
-    var extras = [devClient];
-    config.entry[name] = extras.concat(config.entry[name]);
+	var extras = [devClient];
+	config.entry[name] = extras.concat(config.entry[name]);
 });
 
 module.exports = config;
@@ -177,12 +177,12 @@ module.exports = config;
 
 第2步: 修改 dev-server.js 文件：
 
-```
+```js
 const config = require('./webpack.config');
-替换为：
+// 替换为：
 const config = require('./webpack.dev.conf');
 
-添加：
+// 添加：
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
 //使用 webpack-hot-middleware 
@@ -194,29 +194,29 @@ app.use(hotMiddleware);
 
 第1步: 在dev-server.js文件中监听html文件改变事件，修改 dev-server.js 文件：
 
-```
-添加：
+```js
+// 添加：
 // webpack插件，监听html文件改变事件
 compiler.plugin('compilation', function (compilation) {
-    compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
-        // 发布事件
-        hotMiddleware.publish({ action: 'reload' });
-        cb();
-    });
+	compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
+		// 发布事件
+		hotMiddleware.publish({ action: 'reload' });
+		cb();
+	});
 });
 ```
 
 第2步: 修改webpack.dev.conf.js文件
 
-```
+```js
 var devClient = 'webpack-hot-middleware/client';
-修改为：
+// 修改为：
 var devClient = './build/dev-client';
 ```
 
 第3步: 新建build/dev-client.js文件，并编辑如下内容：
 
-```
+```js
 /*
  *	配置html的热重载
  */
@@ -225,9 +225,9 @@ var hotClient = require('webpack-hot-middleware/client');
 
 // 订阅事件，当 event.action === 'reload' 时执行页面刷新
 hotClient.subscribe(function (event) {
-    if (event.action === 'reload') {
-        window.location.reload();
-    }
+	if (event.action === 'reload') {
+		window.location.reload();
+	}
 });
 ```
 
@@ -235,30 +235,29 @@ hotClient.subscribe(function (event) {
 
 在 webpack.config.js 中添加：
 
-```
+```js
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin('[name]-css.css');
 
 //打包css、 less文件
 module: {
-    rules: [
-      	{
-      		test: /\.css$/, 
-      		use: extractCSS.extract({
-      			fallback: 'style-loader',
-      			use: ['css-loader'],
-      		})
-      	}
-    ]
+	rules: [
+		{
+			test: /\.css$/, 
+			use: extractCSS.extract({
+				fallback: 'style-loader',
+				use: ['css-loader'],
+			})
+		}
+	]
 }
-
-//plugins 中加上 extractCSS,
+// plugins 中加上 extractCSS,
 ```
 
 再把 autoprefixer 也装上吧，开启 sourceMap，修改下
 
-```
+```js
 module: {
 	rules: [
 		{
@@ -289,29 +288,29 @@ module: {
 
 然后创建 postcss.config.js:
 
-```
+```js
 module.exports = {
-    plugins: [
-        require('autoprefixer')
-    ]
+	plugins: [
+		require('autoprefixer')
+	]
 }
 ```
 
 在 package.json 中添加：
 
-```
+```json
 "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+	"> 1%",
+	"last 2 versions",
+	"not ie <= 8"
+]
 ```
 
 可以随你设置。
 
 现在OK！
 
-### ELSE
+### Others
 
 现在，来讲讲配置时的各种 坑 Ｏ(≧口≦)Ｏ ...
 
@@ -321,7 +320,7 @@ module.exports = {
 
 解决方法 1 ：按照 webpack2 的格式写 
 
-```
+```js
 modules: [
 	{
 		test: /\.js$/,
@@ -345,6 +344,32 @@ modules: [
 
 安装着个版本的 webpack ："webpack": "^2.1.0-beta.22"，支持 1 的写法。
 
--  热重载所需的 new webpack.optimize.OccurenceOrderPlugin() 插件默认已经有了，可以不用引入了；new webpack.NoErrorsPlugin() 需替换为 new webpack.NoEmitOnErrorsPlugin()。
+-  热重载所需的 `new webpack.optimize.OccurenceOrderPlugin()` 插件默认已经有了，可以不用引入了；`new webpack.NoErrorsPlugin()` 需替换为 `new webpack.NoEmitOnErrorsPlugin()`。
 
-- 引入文件时 require() 和 module.exports 配对使用， import x from './tag' 和 export default 配对使用，不能混合。
+- 引入文件时 `require()` 和 `module.exports` 配对使用， `import x from './tag'` 和 `export default` 配对使用，不能混合。
+
+#### 2019 code
+
+如果使用 `express` 构建 dev server 而不使用插件 `webpack-dev-server` 时，看不到编译的进度有点难受。其实 `webpack` 已经内置了 api，我们调用下就行了：
+
+```js
+let compiler = webpack(webpackConfig);
+
+// for CLI output
+new webpack.ProgressPlugin({
+  profile: true,
+}).apply(compiler);
+
+// for browser console output
+new webpack.ProgressPlugin((percent, msg, addInfo) => {
+  percent = Math.floor(percent * 100);
+
+  if (percent === 100) {
+    msg = 'Compilation completed';
+  }
+
+  if (addInfo) {
+    msg = `${msg} (${addInfo})`;
+  }
+}).apply(compiler);
+```

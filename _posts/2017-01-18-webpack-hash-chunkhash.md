@@ -31,7 +31,7 @@ hash代表的是`compilation`的hash值。
 
 ### hash
 
-```
+```js
 entry: {
     "main": path.join(__dirname + "/app/main.js"),
     "hello": path.join(__dirname + "/app/hello.js")
@@ -55,7 +55,7 @@ hello.3526642e76ed3a029dad.js  1.43 kB       0  [emitted]  hello
 
 ### chunkhash
 
-```
+```js
 entry: {
     "main": path.join(__dirname + "/app/main.js"),
     "hello": path.join(__dirname + "/app/hello.js")

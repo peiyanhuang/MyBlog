@@ -18,8 +18,8 @@ tag: 前端工具
 ```js
 //  用来配置应用层的模块解析，即要被打包的模块
 resolve: {
-    //  第一项扩展非常重要，千万不要忽略，否则经常出现模块无法加载错误
-    extensions: ['', '.js', '.es6', '.vue','.css']
+	//  第一项扩展非常重要，千万不要忽略，否则经常出现模块无法加载错误
+	extensions: ['', '.js', '.es6', '.vue','.css']
 },
 ```
 
@@ -27,7 +27,9 @@ resolve: {
 
 对上面的配置进行说明，即请求js、es6、vue文件时不需要添加后缀名，直接请求即可，如下。
 
-    import {add} from './MathUtils'
+```js
+import {add} from './MathUtils'
+```
 
 ### CSS
 
@@ -42,15 +44,15 @@ webpack提供两个工具处理样式表，`css-loader` 和 `style-loader`，二
 ```js
 // browserHistory
 app.use("*", (req, res, next) => {
-    const filename = path.resolve(compiler.outputPath, "index.html");
-    compiler.outputFileSystem.readFile(filename, (err, result) => {
-        if (err) {
-            return next(err);
-        }
-        res.set("content-type", "text/html");
-        res.send(result);
-        res.end();
-    });
+	const filename = path.resolve(compiler.outputPath, "index.html");
+	compiler.outputFileSystem.readFile(filename, (err, result) => {
+		if (err) {
+				return next(err);
+		}
+		res.set("content-type", "text/html");
+		res.send(result);
+		res.end();
+	});
 });
 ```
 
