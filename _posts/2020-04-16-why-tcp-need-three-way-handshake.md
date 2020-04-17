@@ -27,7 +27,7 @@ TCP 协议是我们几乎每天都会接触到的网络协议，绝大多数网�
 
 很多人尝试回答或者思考这个问题的时候其实关注点都放在了三次握手中的**三次**上面，这确实很重要，但是如果重新审视这个问题，我们对于『什么是连接』真的清楚？只有知道**连接的定义**，我们才能去尝试回答为什么 TCP 建立连接需要三次握手。
 
-  The reliability and flow control mechanisms described above require that TCPs initialize and maintain certain status information for each data stream. The combination of this information, including sockets, sequence numbers, and window sizes, is called a connection.
+> The reliability and flow control mechanisms described above require that TCPs initialize and maintain certain status information for each data stream. The combination of this information, including sockets, sequence numbers, and window sizes, is called a connection.
 
 (RFC 793 - Transmission Control Protocol)[https://tools.ietf.org/html/rfc793] 文档中非常清楚地定义了 TCP 中的连接是什么，我们简单总结一下：**用于保证可靠性和流控制机制的信息，包括 Socket、序列号以及窗口大小叫做连接**。
 
@@ -51,7 +51,7 @@ TCP 协议是我们几乎每天都会接触到的网络协议，绝大多数网�
 
 RFC 793 - Transmission Control Protocol 其实就指出了 TCP 连接使用三次握手的首要原因 —— 为了阻止历史的重复连接初始化造成的混乱问题，防止使用 TCP 协议通信的双方建立了错误的连接。
 
-  The principle reason for the three-way handshake is to prevent old duplicate connection initiations from causing confusion.
+> The principle reason for the three-way handshake is to prevent old duplicate connection initiations from causing confusion.
 
 ![image]({{'/images/web/tcp-recovery-from-old-duplicate-syn.png'|prepend:site.baseurl}})
 
@@ -90,7 +90,7 @@ SYN (synchronize): TCP连接的第一个包，非常小的一种数据包。
 
 如上图所示，通信双方的两个 TCP A/B 分别向对方发送 SYN 和 ACK 控制消息，等待通信双方都获取到了自己期望的初始化序列号之后就可以开始通信了，由于 TCP 消息头的设计，我们可以将中间的两次通信合成一个，TCP B 可以向 TCP A 同时发送 ACK 和 SYN 控制消息，这也就帮助我们将四次通信减少至三次。
 
-  A three way handshake is necessary because sequence numbers are not tied to a global clock in the network, and TCPs may have different mechanisms for picking the ISN’s. The receiver of the first SYN has no way of knowing whether the segment was an old delayed one or not, unless it remembers the last sequence number used on the connection (which is not always possible), and so it must ask the sender to verify this SYN. The three way handshake and the advantages of a clock-driven scheme are discussed in [3].
+> A three way handshake is necessary because sequence numbers are not tied to a global clock in the network, and TCPs may have different mechanisms for picking the ISN’s. The receiver of the first SYN has no way of knowing whether the segment was an old delayed one or not, unless it remembers the last sequence number used on the connection (which is not always possible), and so it must ask the sender to verify this SYN. The three way handshake and the advantages of a clock-driven scheme are discussed in [3].
 
 除此之外，网络作为一个分布式的系统，其中并不存在一个用于计数的全局时钟，而 TCP 可以通过不同的机制来初始化序列号，作为 TCP 连接的接收方我们无法判断对方传来的初始化序列号是否过期，所以我们需要交由对方来判断，TCP 连接的发起方可以通过保存发出的序列号判断连接是否过期，如果让接收方来保存并判断序列号却是不现实的，这也再一次强化了我们在上一节中提出的观点 —— 避免历史错连接的初始化。
 
