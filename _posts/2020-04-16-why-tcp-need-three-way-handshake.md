@@ -55,11 +55,8 @@ RFC 793 - Transmission Control Protocol 其实就指出了 TCP 连接使用三�
 
 ![image]({{'/images/web/tcp-recovery-from-old-duplicate-syn.png'|prepend:site.baseurl}})
 
-```
-ACK (ACKnowledge Character): 确认字符。在数据通信传输中，接收站发给发送站的一种传输控制字符。它表示确认发来的数据已经接受无误。
-
-SYN (synchronize): TCP连接的第一个包，非常小的一种数据包。
-```
+> ACK (ACKnowledge Character): 确认字符。在数据通信传输中，接收站发给发送站的一种传输控制字符。它表示确认发来的数据已经接受无误。
+> SYN (synchronize): TCP连接的第一个包，非常小的一种数据包。
 
 想象一下这个场景，如果通信双方的通信次数只有两次，那么发送方一旦发出建立连接的请求之后它就没有办法撤回这一次请求，如果在网络状况复杂或者较差的网络中，发送方连续发送多次建立连接的请求，如果 TCP 建立连接只能通信两次，那么接收方只能选择接受或者拒绝发送方发起的请求，它并不清楚这一次请求是不是由于网络拥堵而早早过期的连接。
 
@@ -90,7 +87,7 @@ SYN (synchronize): TCP连接的第一个包，非常小的一种数据包。
 
 如上图所示，通信双方的两个 TCP A/B 分别向对方发送 SYN 和 ACK 控制消息，等待通信双方都获取到了自己期望的初始化序列号之后就可以开始通信了，由于 TCP 消息头的设计，我们可以将中间的两次通信合成一个，TCP B 可以向 TCP A 同时发送 ACK 和 SYN 控制消息，这也就帮助我们将四次通信减少至三次。
 
-> A three way handshake is necessary because sequence numbers are not tied to a global clock in the network, and TCPs may have different mechanisms for picking the ISN’s. The receiver of the first SYN has no way of knowing whether the segment was an old delayed one or not, unless it remembers the last sequence number used on the connection (which is not always possible), and so it must ask the sender to verify this SYN. The three way handshake and the advantages of a clock-driven scheme are discussed in [3].
+> A three way handshake is necessary because sequence numbers are not tied to a global clock in the network, and TCPs may have different mechanisms for picking the ISN’s. The receiver of the first SYN has no way of knowing whether the segment was an old delayed one or not, unless it remembers the last sequence number used on the connection (which is not always possible), and so it must ask the sender to verify this SYN. The three way handshake and the advantages of a clock-driven scheme are discussed in.
 
 除此之外，网络作为一个分布式的系统，其中并不存在一个用于计数的全局时钟，而 TCP 可以通过不同的机制来初始化序列号，作为 TCP 连接的接收方我们无法判断对方传来的初始化序列号是否过期，所以我们需要交由对方来判断，TCP 连接的发起方可以通过保存发出的序列号判断连接是否过期，如果让接收方来保存并判断序列号却是不现实的，这也再一次强化了我们在上一节中提出的观点 —— 避免历史错连接的初始化。
 
