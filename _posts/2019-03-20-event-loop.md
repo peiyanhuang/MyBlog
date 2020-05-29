@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  JavaScript中的 Event Loop（事件循环）机制
-date:   2019-03-18 19:00:00 +0800
+date:   2019-03-20 19:00:00 +0800
 categories: 开发者
 tag: 开发者
 ---
@@ -34,7 +34,7 @@ tag: 开发者
 
 如此反复，这样就形成了一个无限的循环。这就是这个过程被称为`事件循环`（Event Loop）的原因。
 
-### macro task 与 micro task
+### 2.macro task 与 micro task
 
 以上的事件循环过程是一个宏观的表述，实际上因为异步任务之间并不相同，因此他们的执行优先级也有区别。不同的异步任务被分为两类：微任务（micro task）和宏任务（macro task）。
 
