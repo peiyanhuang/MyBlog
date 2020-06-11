@@ -9,7 +9,7 @@ tag: 前端工具
 * content
 {:toc}
 
-原文[Webpack4+Babel7+ES6兼容IE8]（https://juejin.im/post/5cabf7b0e51d456e8b07dd04?utm_medium=hao.caibaojian.com&utm_source=hao.caibaojian.com）
+原文[Webpack4+Babel7+ES6兼容IE8](https://juejin.im/post/5cabf7b0e51d456e8b07dd04?utm_medium=hao.caibaojian.com&utm_source=hao.caibaojian.com)
 
 IE8 很老了大多数时候已经不需要考虑了，但有时候还是有兼容的要求。这边记录下如何实现兼容的。（之前没记录，差点忘了…………）
 
@@ -66,7 +66,7 @@ babel为此提供了两种解决方案：`@babel/polyfill`、`@babel/runtime`。
 
 ### 模块化加载
 
-笔者原来是想用ES6的模块化加载方案，因为这样可以利用webpack的 tree shaking，移除冗余代码，使打包出来的文件体积更小。但在IE8下测试发现 `Object.defineProperty` 会报错'Accessors not supported!'。报错代码如下
+原来是想用ES6的模块化加载方案，因为这样可以利用webpack的 tree shaking，移除冗余代码，使打包出来的文件体积更小。但在IE8下测试发现 `Object.defineProperty` 会报错'Accessors not supported!'。报错代码如下
 
 ```js
 if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
