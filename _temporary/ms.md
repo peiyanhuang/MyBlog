@@ -15,13 +15,22 @@ permalink: /ms/
   - 三者都可以传参，但是apply是数组，而call是参数列表，且apply和call是一次性传入参数，而bind可以分为多次传入。
   - bind 是返回绑定this之后的函数，便于稍后调用；apply 、call 则是立即执行 。
 ```js
-Function.prototype.bind = function () {
-  var _this = this;
-  var context = arguments[0];
-  var arg = [].slice.call(arguments, 1);
+// 先实现一个apply
+Function.prototype.apply = function (context) {
+  context = context || window
+  context.fn = this;
+  const params = arguments[1] || []
+  context.fn(...params);
+  delete context.fn;
+}
+Function.prototype.bind = function (context) {
+  const _this = this;
+  context = context || window;
+  const arg = [].slice.call(arguments, 1);
   return function () {
     arg = [].concat.apply(arg, arguments);
     _this.apply(context, arg);
   }
 };
 ```
+4. [Event Loop](https://peiyanhuang.github.io/MyBlog/2019/03/20/event-loop/)
