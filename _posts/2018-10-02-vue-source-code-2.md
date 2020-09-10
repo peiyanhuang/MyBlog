@@ -219,17 +219,17 @@ const modifiedOptions = resolveModifiedOptions(Ctor)
 
 ```js
 Vue.options = {
-    components: {
-        KeepAlive
-        Transition,
-        TransitionGroup
-    },
-    directives:{
-        model,
-        show
-    },
-    filters: Object.create(null),
-    _base: Vue
+  components: {
+    KeepAlive
+    Transition,
+    TransitionGroup
+  },
+  directives:{
+    model,
+    show
+  },
+  filters: Object.create(null),
+  _base: Vue
 }
 ```
 
