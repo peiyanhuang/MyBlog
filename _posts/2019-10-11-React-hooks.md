@@ -276,7 +276,7 @@ function App() {
 
 #### useCallback
 
-```js
+```
 const memoizedCallback = useCallback(() => { doSomething(a, b); }, [a, b]);
 ````
 
@@ -294,7 +294,7 @@ const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
 
 #### useLayoutEffect
 
-```js
+```
 useLayoutEffect(() => { doSomething });
 ````
 
@@ -313,7 +313,7 @@ useLayoutEffect(() => { doSomething });
 
 ESLint 插件: eslint-plugin-react-hooks
 
-```js
+```json
 // 你的 ESLint 配置
 {
   "plugins": [

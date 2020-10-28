@@ -1,0 +1,183 @@
+---
+layout: post
+title:  JSHint、ESLint
+date:   2017-06-19 20:58:00 +0800
+categories: 前端工具
+tag: 前端工具
+---
+
+* content
+{:toc}
+
+JSHint跟JSLint 、ESLint非常像，都是Javascript代码验证工具。
+
+## JSHint
+
+### 1. sublime JSHint Gutter
+
+Sublime下可以安装JSHint Gutter插件。  
+
+编辑，加载或保存时自动检查
+
+右键 -> JSHint -> Set Plugin Options
+
+三项设置为 true
+
+	{
+		"lint_on_edit": true,
+		"lint_on_load": true,
+		"lint_on_save": true
+	}
+
+可以通过鼠标右键，选择jshint - > lint code查看报错。  
+或者光标移动到报错区，在底部查看。  
+或者Tools -> Command Palette ( Ctrl+Shift+P 或者 Cmd+Shift+P ) 然后输入 jshint。
+
+### 2.SublimeLint + SublimeLinter-jshint
+
+1) node 安装 jslint
+
+```
+npm install -g jshint
+```
+
+2) 使用Package Control安装 `SublimeLinter` 和 `SublimeLinter-jshint` 插件
+
+3) 打开 `Tools   >> SublimeLinter >> open User Settings` 配置文件，找到jshint的“args”属性，添加如下内容:
+
+```
+"args": [
+    "--config",
+    "${home}/.jshintrc"
+],
+```
+
+### 3.单独安装
+
+```
+// npm 安装
+$ npm install jshint -g 
+
+// 检查文件
+$ jshint myfile.js
+```
+    
+### 4.配置jshint
+
+**三种配置方式**
+
+1.通过 --config标记手动配置;
+
+2.使用 .jshintrc 文件:
+- 这个设置允许您每个项目有不同的配置文件。把你的文件放到项目根目录,只要你运行JSHint从任何地方在你的项目目录树,将使用相同的配置文件。
+
+3.配置放到项目的 package.json 文件里面， jshintConfig 下面
+- 配置文件是一 个简单的JSON文件,指定JSHint选项来打开或关闭。
+   
+4.内联配置
+- 除了使用配置文件,您可以在你的文件中使用jshint或者globals开头，并跟着配置项以冒号分隔值列表来配置JSHint。例如,下面的代码片段将启用警告未定义的和未使用的变量和告诉JSHint全局变量命名MY_GLOBAL。
+
+```
+/* jshint undef: true, unused: true */
+/* globals MY_GLOBAL */
+```
+        
+可以使用单行或者多行来配置JSHint，如果放在函数里面，则只影响该函数。
+
+- [jshint 官网](http://jshint.com/install/)
+- [jshint github](https://github.com/jshint/jshint)
+
+#### 官方默认的 .jshintrc 文件配置：
+
+``` stylus
+{
+    "globals": {
+        "jasmine": false,
+        "spyOn": false,
+        "it": false,
+        "console": false,
+        "describe": false,
+        "expect": false,
+        "beforeEach": false,
+        "waits": false,
+        "waitsFor": false,
+        "runs": false
+    },
+
+    "node" : true,
+    //"esversion" : "5",
+    "browser" : true,
+
+    "boss" : false,
+    "curly": false,
+    "debug": false,
+    "devel": false,
+    "eqeqeq": true,
+    "evil": true,
+    "forin": false,
+    "immed": true,
+    "laxbreak": false,
+    "newcap": true,
+    "noarg": true,
+    "noempty": false,
+    "nonew": false,
+    "nomen": false,
+    "onevar": true,
+    "plusplus": false,
+    "regexp": false,
+    "undef": true,
+    "sub": true,
+    "strict": false,
+    "white": true,
+    "unused": true,
+    "indent": true
+}
+```
+
+## ESLint
+
+在 Sublime Text 中你需要安装两个插件：
+
+- SublimeLinter
+- SublimeLinter-contrib-eslint
+
+然后通过 `Preferences->Package Settings->SublimeLinter->Settings - User` 进行集成
+
+```
+{
+    "user": {
+        "lint_mode": "load/save",
+        "linters": {
+            "eslint": {
+                "@disable": false,
+                "args": [],
+                "excludes": []
+            }
+        }
+    }
+}
+```
+
+[SublimeLinter配置 看这](https://sublimelinter.readthedocs.io/en/latest/lint_modes.html)
+
+### eslint 配置
+
+看文档吧
+
+-"off" 或 0 - 关闭规则
+-"warn" 或 1 - 开启规则，使用警告级别的错误：warn (不会导致程序退出)
+-"error" 或 2 - 开启规则，使用错误级别的错误：error (当被触发的时候，程序会退出)
+
+[ESLint 文档](http://eslint.cn/docs/user-guide/configuring)
+
+#### 报错解决
+
+`JSX not allowed in files with extension '.js'`
+
+The set of allowed extensions is configurable. By default '.jsx' is allowed. If you wanted to allow both '.jsx' and '.js', the configuration would be:
+
+```
+"rules": {
+  "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+}
+```
