@@ -2,8 +2,8 @@
 layout: post
 title:  游览器中的 ReadableStream
 date:   2020-11-19 19:00:00 +0800
-categories: 开发者
-tag: 开发者
+categories: JS
+tag: JS
 ---
 
 * content
