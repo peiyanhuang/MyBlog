@@ -43,7 +43,6 @@ tag: 开发者
 * setInterval()
 * setTimeout()
 * setImmediate (Node独有)
-* requestAnimationFrame (浏览器独有)
 * I/O
 * UI rendering (浏览器独有)
 
@@ -65,6 +64,27 @@ tag: 开发者
 7. 执行完毕后，调用栈 Stack 为空；
 8. 重复第3-7个步骤；
 9. ...
+
+### requestAnimationFrame
+
+通过查看 [HTML5 规范中](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-processing-model) 可以在第 `11.Update the rendering: if this is a window event loop, then:` 看到：
+
+```
+11. 执行 UI render 操作：
+11.1-.10. 判断 document 在此时间点渲染是否会『获益』。浏览器只需保证 60Hz 的刷新率即可（在机器负荷重时还会降低刷新率），若 eventloop 频率过高，即使渲染了浏览器也无法及时展示。所以并不是每轮 eventloop 都会执行 UI Render。
+11.6-.11 执行各种渲染所需工作，如 触发 resize、scroll 事件、建立媒体查询、运行 CSS 动画等等
+11.12. 执行 animation frame callbacks
+11.13. 执行 IntersectionObserver callback
+11.14  执行 mark paint timing
+11.15. 渲染 UI
+```
+
+执行 requestAnimationFrame callback 是 UI Render 的其中一步。并不是每轮 eventloop 都会执行 UI Render。
+
+如果浏览器试图实现 60Hz 的刷新率，那么 UI Render 只需要每秒执行 60 次（每 16.7 ms）。如果浏览器发现『顶层浏览器上下文』无法维持住这个频率，可能会下调到可维持的 30Hz，而不是掉帧。（本规范并不对何时进行 render 做任何规定。）类似的，如果一个顶层浏览器上下文在后台运行，用户代理可能决定将该页面的刷新率降到 4Hz，甚至更低。
+
+由于规范没有做约定，所以浏览器在 render 策略上有充分的自主性。既有可能出现每一轮 eventloop 后都 render 的现象，也有可能出现几十轮 eventloop 都不 render 的情况。
+
 
 ### 3.Node环境下的事件循环机制
 
@@ -107,4 +127,6 @@ NodeJS 中微队列主要有2个：
 
 ### 参考
 
-[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+- [在 HTML5 规范中找到 eventloop 相关章节](https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-processing-model)
+- [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+- [浏览器渲染详细过程：重绘、重排和 composite 只是冰山一角](https://juejin.cn/post/6844903476506394638)

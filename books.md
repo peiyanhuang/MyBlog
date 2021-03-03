@@ -16,6 +16,7 @@ permalink: /books/
   2. 三者第一个参数都是this要指向的对象，如果如果没有这个参数或参数为undefined或null，则默认指向全局window。
   3. 三者都可以传参，但是apply是数组，而call是参数列表，且apply和call是一次性传入参数，而bind可以分为多次传入。
   4. bind 是返回绑定this之后的函数，便于稍后调用；apply 、call 则是立即执行。
+
 ```js
 // 先实现一个apply
 Function.prototype.apply = function (context) {
@@ -36,7 +37,9 @@ Function.prototype.bind = function (context) {
   }
 };
 ```
+
 - 实现 new 功能
+
 ```js
 function myNew (func, ...args) {
   const instance = Object.create({})
@@ -53,6 +56,7 @@ function myNew (func, ...args) {
 - [Event Loop](https://peiyanhuang.github.io/MyBlog/2019/03/20/event-loop/)
 - [浏览器缓存-强缓存和协商缓存](https://peiyanhuang.github.io/MyBlog/2018/11/21/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/#%E5%BC%BA%E7%BC%93%E5%AD%98%E5%8D%8F%E5%95%86%E7%BC%93%E5%AD%98)
 - 深拷贝的实现
+
 ```js
 function deepCopy(value, targets) {
   let target = targets || {};
@@ -79,7 +83,9 @@ function deepCopy(value, targets) {
   return target;
 }
 ```
+
 - [柯里化](https://peiyanhuang.github.io/MyBlog/2018/04/27/adequate/#3%E6%9F%AF%E9%87%8C%E5%8C%96curry)
+
 ```js
 function curry(func) {
   return function curried(...args) {
@@ -129,7 +135,9 @@ function limit(count, array, iterateFunc) {
   return enqueue().then(() => Promise.all(tasks))
 }
 ```
+
 - 异步串行 | 异步并行
+
 ```js
 // 字节面试题，实现一个异步加法
 function asyncAdd(a, b, callback) {
@@ -178,10 +186,31 @@ async function parallelSum(...args) {
 ```
 - [JS模块规范：AMD，CMD，CommonJS 与 import](https://peiyanhuang.github.io/MyBlog/2017/11/27/js-module/)
 - [游览器工作原理](https://peiyanhuang.github.io/MyBlog/2017/01/15/Browser-Work/)
+- [浏览器地址栏里输入URL后的全过程](https://juejin.cn/post/6844903757877084174)
+- [webpack模块化原理-异步加载模块](https://zhuanlan.zhihu.com/p/88332125?utm_source=wechat_session)
 
 ### Vue
 
 - [Vue 数据的双向绑定？](https://peiyanhuang.github.io/MyBlog/2018/10/28/vue-source-code-4/)
+
+observer walk,observeArray -> defineReactive
+
+initLifecycle(vm)
+initEvents(vm)
+initRender(vm)
+callHook(vm, 'beforeCreate')
+initInjections(vm) // resolve injections before data/props
+initState(vm)
+initProvide(vm) // resolve provide after data/props
+callHook(vm, 'created')
+
+getter 中 dep 的 depend() 方法收集依赖（调用 dep.target 即 watcher 的 addDep()方法。）dep.addSub() 把watcher push 到 dep.subs 里。
+
+setter 中 dep.notify() 触发依赖。dep.subs 中的 watcher 的 update() 方法重新求值。
+
+整个 Vue 渲染过程，前面我们说了 complie 的过程，在做完 parse、optimize 和 generate 之后，我们得到了一个 render 函数字符串。
+那么接下来 Vue 做的事情就是 new watcher，这个时候会对绑定的数据执行监听，render 函数就是数据监听的回调所调用的，其结果便是重新生成 vnode。当这个 render 函数字符串在第一次 mount、或者绑定的数据更新的时候，都会被调用，生成 Vnode。如果是数据的更新，那么 Vnode 会与数据改变之前的 Vnode 做 diff，对内容做改动之后，就会更新到我们真正的 DOM 上啦~
+
 - [$nextTick 的实现？](https://peiyanhuang.github.io/MyBlog/2018/11/02/vue-source-code-5/#nexttick-%E7%9A%84%E5%AE%9E%E7%8E%B0)
 - [$emit 实现](https://github.com/vuejs/vue/blob/11b7d5dff276caa54da3ef5b52444c0e2c5bbf41/src/core/instance/events.js#L111)
 - 你知道 Vue3 响应式数据原理吗？
@@ -212,3 +241,28 @@ async function parallelSum(...args) {
 
 - TCP如何提供可靠数据传输
 1. 通过使用流量控制、序号、确认和定时器，TCP确保正确的、按序的将数据从发送进程交付给接收进程。
+
+- [7层网络和5层网络](https://www.cnblogs.com/qishui/p/5428938.html)
+
+- get post 区别
+GET在浏览器回退时是无害的，而POST会再次提交请求。
+GET产生的URL地址可以被Bookmark，而POST不可以。
+GET请求会被浏览器主动cache，而POST不会，除非手动设置。
+GET请求只能进行url编码，而POST支持多种编码方式。
+GET请求参数会被完整保留在浏览器历史记录里，而POST中的参数不会被保留。
+GET请求在URL中传送的参数是有长度限制的，而POST么有。
+对参数的数据类型，GET只接受ASCII字符，而POST没有限制。
+GET比POST更不安全，因为参数直接暴露在URL上，所以不能用来传递敏感信息。
+GET参数通过URL传递，POST放在Request body中。
+
+
+- 进程线程区别
+根本区别：进程是操作系统资源分配的基本单位，而线程是任务调度和执行的基本单位
+
+在开销方面：每个进程都有独立的代码和数据空间（程序上下文），程序之间的切换会有较大的开销；线程可以看做轻量级的进程，同一类线程共享代码和数据空间，每个线程都有自己独立的运行栈和程序计数器（PC），线程之间切换的开销小。
+
+所处环境：在操作系统中能同时运行多个进程（程序）；而在同一个进程（程序）中有多个线程同时执行（通过CPU调度，在每个时间片中只有一个线程执行）
+
+内存分配方面：系统在运行的时候会为每个进程分配不同的内存空间；而对线程而言，除了CPU外，系统不会为线程分配内存（线程所使用的资源来自其所属进程的资源），线程组之间只能共享资源。
+
+包含关系：没有线程的进程可以看做是单线程的，如果一个进程内有多个线程，则执行过程不是一条线的，而是多条线（线程）共同完成的；线程是进程的一部分，所以线程也被称为轻权进程或者轻量级进程。

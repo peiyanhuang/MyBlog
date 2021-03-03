@@ -21,7 +21,7 @@ tag: Node
 ```
 GET /json/version                     # 获取浏览器的一些元信息
 GET /json or /json/list               # 当前浏览器上打开的一些页面信息
-GET /json/protocol                    # 获取当前 CDP 的协议信息   
+GET /json/protocol                    # 获取当前 CDP 的协议信息
 GET /json/new?{url}                   # 开启一共新的 Tab 页面
 GET /json/activate/{targetId}         # 激活某个页面成为当前显示的页面
 GET /json/close/{targetId}            # 关闭某个页面
@@ -97,7 +97,7 @@ puppeteer 提供了两种方法用于创建一个 Browser 实例：
 const puppeteer = require('puppeteer');
 let request = require('request-promise-native');
 
-//使用 puppeteer.launch 启动 Chrome
+// 使用 puppeteer.launch 启动 Chrome
 (async () => {
   const browser = await puppeteer.launch({
     headless: false,   //有浏览器界面启动
@@ -191,9 +191,9 @@ await page.waitForRequest('https://d.youdata.netease.com/api/dash/hello');
 - page.waitFor：设置等待时间，实在没办法的做法
 
 ```js
-await page.goto(url, { 
-  timeout: 120000, 
-  waitUntil: 'networkidle2' 
+await page.goto(url, {
+  timeout: 120000,
+  waitUntil: 'networkidle2'
 });
 //我们可以在页面中定义自己认为加载完的事件，在合适的时间点我们将该事件设置为 true
 //以下是我们项目在触发截图时的判断逻辑，如果 renderdone 出现且为 true 那么就截图，如果是 Object，说明页面加载出错了，我们可以捕获该异常进行提示
@@ -503,8 +503,8 @@ let page = await browser.newPage();
 await page.goto(url);
 let btn = await page.waitForSelector('#btn');
 //在点击按钮之前，事先定义一个 Promise，用于返回新 tab 的 Page 对象
-const newPagePromise = new Promise(res => 
-  browser.once('targetcreated', 
+const newPagePromise = new Promise(res =>
+  browser.once('targetcreated',
     target => res(target.page())
   )
 );
