@@ -60,7 +60,7 @@ React 只会对相同层级的 DOM 节点进行比较，即同一个父节点下
 3. nextChildren 的第三个元素是 D ，中 prevChildren 中的位置是 3（_mountIndex），nextIndex 是 2 ，lastIndex 是 1。这时不满足_mountIndex < lastIndex，因此 D 不需要移动。lastIndex 更新为 _mountIndex 和 lastIndex 中较大的：3 。nextIndex 自增：3；
 4. nextChildren 的第四个元素是 C ，中 prevChildren 中的位置是 2（_mountIndex），nextIndex 是 3 ，lastIndex 是 3。这时_mountIndex < lastIndex，因此将 C 移动到 lastPlacedNode (D)的后面。循环结束。
 
-### 4.Fiber Diff 更新
+### Fiber Diff 更新
 
 如果让我设计一个Diff算法，我首先想到的方案是：
 
